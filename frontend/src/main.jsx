@@ -11,6 +11,7 @@ import { Fees } from './components/admin/Fees.jsx'
 import { Facilities } from './components/admin/Facilities.jsx'
 import { Staffs } from './components/admin/Staffs.jsx'
 import { Notifications } from './components/admin/Notifications.jsx'
+import LandingPage from './components/landing-page/layout/LandingPage.jsx'
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,13 @@ const router = createBrowserRouter([
       { path: 'staffs', Component: Staffs },
       { path: 'notifications', Component: Notifications }
     ]
+  }, 
+  {
+    path: '/',
+    Component: LandingPage,
+    // children: [
+    //   { index: true, Component: HomePage }
+    // ]
   }
 ])
 
