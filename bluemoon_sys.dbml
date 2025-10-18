@@ -1,0 +1,145 @@
+// DBML generated from bluemoon_sys.sql
+
+Enum collection_period_type {
+  monthly
+  quarterly
+  yearly
+}
+
+Enum residence_status {
+  permanent
+  temporary
+}
+
+Enum gender {
+  male
+  female
+  other
+}
+
+Enum relationship {
+  owner
+  spouse
+  parent
+  child
+  other
+}
+
+Enum resident_status {
+  living
+  moved_out
+}
+
+Enum revenue_category {
+  mandatory
+  voluntary
+}
+
+Enum revenue_status {
+  active
+  inactive
+}
+
+Enum room_status {
+  available
+  occupied
+}
+
+Enum user_role {
+  accountant
+  admin
+}
+
+Enum vehicle_type {
+  motorbike
+  car
+}
+
+Table collection_periods {
+  id int [pk, increment]
+  name varchar(100)
+  start_date date
+  end_date date
+  type collection_period_type
+  code varchar(50) [unique]
+}
+
+Table rooms {
+  room_number varchar(20) [pk]
+  floor int
+  area float
+  status room_status
+}
+
+Table revenue_items {
+  id int [pk, increment]
+  name varchar(100)
+  unit_price decimal(12,2)
+  description text
+  category revenue_category
+  status revenue_status
+  code varchar(50) [unique]
+  quantity_unit varchar(50)
+}
+
+Table collection_items {
+  id int [pk, increment]
+  collection_period_id int [ref: > collection_periods.id]
+  room_number varchar(20) [ref: > rooms.room_number]
+  revenue_item_id int [ref: > revenue_items.id]
+  quantity decimal(12,2)
+  quantity_unit varchar(20)
+  unit_price decimal(12,2)
+  total_amount decimal(12,2)
+  note varchar(255)
+}
+
+Table payments {
+  id int [pk, increment]
+  room_number varchar(20) [ref: > rooms.room_number]
+  collection_period_id int [ref: > collection_periods.id]
+  paid_amount decimal(12,2)
+  payment_date date
+  note varchar(255)
+  debt_amount decimal(12,2)
+  excess_amount decimal(12,2)
+}
+
+Table residents {
+  id int [pk, increment]
+  full_name varchar(100)
+  date_of_birth date
+  place_of_birth varchar(100)
+  ethnicity varchar(50)
+  occupation varchar(100)
+  hometown varchar(100)
+  id_card_number varchar(20) [unique]
+  residence_status residence_status
+  phone varchar(20)
+  gender gender
+  relationship_to_owner relationship
+  room_number varchar(20) [ref: > rooms.room_number]
+  status resident_status
+}
+
+Table users {
+  id int [pk, increment]
+  email varchar(100) [unique]
+  username varchar(100)
+  password varchar(100)
+  role user_role
+}
+
+Table vehicles {
+  id int [pk, increment]
+  room_number varchar(20) [ref: > rooms.room_number]
+  plate_number varchar(20) [unique]
+  type vehicle_type
+  brand varchar(50)
+  color varchar(30)
+  registration_date date
+  is_active boolean
+  note varchar(255)
+}
+
+// End of DBML
