@@ -1,0 +1,70 @@
+'use strict'
+const { Model } = require('sequelize')
+
+module.exports = (sequelize, DataTypes) => {
+  class MaintenanceRequest extends Model {
+    static associate(models) {
+      // MaintenanceRequest belongs to Equipment
+      MaintenanceRequest.belongsTo(models.Equipment, {
+        foreignKey: 'equipment_id',
+        as: 'equipment'
+      })
+
+      // MaintenanceRequest belongs to Resident
+      MaintenanceRequest.belongsTo(models.Resident, {
+        foreignKey: 'resident_id',
+        as: 'resident'
+      })
+
+      // MaintenanceRequest assigned to Staff
+      MaintenanceRequest.belongsTo(models.Staff, {
+        foreignKey: 'assigned_to',
+        as: 'assignee'
+      })
+    }
+  }
+
+  MaintenanceRequest.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      equipment_id: {
+        type: DataTypes.INTEGER
+      },
+      resident_id: {
+        type: DataTypes.INTEGER
+      },
+      description: {
+        type: DataTypes.TEXT
+      },
+      priority: {
+        type: DataTypes.STRING
+      },
+      status: {
+        type: DataTypes.TINYINT,
+        defaultValue: 0
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        field: 'created_at'
+      },
+      assigned_to: {
+        type: DataTypes.INTEGER
+      },
+      resolved_at: {
+        type: DataTypes.DATE
+      }
+    },
+    {
+      sequelize,
+      modelName: 'MaintenanceRequest',
+      tableName: 'maintenance_requests',
+      underscored: true
+    }
+  )
+
+  return MaintenanceRequest
+}
