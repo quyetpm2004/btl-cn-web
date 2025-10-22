@@ -1,0 +1,256 @@
+//////////////////////////////////////////////////////////////
+// 🔹 BẢNG QUẢN LÝ NGƯỜI DÙNG & PHÂN QUYỀN
+//////////////////////////////////////////////////////////////
+Table roles {
+  id int [pk, increment]                        // Mã vai trò
+  name varchar                                  // Tên vai trò (Admin, Cư dân, Thu ngân,...)
+  description text                              // Mô tả chức năng / quyền hạn
+}
+
+Table users {
+  id int [pk, increment]                        // Mã người dùng
+  username varchar [not null, unique]           // Tên đăng nhập
+  password varchar [not null]                   // Mật khẩu (đã mã hóa)
+  role_id int [ref: > roles.id]                 // Vai trò
+  email varchar                                 // Email
+  phone varchar                                 // Số điện thoại
+  avatar_url varchar                            // Ảnh đại diện
+  status tinyint                                // 0:'inactive', 1:'active'
+  created_at timestamp                          // Ngày tạo
+  updated_at timestamp                          // Cập nhật gần nhất
+}
+
+Table staffs {
+  id int [pk, increment]                        // Mã nhân viên
+  user_id int [ref: > users.id]                 // Tài khoản liên kết
+  full_name varchar                             // Họ tên
+  dob date                                      // Ngày sinh
+  gender tinyint                                // 1:nam, 2:nữ, 3:khác
+  position varchar                              // Chức vụ
+  department varchar                            // Phòng ban
+  id_card varchar                               // CCCD/CMND
+  address varchar                               // Địa chỉ
+  start_date date                               // Ngày bắt đầu làm
+  salary int                                    // Lương
+  status tinyint                                // 0:'nghỉ', 1:'đang làm', 2:'nghỉ phép'
+}
+
+//////////////////////////////////////////////////////////////
+// 🔹 CƯ DÂN & CĂN HỘ
+//////////////////////////////////////////////////////////////
+Table residents {
+  id int [pk, increment]                        // Mã cư dân
+  user_id int [ref: > users.id]                 // Tài khoản liên kết
+  full_name varchar                             // Họ tên
+  gender tinyint                                // 1:nam, 2:nữ, 3:khác
+  dob date                                      // Ngày sinh
+  place_of_birth varchar                        // Nơi sinh
+  ethnicity varchar                             // Dân tộc
+  occupation varchar                            // Nghề nghiệp
+  hometown varchar                              // Quê quán
+  id_card varchar                               // CCCD
+  household_no varchar                          // Mã hộ dân
+  status tinyint                                // 1:'đang ở', 2:'tạm vắng', 3:'chuyển đi'
+  registered_at timestamp                       // Ngày đăng ký
+}
+
+Table apartment_types {
+  id int [pk, increment]                        // Mã loại căn hộ
+  name varchar                                  // Tên loại (Studio, 1PN,...)
+  description text                              // Mô tả
+  layout_image varchar                          // Ảnh sơ đồ
+}
+
+Table apartments {
+  id int [pk, increment]                        // Mã căn hộ
+  apartment_code varchar [not null, unique]     // Mã định danh (vd: A101)
+  building varchar                              // Tòa nhà
+  type_id int [ref: > apartment_types.id]       // Loại căn
+  area float                                    // Diện tích (m2)
+  status tinyint                                // 0:'Trống', 1:'Đang ở', 2:'Đang thuê'
+  floor int                                     // Tầng
+  owner_id int [ref: > residents.id]            // Chủ sở hữu
+}
+
+Table resident_apartment {
+  id int [pk, increment]                        // Liên kết cư dân - căn hộ
+  resident_id int [ref: > residents.id]
+  apartment_id int [ref: > apartments.id]
+  relationship varchar                          // Quan hệ (chủ hộ, thuê,...)
+  start_date date                               // Ngày bắt đầu
+  end_date date                                 // Ngày kết thúc
+}
+
+Table vehicles {
+  id int [pk, increment]
+  apartment_id int [ref: > apartments.id]
+  type tinyint                                  // 1:'car', 2:'motorbike', 3:'bicycle'
+  brand varchar
+  license_plate varchar [unique]
+  color varchar
+  status tinyint                                // 0:'inactive', 1:'active'
+}
+
+//////////////////////////////////////////////////////////////
+// 🔹 ĐỢT THU
+//////////////////////////////////////////////////////////////
+Table collection_periods {
+  id int [pk, increment]
+  name varchar
+  type tinyint                                  // 1:'monthly', 2:'quarterly', 3:'yearly', 0:'custom'
+  start_date date
+  end_date date
+  description text
+  created_at timestamp
+  created_by int [ref: > users.id]
+  status tinyint                                // 0:'closed', 1:'active'
+}
+
+//////////////////////////////////////////////////////////////
+// 🔹 DỊCH VỤ & ĐĂNG KÝ
+//////////////////////////////////////////////////////////////
+Table services {
+  id int [pk, increment]
+  name varchar
+  description text
+  price int
+  unit varchar                                  // tháng, lượt, m2, người
+}
+
+Table service_registrations {
+  id int [pk, increment]
+  apartment_id int [ref: > apartments.id]
+  service_id int [ref: > services.id]
+  start_date date
+  end_date date
+  status tinyint                                // 0:'inactive', 1:'active'
+}
+
+//////////////////////////////////////////////////////////////
+// 🔹 HÓA ĐƠN & THANH TOÁN
+//////////////////////////////////////////////////////////////
+Table invoices {
+  id int [pk, increment]
+  apartment_id int [ref: > apartments.id]
+  period_id int [ref: > collection_periods.id]
+  total_amount bigint
+  status tinyint                                // 0:'unpaid', 1:'paid', 2:'overdue', 3:'cancelled'
+  created_at timestamp
+  created_by int [ref: > users.id]
+  note text
+}
+
+Table payments {
+  id int [pk, increment]
+  invoice_id int [ref: > invoices.id]
+  resident_id int [ref: > residents.id]
+  method varchar
+  amount bigint
+  paid_at timestamp
+  transaction_code varchar
+}
+
+Table account_balances {
+  id int [pk, increment]
+  apartment_id int [ref: > apartments.id]
+  balance int [default: 0]
+  last_update timestamp
+}
+
+//////////////////////////////////////////////////////////////
+// 🔹 THIẾT BỊ & BẢO TRÌ
+//////////////////////////////////////////////////////////////
+Table equipments {
+  id int [pk, increment]
+  name varchar
+  location varchar
+  status tinyint                                // 0:'inactive', 1:'active', 2:'maintenance', 3:'broken'
+  last_maintenance timestamp
+}
+
+Table maintenance_requests {
+  id int [pk, increment]
+  equipment_id int [ref: > equipments.id]
+  resident_id int [ref: > residents.id]
+  description text
+  priority tinyint                              // 1:'low', 2:'medium', 3:'high', 4:'urgent'
+  status tinyint                                // 0:'pending', 1:'in_progress', 2:'done', 3:'cancelled'
+  created_at timestamp
+  assigned_to int [ref: > staffs.id]
+  resolved_at timestamp
+}
+
+Table maintenance_schedules {
+  id int [pk, increment]
+  equipment_id int [ref: > equipments.id]
+  start_at timestamp
+  end_at timestamp
+  assigned_to int [ref: > staffs.id]
+  description text
+  status tinyint                                // 0:'scheduled', 1:'completed'
+}
+
+//////////////////////////////////////////////////////////////
+// 🔹 THÔNG BÁO & TIN TỨC
+//////////////////////////////////////////////////////////////
+Table notifications {
+  id int [pk, increment]
+  title varchar
+  content text
+  created_at timestamp
+  created_by int [ref: > users.id]
+  category tinyint                              // 1:'system', 2:'event', 3:'fee', 4:'maintenance', 5:'other'
+}
+
+Table notification_receivers {
+  id int [pk, increment]
+  notification_id int [ref: > notifications.id]
+  resident_id int [ref: > residents.id]
+  is_read boolean
+  read_at timestamp
+}
+
+Table news {
+  id int [pk, increment]
+  title varchar
+  content text
+  created_at timestamp
+  category int                                  // event, thông báo, hướng dẫn, tin nội khu
+}
+
+//////////////////////////////////////////////////////////////
+// 🔹 BÁO CÁO, DỰ ÁN & CƠ SỞ VẬT CHẤT
+//////////////////////////////////////////////////////////////
+Table financial_reports {
+  id int [pk, increment]
+  title varchar
+  period_id int [ref: > collection_periods.id]
+  total_income bigint
+  total_expense bigint
+  created_at timestamp
+}
+
+Table projects {
+  id int [pk, increment]
+  name varchar
+  description text
+  image_url varchar
+}
+
+Table facilities {
+  id int [pk, increment]
+  name varchar
+  description text
+  image_url varchar
+}
+
+//////////////////////////////////////////////////////////////
+// 🔹 LIÊN HỆ / THÔNG TIN CHUNG CƯ
+//////////////////////////////////////////////////////////////
+Table contacts {
+  id int [pk, increment]
+  email varchar
+  phone varchar
+  address varchar
+  map_embed_url text
+}

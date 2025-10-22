@@ -1,72 +1,70 @@
-import React from 'react'
-
 export const Apartments = () => {
   return (
     <div>
-      <div className="mb-6 flex justify-between items-center">
+      <div className="mb-6 flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          <h2 className="mb-2 text-2xl font-bold text-gray-800">
             Quản lý Căn hộ
           </h2>
           <p className="text-gray-600">Quản lý thông tin căn hộ và hợp đồng</p>
         </div>
-        <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+        <button className="rounded-lg bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-600">
           <i className="fas fa-plus mr-2"></i>
           Thêm căn hộ
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="bg-white p-6 rounded-xl shadow-sm">
+      <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="rounded-xl bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Đã bán</p>
               <p className="text-2xl font-bold text-green-600">186</p>
             </div>
-            <i className="fas fa-check-circle text-green-500 text-2xl"></i>
+            <i className="fas fa-check-circle text-2xl text-green-500"></i>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-xl shadow-sm">
+        <div className="rounded-xl bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Cho thuê</p>
               <p className="text-2xl font-bold text-blue-600">42</p>
             </div>
-            <i className="fas fa-key text-blue-500 text-2xl"></i>
+            <i className="fas fa-key text-2xl text-blue-500"></i>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-xl shadow-sm">
+        <div className="rounded-xl bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Trống</p>
               <p className="text-2xl font-bold text-yellow-600">20</p>
             </div>
-            <i className="fas fa-home text-yellow-500 text-2xl"></i>
+            <i className="fas fa-home text-2xl text-yellow-500"></i>
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-gray-200">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="overflow-hidden rounded-xl bg-white shadow-sm">
+        <div className="border-b border-gray-200 p-6">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
             <input
               type="text"
               placeholder="Tìm kiếm căn hộ..."
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500"
             />
-            <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+            <select className="rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500">
               <option>Tất cả tòa</option>
               <option>Tòa A</option>
               <option>Tòa B</option>
               <option>Tòa C</option>
             </select>
-            <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+            <select className="rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500">
               <option>Tất cả trạng thái</option>
               <option>Đã bán</option>
               <option>Cho thuê</option>
               <option>Trống</option>
             </select>
-            <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+            <select className="rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500">
               <option>Tất cả diện tích</option>
               <option>&lt; 50m²</option>
               <option>50-80m²</option>
@@ -75,11 +73,11 @@ export const Apartments = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-          <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-            <div className="flex justify-between items-start mb-3">
+        <div className="grid grid-cols-1 gap-6 p-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="rounded-lg border border-gray-200 p-4 transition-shadow hover:shadow-md">
+            <div className="mb-3 flex items-start justify-between">
               <h3 className="text-lg font-semibold">A1205</h3>
-              <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+              <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-800">
                 Đã bán
               </span>
             </div>
@@ -98,19 +96,19 @@ export const Apartments = () => {
               </p>
             </div>
             <div className="mt-4 flex gap-x-2">
-              <button className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-3 rounded text-sm transition-colors">
+              <button className="flex-1 rounded bg-blue-500 px-3 py-2 text-sm text-white transition-colors hover:bg-blue-600">
                 Xem chi tiết
               </button>
-              <button className="px-3 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors">
+              <button className="rounded border border-gray-300 px-3 py-2 transition-colors hover:bg-gray-50">
                 <i className="fas fa-edit"></i>
               </button>
             </div>
           </div>
 
-          <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-            <div className="flex justify-between items-start mb-3">
+          <div className="rounded-lg border border-gray-200 p-4 transition-shadow hover:shadow-md">
+            <div className="mb-3 flex items-start justify-between">
               <h3 className="text-lg font-semibold">B0801</h3>
-              <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+              <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-800">
                 Cho thuê
               </span>
             </div>
@@ -129,19 +127,19 @@ export const Apartments = () => {
               </p>
             </div>
             <div className="mt-4 flex gap-x-2">
-              <button className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-3 rounded text-sm transition-colors">
+              <button className="flex-1 rounded bg-blue-500 px-3 py-2 text-sm text-white transition-colors hover:bg-blue-600">
                 Xem chi tiết
               </button>
-              <button className="px-3 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors">
+              <button className="rounded border border-gray-300 px-3 py-2 transition-colors hover:bg-gray-50">
                 <i className="fas fa-edit"></i>
               </button>
             </div>
           </div>
 
-          <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-            <div className="flex justify-between items-start mb-3">
+          <div className="rounded-lg border border-gray-200 p-4 transition-shadow hover:shadow-md">
+            <div className="mb-3 flex items-start justify-between">
               <h3 className="text-lg font-semibold">C1501</h3>
-              <span className="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+              <span className="rounded-full bg-yellow-100 px-2 py-1 text-xs font-semibold text-yellow-800">
                 Trống
               </span>
             </div>
@@ -160,10 +158,10 @@ export const Apartments = () => {
               </p>
             </div>
             <div className="mt-4 flex gap-x-2">
-              <button className="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 px-3 rounded text-sm transition-colors">
+              <button className="flex-1 rounded bg-green-500 px-3 py-2 text-sm text-white transition-colors hover:bg-green-600">
                 Đăng bán
               </button>
-              <button className="px-3 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors">
+              <button className="rounded border border-gray-300 px-3 py-2 transition-colors hover:bg-gray-50">
                 <i className="fas fa-edit"></i>
               </button>
             </div>

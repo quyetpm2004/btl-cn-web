@@ -7,17 +7,20 @@ const sequelize = new Sequelize(
   process.env.DB_PASSWORD,
   {
     host: process.env.DB_HOST,
-    dialect: 'mysql'
+    dialect: 'mysql',
+    timezone: '+07:00',
+    logging: false,
+    dialectOptions: { dateStrings: true, typeCast: true }
   }
 )
 
-const testConnection = async () => {
+const connectDB = async () => {
   try {
     await sequelize.authenticate()
-    console.log('Connection has been established successfully.')
+    console.log('Connection to the database has been established successfully.')
   } catch (error) {
     console.error('Unable to connect to the database:', error)
   }
 }
 
-module.exports = { sequelize, testConnection }
+module.exports = { sequelize, connectDB }
