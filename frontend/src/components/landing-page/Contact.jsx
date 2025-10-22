@@ -1,11 +1,9 @@
-import React from "react";
-
-export default function Contact() {
+export const Contact = () => {
   return (
-    <section id="lien-he" className="py-20 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16 fade-in">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+    <section id="lien-he" className="bg-gray-50 py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="fade-in mb-16 text-center">
+          <h2 className="mb-4 text-3xl font-bold text-gray-800 md:text-4xl">
             Liên Hệ Với Chúng Tôi
           </h2>
           <p className="text-xl text-gray-600">
@@ -13,34 +11,34 @@ export default function Contact() {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
+        <div className="grid gap-12 lg:grid-cols-2">
           {/* Form liên hệ */}
           <div className="fade-in">
-            <div className="bg-white rounded-xl p-8 shadow-lg">
-              <h3 className="text-2xl font-bold mb-6">Gửi Thông Tin Liên Hệ</h3>
+            <div className="rounded-xl bg-white p-8 shadow-lg">
+              <h3 className="mb-6 text-2xl font-bold">Gửi Thông Tin Liên Hệ</h3>
               <form className="space-y-6">
                 {[
-                  { label: "Họ và tên *", type: "text", required: true },
-                  { label: "Số điện thoại *", type: "tel", required: true },
-                  { label: "Email", type: "email" },
+                  { label: 'Họ và tên *', type: 'text', required: true },
+                  { label: 'Số điện thoại *', type: 'tel', required: true },
+                  { label: 'Email', type: 'email' }
                 ].map((field, i) => (
                   <div key={i}>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
                       {field.label}
                     </label>
                     <input
                       type={field.type}
                       required={field.required}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-purple-500"
                     />
                   </div>
                 ))}
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="mb-2 block text-sm font-medium text-gray-700">
                     Loại căn hộ quan tâm
                   </label>
-                  <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                  <select className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-purple-500">
                     <option>Chọn loại căn hộ</option>
                     <option>Studio - 35m²</option>
                     <option>1 Phòng ngủ - 55m²</option>
@@ -51,20 +49,18 @@ export default function Contact() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="mb-2 block text-sm font-medium text-gray-700">
                     Tin nhắn
                   </label>
                   <textarea
                     rows="4"
                     placeholder="Để lại lời nhắn của bạn..."
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  ></textarea>
+                    className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-purple-500"></textarea>
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition duration-300"
-                >
+                  className="w-full rounded-lg bg-purple-600 py-3 font-semibold text-white transition duration-300 hover:bg-purple-700">
                   Gửi Thông Tin
                 </button>
               </form>
@@ -72,9 +68,9 @@ export default function Contact() {
           </div>
 
           {/* Thông tin liên hệ */}
-          <div className="space-y-8 fade-in">
-            <div className="bg-white rounded-xl p-8 shadow-lg">
-              <h3 className="text-2xl font-bold mb-6">Thông Tin Liên Hệ</h3>
+          <div className="fade-in space-y-8">
+            <div className="rounded-xl bg-white p-8 shadow-lg">
+              <h3 className="mb-6 text-2xl font-bold">Thông Tin Liên Hệ</h3>
               <div className="space-y-4 text-gray-700">
                 <p>📞 Hotline: 1900 1234</p>
                 <p>✉️ Email: info@luxuryresidence.vn</p>
@@ -83,15 +79,14 @@ export default function Contact() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-8 shadow-lg text-center">
-              <h3 className="text-2xl font-bold mb-4">Vị Trí Dự Án</h3>
-              <div className="h-64 bg-gray-200 rounded-lg flex flex-col items-center justify-center">
+            <div className="rounded-xl bg-white p-8 text-center shadow-lg">
+              <h3 className="mb-4 text-2xl font-bold">Vị Trí Dự Án</h3>
+              <div className="flex h-64 flex-col items-center justify-center rounded-lg bg-gray-200">
                 <svg
-                  className="w-16 h-16 text-gray-400 mb-4"
+                  className="mb-4 h-16 w-16 text-gray-400"
                   fill="none"
                   stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                  viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -115,5 +110,5 @@ export default function Contact() {
         </div>
       </div>
     </section>
-  );
+  )
 }
