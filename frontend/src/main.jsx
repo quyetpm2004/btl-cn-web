@@ -3,15 +3,18 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
 import './index.css'
-import { Layout } from './components/admin/layouts/Layout.jsx'
-import { Dashboard } from './components/admin/Dashboard.jsx'
-import { Residents } from './components/admin/Residents.jsx'
-import { Apartments } from './components/admin/Apartments.jsx'
-import { Fees } from './components/admin/Fees.jsx'
-import { Facilities } from './components/admin/Facilities.jsx'
-import { Staffs } from './components/admin/Staffs.jsx'
-import { Notifications } from './components/admin/Notifications.jsx'
-import LandingPage from './components/landing-page/layout/LandingPage.jsx'
+import { Layout } from './pages/admin/layouts/Layout.jsx'
+import { Dashboard } from './pages/admin/Dashboard.jsx'
+import { Residents } from './pages/admin/Residents.jsx'
+import { Apartments } from './pages/admin/Apartments.jsx'
+import { Fees } from './pages/admin/Fees.jsx'
+import { Facilities } from './pages/admin/Facilities.jsx'
+import { Staffs } from './pages/admin/Staffs.jsx'
+import { Notifications } from './pages/admin/Notifications.jsx'
+import { LandingPage } from './pages/landing-page/layout/LandingPage.jsx'
+import { AuthLayout } from './pages/auth/AuthLayout.jsx'
+import { Login } from './pages/auth/Login.jsx'
+import { Register } from './pages/auth/Register.jsx'
 
 const router = createBrowserRouter([
   {
@@ -26,13 +29,21 @@ const router = createBrowserRouter([
       { path: 'staffs', Component: Staffs },
       { path: 'notifications', Component: Notifications }
     ]
-  }, 
+  },
   {
     path: '/',
-    Component: LandingPage,
+    Component: LandingPage
     // children: [
     //   { index: true, Component: HomePage }
     // ]
+  },
+  {
+    path: '/auth',
+    Component: AuthLayout,
+    children: [
+      { path: 'login', Component: Login },
+      { path: 'register', Component: Register }
+    ]
   }
 ])
 

@@ -8,7 +8,7 @@ import { News } from '../News'
 import { Contact } from '../Contact'
 import { Footer } from '../Footer'
 
-const LandingPage = () => {
+export const LandingPage = () => {
   return (
     <div className="bg-gray-50">
       <Navbar />
@@ -23,5 +23,3 @@ const LandingPage = () => {
     </div>
   )
 }
-
-export default LandingPage
