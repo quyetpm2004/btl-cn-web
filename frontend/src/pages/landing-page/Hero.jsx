@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 
+// Dữ liệu slides vẫn giữ nguyên
 const slides = [
   {
     id: 0,
@@ -11,7 +12,7 @@ const slides = [
       </>
     ),
     description:
-      'Khám phá không gian sống hiện đại với thiết kế sang trọng, tiện ích đầy đủ và vị trí đắc địa',
+      'Khám phá không gian sống hiện đại với thiết kế sang trọng, tiện ích đầy đủ và vị trí đắc địa.',
     bgGradient: 'from-blue-600 via-purple-600 to-purple-800',
     image:
       'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80', // căn hộ
@@ -36,7 +37,7 @@ const slides = [
       </>
     ),
     description:
-      'Hồ bơi vô cực, phòng gym hiện đại, spa cao cấp và hơn 20 tiện ích khác',
+      'Hồ bơi vô cực, phòng gym hiện đại, spa cao cấp và hơn 20 tiện ích khác đang chờ đón bạn.',
     bgGradient: 'from-green-500 via-teal-600 to-blue-700',
     image:
       'https://vuonannam.com/wp-content/uploads/2023/03/ho-boi-tphcm-dep-va-sang-chanh-11.jpg', // hồ bơi
@@ -61,7 +62,7 @@ const slides = [
       </>
     ),
     description:
-      'Cơ hội sở hữu căn hộ cao cấp với chính sách thanh toán linh hoạt 0% lãi suất',
+      'Cơ hội sở hữu căn hộ cao cấp với chính sách thanh toán linh hoạt và chiết khấu lên đến 10%.',
     bgGradient: 'from-orange-500 via-red-500 to-pink-600',
     image:
       'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1920&q=80', // ưu đãi
@@ -81,111 +82,87 @@ const slides = [
 export const Hero = () => {
   const [current, setCurrent] = useState(0)
 
-  // Tự động chuyển slide sau 6 giây
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length)
-    }, 6000)
+    }, 6000) // Tự động chuyển slide sau 6 giây
     return () => clearInterval(timer)
   }, [])
 
   const goToSlide = (index) => setCurrent(index)
-  const nextSlide = () => setCurrent((prev) => (prev + 1) % slides.length)
-  const prevSlide = () =>
-    setCurrent((prev) => (prev - 1 + slides.length) % slides.length)
 
   return (
-    <section className="relative overflow-hidden pt-16">
-      <div className="slideshow-container relative h-screen">
+    <section className="relative h-screen w-full overflow-hidden text-white">
+      {/* Container cho tất cả các slide */}
+      <div className="relative h-full w-full">
+        {/* Lặp qua các slide để render phần Text và Image riêng biệt */}
         {slides.map((slide, index) => (
           <div
             key={slide.id}
-            className={`slide absolute inset-0 flex h-full w-full items-center justify-center transition-opacity duration-1000 ${
-              index === current ? 'z-10 opacity-100' : 'z-0 opacity-0'
+            className={`absolute inset-0 transition-opacity duration-1000 ${
+              index === current ? 'opacity-100' : 'opacity-0'
             }`}>
-            {/* Ảnh nền */}
-            <img
-              src={slide.image}
-              alt="slide background"
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-            {/* Lớp phủ gradient & mờ đen */}
-            {/* <div
-              className={`absolute inset-0 bg-gradient-to-br ${slide.bgGradient} opacity-60`}
-            ></div> */}
-            {/* <div className="absolute inset-0 bg-black bg-opacity-40"></div> */}
+            <div className="flex h-full w-full flex-col md:flex-row">
+              {/* === PHẦN TEXT (BÊN TRÁI) === */}
+              <div
+                className={`flex w-full flex-col items-start justify-center bg-gradient-to-br p-12 text-left md:w-1/2 lg:p-24 ${slide.bgGradient}`}>
+                {/* Container cho nội dung text để tạo hiệu ứng animation */}
+                <div
+                  className={`transition-all duration-700 ease-in-out ${
+                    index === current
+                      ? 'translate-y-0 opacity-100'
+                      : 'translate-y-8 opacity-0'
+                  }`}>
+                  <h1 className="mb-4 text-4xl leading-tight font-extrabold md:text-5xl lg:text-6xl">
+                    {slide.title}
+                  </h1>
+                  <p className="mb-8 max-w-lg text-lg text-gray-200 md:text-xl">
+                    {slide.description}
+                  </p>
+                  <div className="flex flex-wrap gap-4">
+                    <a
+                      href={slide.primaryBtn.href}
+                      className={`transform rounded-full bg-white px-8 py-3 font-semibold ${slide.primaryBtn.color} shadow-lg transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-105`}>
+                      {slide.primaryBtn.text}
+                    </a>
+                    <a
+                      href={slide.secondaryBtn.href}
+                      className={`transform rounded-full border-2 border-white px-8 py-3 font-semibold text-white transition duration-300 ease-in-out hover:-translate-y-1 hover:bg-white ${slide.secondaryBtn.color}`}>
+                      {slide.secondaryBtn.text}
+                    </a>
+                  </div>
+                </div>
+              </div>
 
-            {/* Nội dung */}
-            <div className="relative z-10 mx-auto max-w-7xl px-4 text-center text-white sm:px-6 lg:px-8">
-              <h1 className="mb-6 text-4xl font-bold md:text-6xl">
-                {slide.title}
-              </h1>
-              <p className="mx-auto mb-8 max-w-3xl text-xl md:text-2xl">
-                {slide.description}
-              </p>
-              <div className="space-x-4">
-                <a
-                  href={slide.primaryBtn.href}
-                  className={`bg-white ${slide.primaryBtn.color} inline-block rounded-full px-8 py-3 font-semibold transition duration-300 hover:bg-gray-100`}>
-                  {slide.primaryBtn.text}
-                </a>
-                <a
-                  href={slide.secondaryBtn.href}
-                  className={`rounded-full border-2 border-white px-8 py-3 font-semibold text-white hover:bg-white ${slide.secondaryBtn.color} inline-block transition duration-300`}>
-                  {slide.secondaryBtn.text}
-                </a>
+              {/* === PHẦN ẢNH (BÊN PHẢI) === */}
+              <div className="relative hidden h-full w-1/2 md:block">
+                <img
+                  src={slide.image}
+                  alt="slide image"
+                  className={`h-full w-full object-cover transition-transform duration-[6000ms] ease-linear ${
+                    index === current ? 'scale-110' : 'scale-100'
+                  }`}
+                />
+                {/* Lớp phủ đen nhẹ để ảnh có chiều sâu */}
+                <div className="absolute inset-0 bg-black/20"></div>
               </div>
             </div>
           </div>
         ))}
+      </div>
 
-        {/* Nút điều hướng */}
-        <button
-          onClick={prevSlide}
-          className="bg-opacity-20 hover:bg-opacity-30 absolute top-1/2 left-4 z-20 -translate-y-1/2 transform cursor-pointer rounded-full bg-white p-3 text-white transition duration-300">
-          <svg
-            className="h-6 w-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            color="#000">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M15 19l-7-7 7-7"></path>
-          </svg>
-        </button>
-        <button
-          onClick={nextSlide}
-          className="bg-opacity-20 hover:bg-opacity-30 absolute top-1/2 right-4 z-20 -translate-y-1/2 transform cursor-pointer rounded-full bg-white p-3 text-white transition duration-300">
-          <svg
-            className="h-6 w-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            color="#000">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-
-        {/* Dấu chấm chỉ báo */}
-        <div className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 transform space-x-3">
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToSlide(index)}
-              className={`h-3 w-3 rounded-full bg-white transition duration-300 ${
-                index === current
-                  ? 'opacity-100'
-                  : 'opacity-50 hover:opacity-100'
-              }`}></button>
-          ))}
-        </div>
+      {/* === ĐIỀU HƯỚNG & DẤU CHẤM === */}
+      <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 transform items-center gap-4">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => goToSlide(index)}
+            className={`h-2.5 w-2.5 rounded-full ring-white ring-offset-2 ring-offset-black/50 transition-all duration-300 ${
+              index === current
+                ? 'scale-125 bg-white ring-2'
+                : 'bg-white/50 hover:bg-white/75'
+            }`}></button>
+        ))}
       </div>
     </section>
   )
