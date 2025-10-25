@@ -35,7 +35,7 @@ export const Contact = () => {
                     <input
                       type={field.type}
                       required={field.required}
-                      className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-purple-500"
+                      className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-transparent focus:ring-2 focus:ring-purple-500"
                     />
                   </div>
                 ))}
@@ -44,7 +44,7 @@ export const Contact = () => {
                   <label className="mb-2 block text-sm font-medium text-gray-700">
                     Loại căn hộ quan tâm
                   </label>
-                  <select className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-purple-500">
+                  <select className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-transparent focus:ring-2 focus:ring-purple-500">
                     <option>Chọn loại căn hộ</option>
                     <option>Studio - 35m²</option>
                     <option>1 Phòng ngủ - 55m²</option>
@@ -61,7 +61,7 @@ export const Contact = () => {
                   <textarea
                     rows="4"
                     placeholder="Để lại lời nhắn của bạn..."
-                    className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-purple-500"></textarea>
+                    className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-transparent focus:ring-2 focus:ring-purple-500"></textarea>
                 </div>
 
                 <button
@@ -92,7 +92,15 @@ export const Contact = () => {
               </h3>
               {/* Đặt chiều cao cho container chứa bản đồ */}
               <div className="h-64 w-full overflow-hidden rounded-lg">
-                <MapComponent />
+                <iframe
+                  // 4. Sửa lại src cho đúng
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.995185951214!2d106.72960681475013!3d10.81439249229699!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3175261993315007%3A0x272a35639a3f3a5e!2s28%20Th%E1%BA%A3o%20%C4%90i%E1%BB%81n%2C%20Th%E1%BA%A3o%20%C4%90i%E1%BB%81n%2C%20Qu%E1%BA%ADn%202%2C%20Th%C3%A0nh%20ph%E1%BB%91%20H%E1%BB%93%20Ch%C3%AD%20Minh%2C%20Vietnam!5e0!3m2!1sen!2s!4v1668583482834!5m2!1sen!2s"
+                  width="100%"
+                  height="450"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"></iframe>
               </div>
               <p className="mt-4 text-center text-sm text-gray-500">
                 123 Đường ABC, Quận 1, TP.HCM

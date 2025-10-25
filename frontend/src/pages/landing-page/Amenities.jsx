@@ -56,7 +56,7 @@ export const Amenities = () => {
         </div>
 
         {/* Danh sách tiện ích */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-4">
           {amenities.map((item, index) => (
             <div
               key={index}

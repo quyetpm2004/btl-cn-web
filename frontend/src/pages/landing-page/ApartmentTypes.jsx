@@ -29,7 +29,9 @@ const apartmentData = [
         original: '/images/studio3.jpg',
         thumbnail: '/images/studio3.jpg'
       }
-    ]
+    ],
+    bedRoom: 1,
+    bathRoom: 2
   },
   {
     id: '1br',
@@ -55,7 +57,9 @@ const apartmentData = [
         original: '/images/phong-don-4.jpg',
         thumbnail: '/images/phong-don-4.jpg'
       }
-    ]
+    ],
+    bedRoom: 1,
+    bathRoom: 2
   },
   {
     id: '1br',
@@ -81,7 +85,9 @@ const apartmentData = [
         original: '/images/phong-1-full-4.jpg',
         thumbnail: '/images/phong-1-full-4.jpg'
       }
-    ]
+    ],
+    bedRoom: 1,
+    bathRoom: 2
   },
   {
     id: '2br',
@@ -107,7 +113,9 @@ const apartmentData = [
         original: '/images/phong-doi-4.jpg',
         thumbnail: '/images/phong-doi-4.jpg'
       }
-    ]
+    ],
+    bedRoom: 2,
+    bathRoom: 2
   },
   {
     id: '3br',
@@ -141,7 +149,9 @@ const apartmentData = [
         original: '/images/phong-ba-6.jpg',
         thumbnail: '/images/phong-ba-6.jpg'
       }
-    ]
+    ],
+    bedRoom: 3,
+    bathRoom: 3
   },
   {
     id: '3br',
@@ -163,7 +173,9 @@ const apartmentData = [
         original: '/images/studio-tunki-4.jpg',
         thumbnail: '/images/studio-tunki-4.jpg'
       }
-    ]
+    ],
+    bedRoom: 1,
+    bathRoom: 2
   }
 
   // ... Thêm các căn hộ còn lại vào đây theo cấu trúc tương tự
@@ -216,7 +228,17 @@ export const ApartmentTypes = () => {
                   <h3 className="mb-2 text-xl font-semibold">
                     {apartment.title}
                   </h3>
-                  <p className="mb-4 text-gray-600">{apartment.description}</p>
+                  <p className="mb-3 text-gray-600">{apartment.description}</p>
+                  <div className="mb-3">
+                    <span>
+                      <i class="fa-solid fa-bed"></i>
+                      <span className="ml-2">{apartment.bedRoom}</span>
+                    </span>
+                    <span className="ml-4">
+                      <i class="fa-solid fa-bath"></i>
+                      <span className="ml-2">{apartment.bathRoom}</span>
+                    </span>
+                  </div>
                   <div className="font-semibold text-purple-600">
                     {apartment.price}
                   </div>
