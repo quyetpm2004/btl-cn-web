@@ -33,7 +33,8 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: 'NotificationReceiver',
       tableName: 'notification_receivers',
-      underscored: true
+      underscored: true,
+      timestamps: false
     }
   )
 

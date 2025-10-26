@@ -34,7 +34,8 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: 'AccountBalance',
       tableName: 'account_balances',
-      underscored: true
+      underscored: true,
+      updatedAt: 'last_update'
     }
   )
 

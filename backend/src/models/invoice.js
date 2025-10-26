@@ -50,10 +50,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TINYINT,
         defaultValue: 0
       },
-      created_at: {
-        type: DataTypes.DATE,
-        field: 'created_at'
-      },
       created_by: {
         type: DataTypes.INTEGER
       },
@@ -65,7 +61,8 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: 'Invoice',
       tableName: 'invoices',
-      underscored: true
+      underscored: true,
+      updatedAt: false
     }
   )
 

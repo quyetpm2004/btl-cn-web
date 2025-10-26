@@ -73,14 +73,6 @@ module.exports = (sequelize, DataTypes) => {
       status: {
         type: DataTypes.TINYINT,
         defaultValue: 1
-      },
-      created_at: {
-        type: DataTypes.DATE,
-        field: 'created_at'
-      },
-      updated_at: {
-        type: DataTypes.DATE,
-        field: 'updated_at'
       }
     },
     {

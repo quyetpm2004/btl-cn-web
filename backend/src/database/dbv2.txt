@@ -15,7 +15,7 @@ Table users {
   email varchar                                 -- Địa chỉ email
   phone varchar                                 -- Số điện thoại liên hệ
   avatar_url varchar                            -- Ảnh đại diện (nếu có)
-  status tinyint                                    -- Trạng thái tài khoản (0:'inactive', 1:'active')
+  status tinyint                                -- Trạng thái tài khoản (0:'inactive', 1:'active')
   created_at timestamp                          -- Ngày tạo tài khoản
   updated_at timestamp                          -- Ngày cập nhật gần nhất
 }

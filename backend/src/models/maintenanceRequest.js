@@ -47,10 +47,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TINYINT,
         defaultValue: 0
       },
-      created_at: {
-        type: DataTypes.DATE,
-        field: 'created_at'
-      },
       assigned_to: {
         type: DataTypes.INTEGER
       },
@@ -62,7 +58,8 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: 'MaintenanceRequest',
       tableName: 'maintenance_requests',
-      underscored: true
+      underscored: true,
+      updatedAt: false
     }
   )
 

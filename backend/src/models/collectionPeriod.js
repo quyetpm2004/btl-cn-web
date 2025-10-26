@@ -47,10 +47,6 @@ module.exports = (sequelize, DataTypes) => {
       description: {
         type: DataTypes.TEXT
       },
-      created_at: {
-        type: DataTypes.DATE,
-        field: 'created_at'
-      },
       created_by: {
         type: DataTypes.INTEGER
       },
@@ -63,7 +59,8 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: 'CollectionPeriod',
       tableName: 'collection_periods',
-      underscored: true
+      underscored: true,
+      updatedAt: false
     }
   )
 

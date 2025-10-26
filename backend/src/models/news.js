@@ -22,10 +22,6 @@ module.exports = (sequelize, DataTypes) => {
       content: {
         type: DataTypes.TEXT
       },
-      created_at: {
-        type: DataTypes.DATE,
-        field: 'created_at'
-      },
       category: {
         type: DataTypes.INTEGER
       }
@@ -34,7 +30,8 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: 'News',
       tableName: 'news',
-      underscored: true
+      underscored: true,
+      updatedAt: false
     }
   )
 

@@ -31,17 +31,14 @@ module.exports = (sequelize, DataTypes) => {
       },
       total_expense: {
         type: DataTypes.BIGINT
-      },
-      created_at: {
-        type: DataTypes.DATE,
-        field: 'created_at'
       }
     },
     {
       sequelize,
       modelName: 'FinancialReport',
       tableName: 'financial_reports',
-      underscored: true
+      underscored: true,
+      updatedAt: false
     }
   )
 
