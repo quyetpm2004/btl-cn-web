@@ -2,12 +2,12 @@ const amenities = [
   {
     title: 'Hồ Bơi Vô Cực',
     desc: 'Hồ bơi ngoài trời với view thành phố, mở cửa 24/7',
-    img: 'https://images.unsplash.com/photo-1555992336-03a23c3bf4e6?auto=format&fit=crop&w=600&q=80'
+    img: '/images/ho-boi.jpg'
   },
   {
     title: 'Phòng Gym Hiện Đại',
     desc: 'Trang thiết bị tập luyện cao cấp, huấn luyện viên chuyên nghiệp',
-    img: 'https://images.unsplash.com/photo-1571019613914-85f342c45f6e?auto=format&fit=crop&w=600&q=80'
+    img: '/images/phong-gym.webp'
   },
   {
     title: 'Bãi Xe Thông Minh',
@@ -17,27 +17,27 @@ const amenities = [
   {
     title: 'Thang Máy Cao Tốc',
     desc: '6 thang máy Mitsubishi, tốc độ 2.5m/s',
-    img: 'https://images.unsplash.com/photo-1601646764402-0b6a7f32cf3a?auto=format&fit=crop&w=600&q=80'
+    img: '/images/thang-may.jpg'
   },
   {
     title: 'Thư Viện & Coworking',
     desc: 'Không gian học tập và làm việc yên tĩnh',
-    img: 'https://images.unsplash.com/photo-1587614382346-4ec1f3e9c8f0?auto=format&fit=crop&w=600&q=80'
+    img: '/images/thu-vien.jpg'
   },
   {
     title: 'Khu Vui Chơi Trẻ Em',
     desc: 'Sân chơi an toàn với thiết bị hiện đại',
-    img: 'https://images.unsplash.com/photo-1565058528608-986e8d4b2c17?auto=format&fit=crop&w=600&q=80'
+    img: '/images/vui-choi.png'
   },
   {
     title: 'Siêu Thị Mini',
     desc: 'Cửa hàng tiện lợi phục vụ 24/7',
-    img: 'https://images.unsplash.com/photo-1588854337118-1f7b1e5a1a6e?auto=format&fit=crop&w=600&q=80'
+    img: '/images/sieu-thi.jpg'
   },
   {
     title: 'An Ninh 24/7',
     desc: 'Hệ thống bảo vệ chuyên nghiệp, camera AI',
-    img: 'https://images.unsplash.com/photo-1590080875838-03a979a9d0ea?auto=format&fit=crop&w=600&q=80'
+    img: '/images/an-ninh.jpg'
   }
 ]
 
@@ -56,7 +56,7 @@ export const Amenities = () => {
         </div>
 
         {/* Danh sách tiện ích */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-4">
           {amenities.map((item, index) => (
             <div
               key={index}

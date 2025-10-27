@@ -1,6 +1,6 @@
 export const Pricing = () => {
   return (
-    <section id="bang-gia" className="bg-white py-20">
+    <section id="bang-gia" className="bg-about py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Tiêu đề */}
         <div className="fade-in mb-16 text-center">
