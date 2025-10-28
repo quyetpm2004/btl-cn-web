@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT
       },
       category: {
-        type: DataTypes.INTEGER
+        type: DataTypes.TINYINT
       }
     },
     {

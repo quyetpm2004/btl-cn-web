@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT
       },
       priority: {
-        type: DataTypes.STRING
+        type: DataTypes.TINYINT
       },
       status: {
         type: DataTypes.TINYINT,

@@ -31,8 +31,8 @@ module.exports = {
         type: Sequelize.TEXT
       },
       priority: {
-        type: Sequelize.STRING,
-        comment: 'low | medium | high | urgent'
+        type: Sequelize.TINYINT,
+        comment: '1:low | 2:medium | 3:high | 4:urgent'
       },
       status: {
         type: Sequelize.TINYINT,

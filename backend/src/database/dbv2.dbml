@@ -15,7 +15,7 @@ Table users {
   email varchar                                 // Email
   phone varchar                                 // Số điện thoại
   avatar_url varchar                            // Ảnh đại diện
-  status tinyint                                // 0:'inactive', 1:'active'
+  status tinyint [default: 1]                   // 0:'inactive', 1:'active'
   created_at timestamp                          // Ngày tạo
   updated_at timestamp                          // Cập nhật gần nhất
 }
@@ -32,7 +32,7 @@ Table staffs {
   address varchar                               // Địa chỉ
   start_date date                               // Ngày bắt đầu làm
   salary int                                    // Lương
-  status tinyint                                // 0:'nghỉ', 1:'đang làm', 2:'nghỉ phép'
+  status tinyint [default: 1]                   // 0:'nghỉ', 1:'đang làm', 2:'nghỉ phép'
 }
 
 //////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ Table residents {
   hometown varchar                              // Quê quán
   id_card varchar                               // CCCD
   household_no varchar                          // Mã hộ dân
-  status tinyint                                // 1:'đang ở', 2:'tạm vắng', 3:'chuyển đi'
+  status tinyint [default: 1]                   // 1:'đang ở', 2:'tạm vắng', 3:'chuyển đi'
   registered_at timestamp                       // Ngày đăng ký
 }
 
@@ -88,7 +88,7 @@ Table vehicles {
   brand varchar
   license_plate varchar [unique]
   color varchar
-  status tinyint                                // 0:'inactive', 1:'active'
+  status tinyint [default: 1]                   // 0:'inactive', 1:'active'
 }
 
 //////////////////////////////////////////////////////////////
@@ -103,7 +103,7 @@ Table collection_periods {
   description text
   created_at timestamp
   created_by int [ref: > users.id]
-  status tinyint                                // 0:'closed', 1:'active'
+  status tinyint [default: 1]                   // 0:'closed', 1:'active'
 }
 
 //////////////////////////////////////////////////////////////
@@ -123,7 +123,7 @@ Table service_registrations {
   service_id int [ref: > services.id]
   start_date date
   end_date date
-  status tinyint                                // 0:'inactive', 1:'active'
+  status tinyint [default: 1]                   // 0:'inactive', 1:'active'
 }
 
 //////////////////////////////////////////////////////////////
@@ -134,7 +134,7 @@ Table invoices {
   apartment_id int [ref: > apartments.id]
   period_id int [ref: > collection_periods.id]
   total_amount bigint
-  status tinyint                                // 0:'unpaid', 1:'paid', 2:'overdue', 3:'cancelled'
+  status tinyint [default: 0]                    // 0:'unpaid', 1:'paid', 2:'overdue', 3:'cancelled'
   created_at timestamp
   created_by int [ref: > users.id]
   note text
@@ -164,7 +164,7 @@ Table equipments {
   id int [pk, increment]
   name varchar
   location varchar
-  status tinyint                                // 0:'inactive', 1:'active', 2:'maintenance', 3:'broken'
+  status tinyint [default: 1]                   // 0:'inactive', 1:'active', 2:'maintenance', 3:'broken'
   last_maintenance timestamp
 }
 
@@ -174,7 +174,7 @@ Table maintenance_requests {
   resident_id int [ref: > residents.id]
   description text
   priority tinyint                              // 1:'low', 2:'medium', 3:'high', 4:'urgent'
-  status tinyint                                // 0:'pending', 1:'in_progress', 2:'done', 3:'cancelled'
+  status tinyint [default: 0]                   // 0:'pending', 1:'in_progress', 2:'done', 3:'cancelled'
   created_at timestamp
   assigned_to int [ref: > staffs.id]
   resolved_at timestamp
@@ -187,7 +187,7 @@ Table maintenance_schedules {
   end_at timestamp
   assigned_to int [ref: > staffs.id]
   description text
-  status tinyint                                // 0:'scheduled', 1:'completed'
+  status tinyint [default: 0]                   // 0:'scheduled', 1:'completed'
 }
 
 //////////////////////////////////////////////////////////////

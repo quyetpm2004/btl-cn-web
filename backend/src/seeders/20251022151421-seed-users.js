@@ -54,6 +54,26 @@ module.exports = {
         status: 1,
         created_at: new Date(),
         updated_at: new Date()
+      },
+      {
+        username: 'resident2',
+        password: await bcrypt.hash('resident123', 10),
+        role_id: 2,
+        email: 'resident2@apartment.com',
+        phone: '0123456789',
+        status: 1,
+        created_at: new Date(),
+        updated_at: new Date()
+      },
+      {
+        username: 'resident3',
+        password: await bcrypt.hash('resident123', 10),
+        role_id: 2,
+        email: 'resident3@apartment.com',
+        phone: '0123456789',
+        status: 1,
+        created_at: new Date(),
+        updated_at: new Date()
       }
     ])
   },

@@ -1,23 +1,27 @@
 import { Resident } from '../models/index.js'
 
-async function createResident(residentData, options = {}) {
-  return Resident.create(residentData, options)
+async function createResident(data, options = {}) {
+  return Resident.create(data, options)
 }
 
-async function getResidentById(residentId) {
-  return Resident.findByPk(residentId)
+async function getResidentById(id) {
+  return Resident.findByPk(id)
 }
 
 async function getAllResidents() {
   return Resident.findAll()
 }
 
-async function updateResident(residentId, updateData) {
-  return Resident.update(updateData, { where: { id: residentId } })
+async function updateResident(id, data) {
+  return Resident.update(data, { where: { id } })
 }
 
-async function deleteResident(residentId) {
-  return Resident.destroy({ where: { id: residentId } })
+async function deleteResident(id) {
+  return Resident.destroy({ where: { id } })
+}
+
+async function getResidentCount() {
+  return Resident.count()
 }
 
 export {
@@ -25,5 +29,6 @@ export {
   getResidentById,
   getAllResidents,
   updateResident,
-  deleteResident
+  deleteResident,
+  getResidentCount
 }

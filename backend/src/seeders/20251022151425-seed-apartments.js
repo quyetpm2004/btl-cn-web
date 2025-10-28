@@ -12,6 +12,24 @@ module.exports = {
         status: 1,
         floor: 1,
         owner_id: 1
+      },
+      {
+        apartment_code: 'A102',
+        building: 'A',
+        type_id: 2,
+        area: 80,
+        status: 1,
+        floor: 1,
+        owner_id: 2
+      },
+      {
+        apartment_code: 'A103',
+        building: 'A',
+        type_id: 4,
+        area: 110,
+        status: 1,
+        floor: 1,
+        owner_id: 3
       }
     ])
   },

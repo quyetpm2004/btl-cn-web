@@ -17,6 +17,34 @@ module.exports = {
         household_no: '987654321',
         status: 1,
         registered_at: new Date()
+      },
+      {
+        user_id: 6,
+        full_name: 'Nguyễn Thị F',
+        gender: 2,
+        dob: '1981-01-01',
+        place_of_birth: 'Hà Nội',
+        ethnicity: 'Kinh',
+        occupation: 'Kỹ sư',
+        hometown: 'Nam Định',
+        id_card: '123456789012',
+        household_no: '987654321',
+        status: 1,
+        registered_at: new Date()
+      },
+      {
+        user_id: 7,
+        full_name: 'Nguyễn Văn G',
+        gender: 1,
+        dob: '1980-03-03',
+        place_of_birth: 'Hà Nội',
+        ethnicity: 'Kinh',
+        occupation: 'Kỹ sư',
+        hometown: 'Nam Định',
+        id_card: '123456789012',
+        household_no: '987654321',
+        status: 1,
+        registered_at: new Date()
       }
     ])
   },
