@@ -62,7 +62,7 @@ const apartmentData = [
     bathRoom: 2
   },
   {
-    id: '1br',
+    id: '_1br',
     title: '1 Phòng Ngủ - Full đồ - 75m²',
     description:
       'Căn hộ 1 phòng ngủ đầy đủ đồ đặc rộng rãi với phòng khách riêng biệt, ban công thoáng mát.',
@@ -154,7 +154,7 @@ const apartmentData = [
     bathRoom: 3
   },
   {
-    id: '3br',
+    id: '_3br',
     title: 'Căn Hộ Studio Full Đồ Tonkin - 28m²',
     description:
       ' Deco với màu sắc hồng nữ tính theo chủ nghĩa ghét màu hồng thích sự giả dối.',
@@ -231,11 +231,11 @@ export const ApartmentTypes = () => {
                   <p className="mb-3 text-gray-600">{apartment.description}</p>
                   <div className="mb-3">
                     <span>
-                      <i class="fa-solid fa-bed"></i>
+                      <i className="fa-solid fa-bed"></i>
                       <span className="ml-2">{apartment.bedRoom}</span>
                     </span>
                     <span className="ml-4">
-                      <i class="fa-solid fa-bath"></i>
+                      <i className="fa-solid fa-bath"></i>
                       <span className="ml-2">{apartment.bathRoom}</span>
                     </span>
                   </div>

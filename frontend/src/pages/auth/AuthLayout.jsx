@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from 'react-router' // SỬA 1: Import từ 'react-router-dom'
+import { Toaster } from 'sonner'
 
 export const AuthLayout = () => {
   // KHÔNG CẦN DÙNG window.location nữa. NavLink sẽ tự xử lý.
@@ -65,6 +66,7 @@ export const AuthLayout = () => {
           </div>
         </div>
       </div>
+      <Toaster position="top-right" richColors />
     </div>
   )
 }

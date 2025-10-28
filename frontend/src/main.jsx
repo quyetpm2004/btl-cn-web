@@ -15,19 +15,27 @@ import { LandingPage } from './pages/landing-page/layout/LandingPage.jsx'
 import { AuthLayout } from './pages/auth/AuthLayout.jsx'
 import { Login } from './pages/auth/Login.jsx'
 import { Register } from './pages/auth/Register.jsx'
+import { Toaster } from 'sonner'
+import 'sonner'
+import { ProtectedRoute } from './routes/ProtectedRoute.jsx'
 
 const router = createBrowserRouter([
   {
-    path: '/admin',
-    Component: Layout,
+    element: <ProtectedRoute />, // chỉ bọc route cần bảo vệ
     children: [
-      { index: true, Component: Dashboard },
-      { path: 'residents', Component: Residents },
-      { path: 'apartments', Component: Apartments },
-      { path: 'fees', Component: Fees },
-      { path: 'facilities', Component: Facilities },
-      { path: 'staffs', Component: Staffs },
-      { path: 'notifications', Component: Notifications }
+      {
+        path: '/admin',
+        Component: Layout,
+        children: [
+          { index: true, Component: Dashboard },
+          { path: 'residents', Component: Residents },
+          { path: 'apartments', Component: Apartments },
+          { path: 'fees', Component: Fees },
+          { path: 'facilities', Component: Facilities },
+          { path: 'staffs', Component: Staffs },
+          { path: 'notifications', Component: Notifications }
+        ]
+      }
     ]
   },
   {
@@ -50,5 +58,6 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <RouterProvider router={router} />
+    <Toaster position="top-right" richColors />
   </StrictMode>
 )
