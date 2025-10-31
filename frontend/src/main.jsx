@@ -18,6 +18,9 @@ import { Register } from './pages/auth/Register.jsx'
 import { Toaster } from 'sonner'
 import 'sonner'
 import { ProtectedRoute } from './routes/ProtectedRoute.jsx'
+import { UserLayout } from './pages/user/layout/Layout'
+import UserDashboard from './pages/user/Dashboard'
+import ProfileSection from './pages/user/Profile'
 
 const router = createBrowserRouter([
   {
@@ -34,6 +37,19 @@ const router = createBrowserRouter([
           { path: 'facilities', Component: Facilities },
           { path: 'staffs', Component: Staffs },
           { path: 'notifications', Component: Notifications }
+        ]
+      }
+    ]
+  },
+  {
+    element: <ProtectedRoute />, // chỉ bọc route cần bảo vệ
+    children: [
+      {
+        path: '/user',
+        Component: UserLayout,
+        children: [
+          { index: true, Component: UserDashboard },
+          { path: 'profile', Component: ProfileSection }
         ]
       }
     ]

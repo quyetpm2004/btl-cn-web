@@ -1,14 +1,14 @@
 @import 'tailwindcss';
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 .bg-auth {
   background-image: url('/images/bg-auth.jpeg'); /* đường dẫn ảnh */
-  background-size: cover;        /* phóng ảnh phủ kín */
-  background-position: center;   /* canh giữa ảnh */
-  background-repeat: no-repeat;  /* không lặp lại */
-  min-height: 100vh;             /* full chiều cao màn hình */
-  width: 100%;                   /* full chiều rộng */
+  background-size: cover; /* phóng ảnh phủ kín */
+  background-position: center; /* canh giữa ảnh */
+  background-repeat: no-repeat; /* không lặp lại */
+  min-height: 100vh; /* full chiều cao màn hình */
+  width: 100%; /* full chiều rộng */
 }
 
 /* styles.css */
@@ -51,7 +51,7 @@
 
 /* Tùy chỉnh nhỏ cho react-image-gallery để phù hợp với modal */
 .image-gallery-slide .image-gallery-image {
-    max-height: 80vh; /* Giữ cho ảnh không quá cao */
+  max-height: 80vh; /* Giữ cho ảnh không quá cao */
 }
 
 .bg-about {
@@ -172,4 +172,8 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }

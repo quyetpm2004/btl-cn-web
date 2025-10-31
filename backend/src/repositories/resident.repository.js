@@ -1,23 +1,23 @@
-import { Resident } from '../models/index.js'
+import { Resident } from "../models/index.js";
 
 async function createResident(residentData, options = {}) {
-  return Resident.create(residentData, options)
+  return Resident.create(residentData, options);
 }
 
 async function getResidentById(residentId) {
-  return Resident.findByPk(residentId)
+  return Resident.findByPk(residentId);
 }
 
 async function getAllResidents() {
-  return Resident.findAll()
+  return Resident.findAll();
 }
 
 async function updateResident(residentId, updateData) {
-  return Resident.update(updateData, { where: { id: residentId } })
+  return Resident.update(updateData, { where: { id: residentId } });
 }
 
 async function deleteResident(residentId) {
-  return Resident.destroy({ where: { id: residentId } })
+  return Resident.destroy({ where: { id: residentId } });
 }
 
 export {
@@ -25,5 +25,5 @@ export {
   getResidentById,
   getAllResidents,
   updateResident,
-  deleteResident
-}
+  deleteResident,
+};
