@@ -5,9 +5,8 @@ import { StatusCodes } from 'http-status-codes'
 async function createApartment(req, res) {
   try {
     const apartmentData = req.body
-    const newApartment = await apartmentService.createApartmentService(
-      apartmentData
-    )
+    const newApartment =
+      await apartmentService.createApartmentService(apartmentData)
     return res.status(StatusCodes.CREATED).json({ apartment: newApartment })
   } catch (err) {
     const http = toHttpError(err)
@@ -28,13 +27,8 @@ async function getApartments(req, res) {
 async function getApartmentDetail(req, res) {
   try {
     const apartmentId = req.params.id
-    const apartment = await apartmentService.getApartmentDetailService(
-      apartmentId
-    )
-    if (!apartment)
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: 'Apartment not found' })
+    const apartment =
+      await apartmentService.getApartmentDetailService(apartmentId)
     return res.status(StatusCodes.OK).json({ apartment })
   } catch (err) {
     const http = toHttpError(err)
@@ -50,10 +44,6 @@ async function updateApartment(req, res) {
       apartmentId,
       apartmentData
     )
-    if (!updatedApartment)
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: 'Apartment not found' })
     return res.status(StatusCodes.OK).json({ apartment: updatedApartment })
   } catch (err) {
     const http = toHttpError(err)
@@ -75,12 +65,18 @@ async function filterApartments(req, res) {
 async function deleteApartment(req, res) {
   try {
     const apartmentId = req.params.id
-    const deleted = await apartmentService.deleteApartmentService(apartmentId)
-    if (!deleted)
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: 'Apartment not found' })
+    await apartmentService.deleteApartmentService(apartmentId)
     return res.status(StatusCodes.NO_CONTENT).send()
+  } catch (err) {
+    const http = toHttpError(err)
+    return res.status(http.status).json(http.body)
+  }
+}
+
+async function getApartmentCount(req, res) {
+  try {
+    const apartmentCount = await apartmentService.getApartmentCountService()
+    return res.status(StatusCodes.OK).json({ apartmentCount })
   } catch (err) {
     const http = toHttpError(err)
     return res.status(http.status).json(http.body)
@@ -93,5 +89,6 @@ export const apartmentController = {
   getApartmentDetail,
   updateApartment,
   filterApartments,
-  deleteApartment
+  deleteApartment,
+  getApartmentCount
 }

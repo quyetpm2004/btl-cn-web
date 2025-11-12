@@ -29,7 +29,7 @@ module.exports = {
       },
       relationship: {
         type: Sequelize.STRING,
-        comment: 'owner | tenant | relative'
+        comment: 'owner | relative'
       },
       start_date: {
         type: Sequelize.DATEONLY

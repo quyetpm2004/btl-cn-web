@@ -32,7 +32,7 @@ module.exports = {
       status: {
         type: Sequelize.TINYINT,
         defaultValue: 0,
-        comment: '0: vacant | 1: occupied (owner) | 2: rented'
+        comment: '0: vacant | 1: occupied (owner)'
       },
       floor: {
         type: Sequelize.INTEGER

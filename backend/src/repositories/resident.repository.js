@@ -4,12 +4,12 @@ async function createResident(data, options = {}) {
   return Resident.create(data, options)
 }
 
-async function getResidentById(id) {
-  return Resident.findByPk(id)
-}
-
 async function getAllResidents() {
   return Resident.findAll()
+}
+
+async function getResidentById(id) {
+  return Resident.findByPk(id)
 }
 
 async function updateResident(id, data) {
@@ -24,11 +24,16 @@ async function getResidentCount() {
   return Resident.count()
 }
 
+async function filterResidents(filters) {
+  return Resident.findAll({ where: filters })
+}
+
 export {
   createResident,
-  getResidentById,
   getAllResidents,
+  getResidentById,
   updateResident,
   deleteResident,
-  getResidentCount
+  getResidentCount,
+  filterResidents
 }

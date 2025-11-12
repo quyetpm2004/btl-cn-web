@@ -11,15 +11,19 @@ async function getApartmentsService() {
 }
 
 async function getApartmentDetailService(id) {
-  return apartmentRepo.getApartmentById(id)
+  const apartment = await apartmentRepo.getApartmentById(id)
+  if (!apartment) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Apartment not found')
+  }
+  return apartment
 }
 
 async function updateApartmentService(id, data) {
   const [updatedRows] = await apartmentRepo.updateApartment(id, data)
   if (updatedRows === 0) {
     throw new AppError(
-      'Apartment not found or no changes made',
-      StatusCodes.NOT_FOUND
+      StatusCodes.NOT_FOUND,
+      'Apartment not found or no changes made'
     )
   }
   return apartmentRepo.getApartmentById(id)
@@ -32,9 +36,12 @@ async function filterApartmentsService(filters) {
 async function deleteApartmentService(id) {
   const deletedRows = await apartmentRepo.deleteApartment(id)
   if (deletedRows === 0) {
-    throw new AppError('Apartment not found', StatusCodes.NOT_FOUND)
+    throw new AppError(StatusCodes.NOT_FOUND, 'Apartment not found')
   }
-  return true
+}
+
+async function getApartmentCountService() {
+  return apartmentRepo.getApartmentCount() ?? 0
 }
 
 export const apartmentService = {
@@ -43,5 +50,6 @@ export const apartmentService = {
   getApartmentDetailService,
   updateApartmentService,
   filterApartmentsService,
-  deleteApartmentService
+  deleteApartmentService,
+  getApartmentCountService
 }

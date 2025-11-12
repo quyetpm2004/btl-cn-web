@@ -67,7 +67,7 @@ Table apartments {
   building varchar                              // Tòa nhà
   type_id int [ref: > apartment_types.id]       // Loại căn
   area float                                    // Diện tích (m2)
-  status tinyint                                // 0:'Trống', 1:'Đang ở', 2:'Đang thuê'
+  status tinyint                                // 0:'Trống', 1:'Đang ở'
   floor int                                     // Tầng
   owner_id int [ref: > residents.id]            // Chủ sở hữu
 }
@@ -76,7 +76,7 @@ Table resident_apartment {
   id int [pk, increment]                        // Liên kết cư dân - căn hộ
   resident_id int [ref: > residents.id]
   apartment_id int [ref: > apartments.id]
-  relationship varchar                          // Quan hệ (chủ hộ, thuê,...)
+  relationship varchar                          // Quan hệ (chủ hộ, người thân,...)
   start_date date                               // Ngày bắt đầu
   end_date date                                 // Ngày kết thúc
 }
