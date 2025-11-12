@@ -1,7 +1,12 @@
+import React from 'react'
+// 1. Import component bản đồ
+import MapComponent from './MapComponent'
+
 export const Contact = () => {
   return (
     <section id="lien-he" className="bg-gray-50 py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* ... (phần tiêu đề không đổi) ... */}
         <div className="fade-in mb-16 text-center">
           <h2 className="mb-4 text-3xl font-bold text-gray-800 md:text-4xl">
             Liên Hệ Với Chúng Tôi
@@ -12,9 +17,10 @@ export const Contact = () => {
         </div>
 
         <div className="grid gap-12 lg:grid-cols-2">
-          {/* Form liên hệ */}
+          {/* ... (phần form liên hệ không đổi) ... */}
           <div className="fade-in">
             <div className="rounded-xl bg-white p-8 shadow-lg">
+              {/* Form content */}
               <h3 className="mb-6 text-2xl font-bold">Gửi Thông Tin Liên Hệ</h3>
               <form className="space-y-6">
                 {[
@@ -29,7 +35,7 @@ export const Contact = () => {
                     <input
                       type={field.type}
                       required={field.required}
-                      className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-purple-500"
+                      className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-transparent focus:ring-2 focus:ring-purple-500"
                     />
                   </div>
                 ))}
@@ -38,7 +44,7 @@ export const Contact = () => {
                   <label className="mb-2 block text-sm font-medium text-gray-700">
                     Loại căn hộ quan tâm
                   </label>
-                  <select className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-purple-500">
+                  <select className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-transparent focus:ring-2 focus:ring-purple-500">
                     <option>Chọn loại căn hộ</option>
                     <option>Studio - 35m²</option>
                     <option>1 Phòng ngủ - 55m²</option>
@@ -55,7 +61,7 @@ export const Contact = () => {
                   <textarea
                     rows="4"
                     placeholder="Để lại lời nhắn của bạn..."
-                    className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-purple-500"></textarea>
+                    className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-transparent focus:ring-2 focus:ring-purple-500"></textarea>
                 </div>
 
                 <button
@@ -79,32 +85,26 @@ export const Contact = () => {
               </div>
             </div>
 
-            <div className="rounded-xl bg-white p-8 text-center shadow-lg">
-              <h3 className="mb-4 text-2xl font-bold">Vị Trí Dự Án</h3>
-              <div className="flex h-64 flex-col items-center justify-center rounded-lg bg-gray-200">
-                <svg
-                  className="mb-4 h-16 w-16 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-                <p className="text-gray-600">Bản đồ vị trí dự án</p>
-                <p className="text-sm text-gray-500">
-                  123 Đường ABC, Quận 1, TP.HCM
-                </p>
+            {/* 2. Cập nhật khối Vị Trí Dự Án */}
+            <div className="rounded-xl bg-white p-8 shadow-lg">
+              <h3 className="mb-4 text-center text-2xl font-bold">
+                Vị Trí Dự Án
+              </h3>
+              {/* Đặt chiều cao cho container chứa bản đồ */}
+              <div className="h-64 w-full overflow-hidden rounded-lg">
+                <iframe
+                  // 4. Sửa lại src cho đúng
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.995185951214!2d106.72960681475013!3d10.81439249229699!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3175261993315007%3A0x272a35639a3f3a5e!2s28%20Th%E1%BA%A3o%20%C4%90i%E1%BB%81n%2C%20Th%E1%BA%A3o%20%C4%90i%E1%BB%81n%2C%20Qu%E1%BA%ADn%202%2C%20Th%C3%A0nh%20ph%E1%BB%91%20H%E1%BB%93%20Ch%C3%AD%20Minh%2C%20Vietnam!5e0!3m2!1sen!2s!4v1668583482834!5m2!1sen!2s"
+                  width="100%"
+                  height="450"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"></iframe>
               </div>
+              <p className="mt-4 text-center text-sm text-gray-500">
+                123 Đường ABC, Quận 1, TP.HCM
+              </p>
             </div>
           </div>
         </div>

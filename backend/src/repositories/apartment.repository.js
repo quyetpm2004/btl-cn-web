@@ -1,4 +1,4 @@
-import { Apartment } from '../models/index.js'
+import { Apartment, Resident, User, ApartmentType } from '../models/index.js'
 
 async function createApartment(data) {
   return Apartment.create(data)
@@ -32,6 +32,32 @@ async function filterApartments(filters) {
   return Apartment.findAll({ where: filters })
 }
 
+async function getApartmentByUserId(userId) {
+  return Apartment.findOne({
+    include: [
+      {
+        model: Resident,
+        as: 'owner',
+        required: true,
+        include: [
+          {
+            model: User,
+            as: 'user',
+            required: true,
+            where: { id: userId },
+            attributes: { exclude: ['password', 'createdAt', 'updatedAt'] }
+          }
+        ]
+      },
+      {
+        model: ApartmentType,
+        as: 'type',
+        attributes: { exclude: ['createdAt', 'updatedAt'] }
+      }
+    ]
+  })
+}
+
 export {
   createApartment,
   getAllApartments,
@@ -40,5 +66,6 @@ export {
   updateApartment,
   deleteApartment,
   getApartmentCount,
-  filterApartments
+  filterApartments,
+  getApartmentByUserId
 }

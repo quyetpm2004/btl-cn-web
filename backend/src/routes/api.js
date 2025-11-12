@@ -1,6 +1,7 @@
 import express from 'express'
 import { authMiddleware } from '../middlewares/auth.js'
 import authRouter from './auth.route.js'
+import userRoute from './user.route.js'
 import apartmentRouter from './apartment.route.js'
 import residentRouter from './resident.route.js'
 
@@ -14,6 +15,7 @@ router.get('/', async (req, res) => {
 
 router.use(authMiddleware)
 router.use(authRouter)
+router.use('/user', userRoute)
 router.use('/apartments', apartmentRouter)
 router.use('/residents', residentRouter)
 

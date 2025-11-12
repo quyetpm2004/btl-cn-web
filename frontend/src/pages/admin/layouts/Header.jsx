@@ -1,4 +1,13 @@
+import { useNavigate } from 'react-router'
+import { useAuthStore } from '../../../stores/useAuthStore'
+
 export const Header = () => {
+  const navigate = useNavigate()
+  const { logout } = useAuthStore()
+  const handleLogout = () => {
+    logout()
+    navigate('/auth/login')
+  }
   return (
     <header className="fixed top-0 z-50 w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg">
       <div className="mx-auto px-8 py-4">
@@ -15,7 +24,9 @@ export const Header = () => {
               <i className="fas fa-user-circle text-xl"></i>
               <span>Nguyễn Văn An</span>
             </div>
-            <button className="rounded-lg bg-white/20 px-4 py-2 transition-all hover:bg-white/30">
+            <button
+              onClick={handleLogout}
+              className="cursor-pointer rounded-lg bg-white/20 px-4 py-2 transition-all hover:bg-white/30">
               <i className="fas fa-sign-out-alt mr-2"></i>Đăng xuất
             </button>
           </div>

@@ -7,12 +7,13 @@ import { Amenities } from '../Amenities'
 import { News } from '../News'
 import { Contact } from '../Contact'
 import { Footer } from '../Footer'
+import LuxuryHero from '../LuxuryHero'
 
 export const LandingPage = () => {
   return (
     <div className="bg-gray-50">
       <Navbar />
-      <Hero />
+      <LuxuryHero />
       <About />
       <ApartmentTypes />
       <Pricing />

@@ -1,180 +1,272 @@
+// src/components/ApartmentTypes.js
+
+import React, { useState } from 'react'
+import ImageGallery from 'react-image-gallery'
+
+// Đừng quên import file CSS của thư viện!
+import 'react-image-gallery/styles/css/image-gallery.css'
+
+// 1. Dữ liệu được cấu trúc lại
+// Thay thế bằng các đường dẫn ảnh thực tế của bạn
+const apartmentData = [
+  {
+    id: 'studio',
+    title: 'Studio - 35m²',
+    description:
+      'Căn hộ studio hiện đại, tối ưu không gian, phù hợp cho người độc thân hoặc cặp đôi trẻ.',
+    price: 'Từ 1.2 tỷ VNĐ',
+    coverImage: '/images/studio1.jpg',
+    galleryImages: [
+      {
+        original: '/images/studio1.jpg',
+        thumbnail: '/images/studio1.jpg'
+      },
+      {
+        original: '/images/studio2.jpg',
+        thumbnail: '/images/studio2.jpg'
+      },
+      {
+        original: '/images/studio3.jpg',
+        thumbnail: '/images/studio3.jpg'
+      }
+    ],
+    bedRoom: 1,
+    bathRoom: 2
+  },
+  {
+    id: '1br',
+    title: '1 Phòng Ngủ - 55m²',
+    description:
+      'Căn hộ 1 phòng ngủ rộng rãi với phòng khách riêng biệt, ban công thoáng mát.',
+    price: 'Từ 1.8 tỷ VNĐ',
+    coverImage: '/images/phong-don-1.jpg',
+    galleryImages: [
+      {
+        original: '/images/phong-don-1.jpg',
+        thumbnail: '/images/phong-don-1.jpg'
+      },
+      {
+        original: '/images/phong-don-2.jpg',
+        thumbnail: '/images/phong-don-2.jpg'
+      },
+      {
+        original: '/images/phong-don-3.jpg',
+        thumbnail: '/images/phong-don-3.jpg'
+      },
+      {
+        original: '/images/phong-don-4.jpg',
+        thumbnail: '/images/phong-don-4.jpg'
+      }
+    ],
+    bedRoom: 1,
+    bathRoom: 2
+  },
+  {
+    id: '_1br',
+    title: '1 Phòng Ngủ - Full đồ - 75m²',
+    description:
+      'Căn hộ 1 phòng ngủ đầy đủ đồ đặc rộng rãi với phòng khách riêng biệt, ban công thoáng mát.',
+    price: 'Từ 2 tỷ VNĐ',
+    coverImage: '/images/phong-1-full-1.jpg',
+    galleryImages: [
+      {
+        original: '/images/phong-1-full-1.jpg',
+        thumbnail: '/images/phong-1-full-1.jpg'
+      },
+      {
+        original: '/images/phong-1-full-2.jpg',
+        thumbnail: '/images/phong-1-full-2.jpg'
+      },
+      {
+        original: '/images/phong-1-full-3.jpg',
+        thumbnail: '/images/phong-1-full-3.jpg'
+      },
+      {
+        original: '/images/phong-1-full-4.jpg',
+        thumbnail: '/images/phong-1-full-4.jpg'
+      }
+    ],
+    bedRoom: 1,
+    bathRoom: 2
+  },
+  {
+    id: '2br',
+    title: '2 Phòng Ngủ - 75m²',
+    description:
+      'Căn hộ 2 phòng ngủ lý tưởng cho gia đình nhỏ, thiết kế thông minh và tiện nghi.',
+    price: 'Từ 2.5 tỷ VNĐ',
+    coverImage: '/images/phong-doi-1.jpg',
+    galleryImages: [
+      {
+        original: '/images/phong-doi-1.jpg',
+        thumbnail: '/images/phong-doi-1.jpg'
+      },
+      {
+        original: '/images/phong-doi-2.jpg',
+        thumbnail: '/images/phong-doi-2.jpg'
+      },
+      {
+        original: '/images/phong-doi-3.jpg',
+        thumbnail: '/images/phong-doi-3.jpg'
+      },
+      {
+        original: '/images/phong-doi-4.jpg',
+        thumbnail: '/images/phong-doi-4.jpg'
+      }
+    ],
+    bedRoom: 2,
+    bathRoom: 2
+  },
+  {
+    id: '3br',
+    title: '3 Phòng Ngủ - 75m²',
+    description:
+      ' Căn hộ 3 phòng ngủ rộng rãi cho gia đình đông thành viên, có phòng làm việc riêng.',
+    price: 'Từ 3.2 tỷ VNĐ',
+    coverImage: '/images/phong-ba-1.jpg',
+    galleryImages: [
+      {
+        original: '/images/phong-ba-1.jpg',
+        thumbnail: '/images/phong-ba-1.jpg'
+      },
+      {
+        original: '/images/phong-ba-2.jpg',
+        thumbnail: '/images/phong-ba-2.jpg'
+      },
+      {
+        original: '/images/phong-ba-3.jpg',
+        thumbnail: '/images/phong-ba-3.jpg'
+      },
+      {
+        original: '/images/phong-ba-4.jpg',
+        thumbnail: '/images/phong-ba-4.jpg'
+      },
+      {
+        original: '/images/phong-ba-5.jpg',
+        thumbnail: '/images/phong-ba-5.jpg'
+      },
+      {
+        original: '/images/phong-ba-6.jpg',
+        thumbnail: '/images/phong-ba-6.jpg'
+      }
+    ],
+    bedRoom: 3,
+    bathRoom: 3
+  },
+  {
+    id: '_3br',
+    title: 'Căn Hộ Studio Full Đồ Tonkin - 28m²',
+    description:
+      ' Deco với màu sắc hồng nữ tính theo chủ nghĩa ghét màu hồng thích sự giả dối.',
+    price: 'Từ 1.5 tỷ VNĐ',
+    coverImage: '/images/studio-tunki-1.jpg',
+    galleryImages: [
+      {
+        original: '/images/studio-tunki-1.jpg',
+        thumbnail: '/images/studio-tunki-1.jpg'
+      },
+      {
+        original: '/images/studio-tunki-2.jpg',
+        thumbnail: '/images/studio-tunki-2.jpg'
+      },
+      {
+        original: '/images/studio-tunki-4.jpg',
+        thumbnail: '/images/studio-tunki-4.jpg'
+      }
+    ],
+    bedRoom: 1,
+    bathRoom: 2
+  }
+
+  // ... Thêm các căn hộ còn lại vào đây theo cấu trúc tương tự
+]
+
 export const ApartmentTypes = () => {
+  // 2. State để quản lý modal gallery
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false)
+  const [galleryImages, setGalleryImages] = useState([])
+
+  // Hàm để mở gallery với bộ ảnh tương ứng
+  const openGallery = (images) => {
+    setGalleryImages(images)
+    setIsGalleryOpen(true)
+  }
+
+  // Hàm để đóng gallery
+  const closeGallery = () => {
+    setIsGalleryOpen(false)
+  }
+
   return (
-    <section id="can-ho" className="bg-gray-50 py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Tiêu đề */}
-        <div className="fade-in mb-16 text-center">
-          <h2 className="mb-4 text-3xl font-bold text-gray-800 md:text-4xl">
-            Loại Căn Hộ &amp; Mặt Bằng
-          </h2>
-          <p className="text-xl text-gray-600">
-            Đa dạng các loại căn hộ từ 1-4 phòng ngủ phù hợp mọi nhu cầu
-          </p>
-        </div>
-
-        {/* Grid các căn hộ */}
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {/* Studio */}
-          <div className="card-hover fade-in overflow-hidden rounded-xl bg-white shadow-lg">
-            <div className="flex h-48 items-center justify-center bg-gradient-to-br from-blue-400 to-blue-600">
-              <svg
-                className="h-20 w-20 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1"
-                  d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1"
-                  d="M8 21l0-12 8 0 0 12"
-                />
-              </svg>
-            </div>
-            <div className="p-6">
-              <h3 className="mb-2 text-xl font-semibold">Studio - 35m²</h3>
-              <p className="mb-4 text-gray-600">
-                Căn hộ studio hiện đại, tối ưu không gian, phù hợp cho người độc
-                thân hoặc cặp đôi trẻ
-              </p>
-              <div className="font-semibold text-purple-600">Từ 1.2 tỷ VNĐ</div>
-            </div>
+    <>
+      <section id="can-ho" className="bg-gray-50 py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          {/* Tiêu đề */}
+          <div className="fade-in mb-16 text-center">
+            <h2 className="mb-4 text-3xl font-bold text-gray-800 md:text-4xl">
+              Loại Căn Hộ &amp; Mặt Bằng
+            </h2>
+            <p className="text-xl text-gray-600">
+              Đa dạng các loại căn hộ từ 1-4 phòng ngủ phù hợp mọi nhu cầu
+            </p>
           </div>
 
-          {/* 1 Phòng Ngủ */}
-          <div className="card-hover fade-in overflow-hidden rounded-xl bg-white shadow-lg">
-            <div className="flex h-48 items-center justify-center bg-gradient-to-br from-green-400 to-green-600">
-              <svg
-                className="h-20 w-20 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1"
-                  d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2z"
+          {/* 3. Grid các căn hộ được render tự động */}
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {apartmentData.map((apartment) => (
+              <div
+                key={apartment.id}
+                className="card-hover fade-in cursor-pointer overflow-hidden rounded-xl bg-white shadow-lg"
+                onClick={() => openGallery(apartment.galleryImages)} // <-- Sự kiện click
+              >
+                <img
+                  className="h-48 w-full object-cover"
+                  src={apartment.coverImage}
+                  alt={`Hình ảnh bìa cho căn hộ ${apartment.title}`}
                 />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1"
-                  d="M8 21l0-12 4 0 0 6 4 0 0 6"
-                />
-              </svg>
-            </div>
-            <div className="p-6">
-              <h3 className="mb-2 text-xl font-semibold">1 Phòng Ngủ - 55m²</h3>
-              <p className="mb-4 text-gray-600">
-                Căn hộ 1 phòng ngủ rộng rãi với phòng khách riêng biệt, ban công
-                thoáng mát
-              </p>
-              <div className="font-semibold text-purple-600">Từ 1.8 tỷ VNĐ</div>
-            </div>
-          </div>
-
-          {/* 2 Phòng Ngủ */}
-          <div className="card-hover fade-in overflow-hidden rounded-xl bg-white shadow-lg">
-            <div className="flex h-48 items-center justify-center bg-gradient-to-br from-orange-400 to-orange-600">
-              <svg
-                className="h-20 w-20 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1"
-                  d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1"
-                  d="M8 21l0-12 3 0 0 6 3 0 0-6 3 0 0 12"
-                />
-              </svg>
-            </div>
-            <div className="p-6">
-              <h3 className="mb-2 text-xl font-semibold">2 Phòng Ngủ - 75m²</h3>
-              <p className="mb-4 text-gray-600">
-                Căn hộ 2 phòng ngủ lý tưởng cho gia đình nhỏ, thiết kế thông
-                minh và tiện nghi
-              </p>
-              <div className="font-semibold text-purple-600">Từ 2.5 tỷ VNĐ</div>
-            </div>
-          </div>
-
-          {/* 3 Phòng Ngủ */}
-          <div className="card-hover fade-in overflow-hidden rounded-xl bg-white shadow-lg">
-            <div className="flex h-48 items-center justify-center bg-gradient-to-br from-purple-400 to-purple-600">
-              <svg
-                className="h-20 w-20 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1"
-                  d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1"
-                  d="M7 21l0-12 2.5 0 0 6 2.5 0 0-6 2.5 0 0 6 2.5 0 0 6"
-                />
-              </svg>
-            </div>
-            <div className="p-6">
-              <h3 className="mb-2 text-xl font-semibold">3 Phòng Ngủ - 95m²</h3>
-              <p className="mb-4 text-gray-600">
-                Căn hộ 3 phòng ngủ rộng rãi cho gia đình đông thành viên, có
-                phòng làm việc riêng
-              </p>
-              <div className="font-semibold text-purple-600">Từ 3.2 tỷ VNĐ</div>
-            </div>
-          </div>
-
-          {/* Penthouse */}
-          <div className="card-hover fade-in overflow-hidden rounded-xl bg-white shadow-lg">
-            <div className="flex h-48 items-center justify-center bg-gradient-to-br from-red-400 to-red-600">
-              <svg
-                className="h-20 w-20 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1"
-                  d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1"
-                  d="M6 21l0-12 3 0 0 4 3 0 0-4 3 0 0 8 3 0 0 4"
-                />
-              </svg>
-            </div>
-            <div className="p-6">
-              <h3 className="mb-2 text-xl font-semibold">Penthouse - 150m²</h3>
-              <p className="mb-4 text-gray-600">
-                Căn hộ penthouse sang trọng với sân vườn riêng, view toàn cảnh
-                thành phố
-              </p>
-              <div className="font-semibold text-purple-600">Từ 6.5 tỷ VNĐ</div>
-            </div>
+                <div className="p-6">
+                  <h3 className="mb-2 text-xl font-semibold">
+                    {apartment.title}
+                  </h3>
+                  <p className="mb-3 text-gray-600">{apartment.description}</p>
+                  <div className="mb-3">
+                    <span>
+                      <i className="fa-solid fa-bed"></i>
+                      <span className="ml-2">{apartment.bedRoom}</span>
+                    </span>
+                    <span className="ml-4">
+                      <i className="fa-solid fa-bath"></i>
+                      <span className="ml-2">{apartment.bathRoom}</span>
+                    </span>
+                  </div>
+                  <div className="font-semibold text-purple-600">
+                    {apartment.price}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* 4. Modal chứa Gallery */}
+      {isGalleryOpen && (
+        <div className="gallery-modal">
+          <button className="close-button" onClick={closeGallery}>
+            &times;
+          </button>
+          <div className="gallery-content">
+            <ImageGallery
+              items={galleryImages}
+              showPlayButton={false}
+              showFullscreenButton={true}
+              showThumbnails={true}
+              slideOnThumbnailOver={true}
+              showNav={true}
+            />
+          </div>
+        </div>
+      )}
+    </>
   )
 }

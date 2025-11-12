@@ -1,13 +1,26 @@
-import { Link, Outlet } from 'react-router'
+import { NavLink, Outlet } from 'react-router' // SỬA 1: Import từ 'react-router-dom'
+import { Toaster } from 'sonner'
 
 export const AuthLayout = () => {
+  // KHÔNG CẦN DÙNG window.location nữa. NavLink sẽ tự xử lý.
+
+  // SỬA 2: Tạo một hàm để tái sử dụng className, giúp code gọn hơn
+  const getTabClassName = ({ isActive }) =>
+    `flex-1 rounded-md px-4 py-2 text-center font-semibold transition-all duration-300 ${
+      isActive
+        ? 'bg-white text-primary-600 shadow-sm'
+        : 'text-primary-600 hover:bg-white/50 hover:text-gray-800'
+    }`
+
   return (
-    <div className="gradient-primary min-h-full">
-      <div className="flex min-h-full items-center justify-center px-4 py-12">
+    <div className="gradient-primary bg-auth min-h-screen">
+      {' '}
+      {/* Sửa min-h-full thành min-h-screen */}
+      <div className="flex min-h-full min-h-screen items-center justify-center bg-black/40 px-4 py-12">
         <div className="w-full max-w-md">
-          {/* <!-- Logo và Tiêu đề --> */}
+          {/* */}
           <div className="mb-8 text-center">
-            <div className="animate-float mb-4 inline-block text-6xl text-white">
+            <div className="animate-float text-primary mb-4 inline-block text-6xl">
               🏢
             </div>
             <h1 className="mb-2 text-3xl font-bold text-white">
@@ -18,26 +31,21 @@ export const AuthLayout = () => {
             </p>
           </div>
 
-          {/* <!-- Form Container --> */}
+          {/* */}
           <div className="glass-morphism animate-fade-in rounded-2xl p-8 shadow-2xl">
             <div className="mb-8 flex rounded-lg bg-gray-100 p-1">
-              <Link
-                to="/auth/login"
-                id="loginTab"
-                className="text-primary-600 flex-1 rounded-md bg-white px-4 py-2 font-semibold shadow-sm transition-all duration-300 hover:shadow-md">
+              {/* SỬA 3: Dùng NavLink thay cho Link */}
+              <NavLink to="/auth/login" className={getTabClassName}>
                 Đăng Nhập
-              </Link>
-              <Link
-                to="/auth/register"
-                id="registerTab"
-                className="flex-1 rounded-md px-4 py-2 font-semibold text-gray-600 transition-all duration-300 hover:bg-white/50 hover:text-gray-800">
+              </NavLink>
+              <NavLink to="/auth/register" className={getTabClassName}>
                 Đăng Ký
-              </Link>
+              </NavLink>
             </div>
 
             <Outlet />
 
-            {/* <!-- Success Message --> */}
+            {/* */}
             <div
               id="successMessage"
               className="mt-6 hidden rounded-lg border border-green-200 bg-green-50 p-4">
@@ -54,10 +62,11 @@ export const AuthLayout = () => {
           </div>
 
           <div className="mt-6 text-center text-sm text-white">
-            <p>© 2024 Hệ Thống Quản Lý Chung Cư. Bảo mật và an toàn.</p>
+            <p>© 2025 Hệ Thống Quản Lý Chung Cư. Bảo mật và an toàn.</p>
           </div>
         </div>
       </div>
+      <Toaster position="top-right" richColors />
     </div>
   )
 }

@@ -4,4 +4,8 @@ async function createResidentApartment(data, options = {}) {
   return ResidentApartment.create(data, options)
 }
 
-export { createResidentApartment }
+async function getResidentApartmentByResidentId(resident_id) {
+  return ResidentApartment.findOne({ where: { resident_id } })
+}
+
+export { createResidentApartment, getResidentApartmentByResidentId }
