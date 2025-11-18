@@ -1,11 +1,8 @@
 import {
-  handleFetchResident,
-  handleGetApartment,
   handleGetProfile,
   handleUpdatePassword,
   handleUpdateProfile,
-} from "../services/user.service.js";
-import { AppError } from "../utils/errors.js";
+} from "../../services/user/profile.service";
 
 const getProfile = async (req, res) => {
   const { id } = req.user;
@@ -31,6 +28,7 @@ const updateProfile = async (req, res) => {
     ethnicity,
     occupation,
   } = req.body;
+  const avatar = req.file ? req.file.filename : null;
   try {
     const data = await handleUpdateProfile(
       id,
@@ -42,7 +40,8 @@ const updateProfile = async (req, res) => {
       dob,
       hometown,
       ethnicity,
-      occupation
+      occupation,
+      avatar
     );
     return res.status(200).json({ message: "Update profile successful", data });
   } catch (err) {
@@ -68,30 +67,4 @@ const updatePassword = async (req, res) => {
   }
 };
 
-const getApartment = async (req, res) => {
-  const { id } = req.user;
-  try {
-    const data = await handleGetApartment(2);
-    return res.status(200).json({ message: "Get apartment successful", data });
-  } catch (err) {
-    return res.status(400).json({ error: err.message });
-  }
-};
-
-const fetchResident = async (req, res) => {
-  const { id } = req.user;
-  try {
-    const user = await handleFetchResident(id);
-    return res.status(200).json({ message: "Fetch resident successful", user });
-  } catch (err) {
-    return res.status(400).json({ error: err.message });
-  }
-};
-
-export {
-  getProfile,
-  updateProfile,
-  updatePassword,
-  getApartment,
-  fetchResident,
-};
+export { getProfile, updatePassword, updateProfile };

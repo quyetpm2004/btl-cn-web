@@ -1,5 +1,5 @@
-import { authService } from "../services/auth.service.js";
-import { toHttpError } from "../utils/errors.js";
+import { authService } from "../../services/auth/auth.service.js";
+import { toHttpError } from "../../utils/errors.js";
 
 async function register(req, res) {
   try {

@@ -21,6 +21,10 @@ import { ProtectedRoute } from './routes/ProtectedRoute.jsx'
 import { UserLayout } from './pages/user/layout/Layout'
 import UserDashboard from './pages/user/Dashboard'
 import ProfileSection from './pages/user/Profile'
+import Apartment from './pages/user/Apartment'
+import Payment from './pages/user/Payment'
+import Notification from './pages/user/Notification'
+import Maintenance from './pages/user/Maintenance'
 
 const router = createBrowserRouter([
   {
@@ -49,7 +53,11 @@ const router = createBrowserRouter([
         Component: UserLayout,
         children: [
           { index: true, Component: UserDashboard },
-          { path: 'profile', Component: ProfileSection }
+          { path: 'profile', Component: ProfileSection },
+          { path: 'apartment', Component: Apartment },
+          { path: 'payment', Component: Payment },
+          { path: 'notification', Component: Notification },
+          { path: 'maintenance', Component: Maintenance }
         ]
       }
     ]

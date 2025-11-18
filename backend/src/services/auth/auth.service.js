@@ -1,12 +1,12 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { StatusCodes } from "http-status-codes";
-import { AppError } from "../utils/errors.js";
-import { sequelize } from "../models/index.js";
-import * as userRepo from "../repositories/user.repository.js";
-import { createResident } from "../repositories/resident.repository.js";
-import { createResidentApartment } from "../repositories/residentApartment.repository.js";
-import { getApartmentByCode } from "../repositories/apartment.repository.js";
+import { AppError } from "../../utils/errors.js";
+import { sequelize } from "../../models/index.js";
+import * as userRepo from "../../repositories/user.repository.js";
+import { createResident } from "../../repositories/resident.repository.js";
+import { createResidentApartment } from "../../repositories/residentApartment.repository.js";
+import { getApartmentByCode } from "../../repositories/apartment.repository.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "12h";

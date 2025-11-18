@@ -48,11 +48,65 @@ const fetchResidentInfoApi = async () => {
   return response
 }
 
+const getNotification = async (residentId, filter) => {
+  const response = await instance.get(
+    `/api-v1/user/notification/${residentId}?filter=${filter}`
+  )
+  return response
+}
+
+const markNotification = async (notificationReceiverId, isRead) => {
+  const response = instance.put(
+    `/api-v1/user/notification/${notificationReceiverId}/${isRead}`
+  )
+  return response
+}
+
+const getMaintenanceRequestsApi = async (residentId) => {
+  const response = await instance.get(
+    `/api-v1/user/maintenance-request/${residentId}/pending`
+  )
+  return response
+}
+
+const getAllEquipmentApi = async () => {
+  const response = await instance.get('/api-v1/user/equipment')
+  return response
+}
+
+const getEquipmentByIdApi = async (id) => {
+  const response = await instance.get(`/api-v1/user/equipment/${id}`)
+  return response
+}
+
+const createMaintenanceRequestApi = async (data) => {
+  const formData = new FormData()
+  formData.append('equipment_id', data.equipment_id)
+  formData.append('resident_id', data.resident_id)
+  formData.append('priority', data.priority)
+  formData.append('description', data.description)
+  data.images.forEach((image, index) => {
+    formData.append(`images`, image)
+  })
+  console.log('FormData entries:', Array.from(formData.entries()))
+  const response = await instance.post(
+    '/api-v1/user/maintenance-request',
+    formData
+  )
+  return response
+}
+
 export {
   loginApi,
   registerApi,
   getProfileApi,
   updateProfileApi,
   updatePasswordApi,
-  fetchResidentInfoApi
+  fetchResidentInfoApi,
+  getNotification,
+  markNotification,
+  getMaintenanceRequestsApi,
+  getAllEquipmentApi,
+  getEquipmentByIdApi,
+  createMaintenanceRequestApi
 }

@@ -1,50 +1,80 @@
 import { useResidentStore } from '@/stores/useResidentStore'
+import { useAuthStore } from '@/stores/useAuthStore'
 import React from 'react'
+import { useNavigate } from 'react-router'
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem
+} from '@/components/ui/dropdown-menu'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Building2 } from 'lucide-react'
 
 const Header = () => {
-  const { resident } = useResidentStore()
-  const { fullName, apartments } = resident
-  const { apartmentCode } = apartments[0]
+  const navigate = useNavigate()
+  const { resident, clearResident } = useResidentStore()
+  const { logout } = useAuthStore()
+
+  const fullName = resident?.fullName ?? ''
+  const apartmentCode = resident?.apartments?.[0]?.apartmentCode ?? ''
+
+  const handleLogout = () => {
+    logout()
+    clearResident()
+    navigate('/auth/login')
+  }
+
+  const baseURL =
+    import.meta.env.VITE_BASE_URL_BACKEND || 'http://localhost:8000'
 
   return (
-    <header className="gradient-bg text-white shadow-lg">
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          {/* Left section */}
-          <div className="flex items-center space-x-4">
-            <button id="menuToggle" className="text-white md:hidden">
-              <i className="fas fa-bars text-xl"></i>
-            </button>
+    <header className="z-index-10000 fixed top-0 w-full bg-white text-black shadow-sm">
+      <div className="container mx-auto flex items-center justify-between px-6 py-4">
+        {/* Left */}
+        <div className="flex items-center space-x-4">
+          <button id="menuToggle" className="md:hidden">
+            <i className="fas fa-bars text-xl"></i>
+          </button>
 
-            <div className="flex items-center space-x-3">
-              <i className="fas fa-building text-2xl"></i>
-              <div>
-                <h1 className="text-xl font-bold">Vinhomes Central Park</h1>
-                <p className="text-sm opacity-90">Cổng thông tin cư dân</p>
-              </div>
+          <div className="flex items-center space-x-3">
+            <Building2 />
+            <div>
+              <h1 className="text-lg font-semibold">Luxury Residence</h1>
+              <p className="text-sm opacity-80">Cổng thông tin cư dân</p>
             </div>
           </div>
+        </div>
 
-          {/* Right section */}
-          <div className="flex items-center space-x-4">
-            <div className="hidden items-center space-x-2 md:flex">
-              <div className="bg-opacity-20 flex h-8 w-8 items-center justify-center rounded-full bg-white">
-                <i className="fas fa-user text-sm"></i>
-              </div>
-              <div>
-                <p className="text-sm font-medium">{fullName}</p>
-                <p className="text-xs opacity-75">
-                  Căn hộ {`${apartmentCode}`}
-                </p>
-              </div>
+        {/* Right */}
+        <div className="flex items-center space-x-4">
+          <div className="hidden items-center space-x-2 md:flex">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Avatar className="h-8 w-8">
+                  <AvatarImage
+                    src={`${baseURL}/images/avatar/${resident?.avatar_url}`}
+                    alt="Avatar"
+                  />
+                  <AvatarFallback>
+                    <i className="fas fa-user text-black"></i>
+                  </AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                sideOffset={10}
+                align="start"
+                className="w-40">
+                <DropdownMenuItem onClick={handleLogout}>
+                  Đăng xuất
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <div>
+              <p className="text-sm font-medium">{fullName}</p>
+              <p className="text-xs opacity-75">Căn hộ {apartmentCode}</p>
             </div>
-
-            <button className="relative">
-              <i className="fas fa-bell text-xl"></i>
-              <span className="notification-badge absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs">
-                3
-              </span>
-            </button>
           </div>
         </div>
       </div>

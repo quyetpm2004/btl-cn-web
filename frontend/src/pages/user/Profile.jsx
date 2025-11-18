@@ -1,13 +1,18 @@
 import { getProfileApi, updateProfileApi } from '@/services/api'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { toast } from 'sonner'
 import { ModalChangePassword } from './ModalChangePassword'
 import { useResidentStore } from '@/stores/useResidentStore'
+import { Button } from '@/components/ui/button'
+import { PenLine } from 'lucide-react'
 
 const ProfileSection = () => {
-  const { resident } = useResidentStore()
-  const { fullName, apartments } = resident
-  const { apartmentCode, relationship, startDate } = apartments[0]
+  const { resident, refreshResident } = useResidentStore()
+  const fullName = resident?.fullName ?? ''
+  const apartmentCode = resident?.apartments?.[0]?.apartmentCode ?? ''
+  const relationship = resident?.apartments?.[0]?.relationship ?? ''
+  const startDate = resident?.apartments?.[0]?.startDate ?? ''
+
   const [isEditing, setIsEditing] = useState(false)
 
   const [residentInfo, setResidentInfo] = useState({})
@@ -15,10 +20,13 @@ const ProfileSection = () => {
   const [isOpenChangePassword, setIsOpenChangePassword] = useState(false)
   const handleClosePassword = () => setIsOpenChangePassword(false)
 
+  // Avatar upload state
+  const [avatarFile, setAvatarFile] = useState(null)
+  const [avatarPreview, setAvatarPreview] = useState(null)
+  const fileInputRef = useRef(null)
   const fetchResidentInfo = async () => {
     const res = await getProfileApi()
     if (res.data) {
-      console.log('Resident Info:', res.data.data)
       setResidentInfo(res.data.data)
     }
   }
@@ -34,13 +42,33 @@ const ProfileSection = () => {
   }
   const handleSave = async (e) => {
     e.preventDefault()
-    // console.log('Saved data:', residentInfo)
-    const res = await updateProfileApi(residentInfo)
+    let res
+    // If a new avatar has been selected, send as FormData
+    if (avatarFile) {
+      const form = new FormData()
+      // Append primitive fields from residentInfo
+      Object.keys(residentInfo || {}).forEach((k) => {
+        const v = residentInfo[k]
+        if (v !== undefined && v !== null) form.append(k, v)
+      })
+      form.append('avatar', avatarFile)
+      res = await updateProfileApi(form)
+    } else {
+      res = await updateProfileApi(residentInfo)
+    }
     if (res.data) {
       toast.success('Cập nhật thông tin thành công!')
     } else {
       toast.error('Cập nhật thông tin thất bại. Vui lòng thử lại.')
     }
+    refreshResident()
+
+    fetchResidentInfo()
+
+    // Reset preview/file state
+    setAvatarFile(null)
+    setAvatarPreview(null)
+
     setIsEditing(false)
   }
 
@@ -49,11 +77,29 @@ const ProfileSection = () => {
     setResidentInfo((prev) => ({ ...prev, [name]: value }))
   }
 
-  const viewCardHistory = (id) => alert(`Xem lịch sử thẻ ${id}`)
-  const lockCard = (id) => alert(`Khóa thẻ ${id}`)
   const changePassword = () => {
     setIsOpenChangePassword(true)
   }
+
+  // Handle avatar selection + preview
+  const handleAvatarSelect = (e) => {
+    const file = e.target.files && e.target.files[0]
+    if (file) {
+      setAvatarFile(file)
+      const url = URL.createObjectURL(file)
+      setAvatarPreview(url)
+    }
+  }
+
+  const baseURL =
+    import.meta.env.VITE_BASE_URL_BACKEND || 'http://localhost:8000'
+
+  // Cleanup preview URL when component unmounts or avatar changes
+  useEffect(() => {
+    return () => {
+      if (avatarPreview) URL.revokeObjectURL(avatarPreview)
+    }
+  }, [avatarPreview])
 
   return (
     <>
@@ -70,8 +116,48 @@ const ProfileSection = () => {
           <div className="lg:col-span-2">
             <div className="rounded-xl bg-white p-6 shadow-sm">
               <div className="mb-6 flex items-center space-x-4">
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
-                  <span className="text-2xl font-bold text-white">NV</span>
+                {/* Avatar: image with upload in edit mode */}
+                <div className="relative">
+                  {avatarPreview || residentInfo?.avatar_url ? (
+                    <img
+                      src={
+                        avatarPreview ||
+                        `${baseURL}/images/avatar/${residentInfo?.avatar_url}`
+                      }
+                      alt="avatar"
+                      className="h-20 w-20 rounded-full object-cover"
+                      onClick={() => {
+                        if (isEditing && fileInputRef.current)
+                          fileInputRef.current.click()
+                      }}
+                    />
+                  ) : (
+                    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+                      <span className="text-2xl font-bold">
+                        {resident?.fullName
+                          ? resident.fullName
+                              .split(' ')
+                              .map((n) => n?.[0])
+                              .slice(0, 2)
+                              .join('')
+                          : 'NV'}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Hidden file input for avatar upload */}
+                  {isEditing && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          fileInputRef.current && fileInputRef.current.click()
+                        }
+                        className="absolute right-0 -bottom-2 rounded bg-white px-2 py-1 text-xs shadow">
+                        Thay ảnh
+                      </button>
+                    </>
+                  )}
                 </div>
                 <div>
                   <h3 className="text-xl font-semibold">{fullName}</h3>
@@ -82,11 +168,9 @@ const ProfileSection = () => {
                     Thành viên từ: {startDate}
                   </p>
                 </div>
-                <button
-                  onClick={handleEdit}
-                  className="ml-auto cursor-pointer rounded-lg bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-600">
-                  <i className="fas fa-edit mr-2"></i>Chỉnh sửa
-                </button>
+                <Button className="ml-auto" variant="blue" onClick={handleEdit}>
+                  <PenLine /> Chỉnh sửa
+                </Button>
               </div>
 
               {/* View Mode */}
@@ -113,6 +197,14 @@ const ProfileSection = () => {
                 <form
                   onSubmit={handleSave}
                   className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarSelect}
+                    className="hidden"
+                    name="avatar"
+                  />
                   <EditInput
                     label="Họ và tên"
                     name="full_name"
@@ -186,17 +278,12 @@ const ProfileSection = () => {
 
                   {/* Buttons */}
                   <div className="flex space-x-4 md:col-span-2">
-                    <button
-                      type="submit"
-                      className="cursor-pointer rounded-lg bg-green-500 px-6 py-2 text-white hover:bg-green-600">
-                      <i className="fas fa-save mr-2"></i>Lưu thay đổi
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleCancel}
-                      className="cursor-pointer rounded-lg bg-gray-500 px-6 py-2 text-white hover:bg-gray-600">
-                      <i className="fas fa-times mr-2"></i>Hủy
-                    </button>
+                    <Button type="submit" variant="success">
+                      Lưu thay đổi
+                    </Button>
+                    <Button onClick={handleCancel} variant="outline">
+                      Hủy
+                    </Button>
                   </div>
                 </form>
               )}
@@ -205,29 +292,32 @@ const ProfileSection = () => {
 
           {/* RIGHT SIDE */}
           <div className="space-y-6">
-            {/* Access Cards */}
-            <AccessCard
-              type="Thẻ chính"
-              id="#A1205001"
-              color="green"
-              issued="15/03/2020"
-              expiry="Vô thời hạn"
-              lastUsed="13/12/2024 08:30"
-              onHistory={viewCardHistory}
-              onLock={lockCard}
-            />
-            <AccessCard
-              type="Thẻ phụ"
-              id="#A1205002"
-              color="blue"
-              issued="20/06/2023"
-              expiry="Vô thời hạn"
-              lastUsed="12/12/2024 18:45"
-              onHistory={viewCardHistory}
-              onLock={lockCard}
-            />
-
-            {/* Account Settings */}
+            {/* Family Members */}
+            <div className="rounded-xl bg-white p-6 shadow-sm">
+              <div className="mb-4 flex items-center justify-between">
+                <h4 className="font-semibold text-gray-800">
+                  Thành viên gia đình
+                </h4>
+              </div>
+              <div className="space-y-3">
+                <FamilyMemberCard
+                  name="Trần Thị Bình"
+                  relationship="Vợ"
+                  phone="0987654321"
+                  dob="20/05/1988"
+                  initials="TB"
+                  color="bg-blue-500"
+                />
+                <FamilyMemberCard
+                  name="Nguyễn Minh Khang"
+                  relationship="Con trai"
+                  age="15 tuổi"
+                  dob="10/12/2008"
+                  initials="NK"
+                  color="bg-green-500"
+                />
+              </div>
+            </div>
             <AccountSettings changePassword={changePassword} />
           </div>
         </div>
@@ -261,43 +351,28 @@ const EditInput = ({ label, name, value, onChange, type = 'text' }) => (
   </div>
 )
 
-const AccessCard = ({
-  type,
-  id,
-  color,
-  issued,
-  expiry,
-  lastUsed,
-  onHistory,
-  onLock
+const FamilyMemberCard = ({
+  name,
+  relationship,
+  phone,
+  age,
+  dob,
+  initials,
+  color
 }) => (
-  <div className={`border-2 p-4 border-${color}-200 bg-${color}-50 rounded-lg`}>
-    <div className="mb-2 flex items-center justify-between">
-      <div>
-        <p className={`font-medium text-${color}-700`}>{type}</p>
-        <p className={`text-sm text-${color}-600`}>ID: {id}</p>
+  <div className="flex items-center justify-between rounded-lg bg-gray-100 p-4">
+    <div className="flex items-center space-x-3">
+      <div
+        className={`${color} flex h-10 w-10 items-center justify-center rounded-full`}>
+        <span className="text-sm font-medium text-white">{initials}</span>
       </div>
-      <span
-        className={`rounded-full px-2 py-1 text-xs font-semibold bg-${color}-100 text-${color}-800`}>
-        Hoạt động
-      </span>
-    </div>
-    <div className={`text-xs text-${color}-600 mb-3`}>
-      <p>Cấp: {issued}</p>
-      <p>Hạn: {expiry}</p>
-      <p>Lần cuối sử dụng: {lastUsed}</p>
-    </div>
-    <div className="flex space-x-2">
-      <button
-        className={`text-xs bg-${color}-500 hover:bg-${color}-600 rounded px-2 py-1 text-white`}
-        onClick={() => onHistory(id)}>
-        Lịch sử
-      </button>
-      <button
-        className="rounded bg-red-500 px-2 py-1 text-xs text-white hover:bg-red-600"
-        onClick={() => onLock(id)}>
-        Khóa thẻ
-      </button>
+      <div>
+        <p className="font-medium">{name}</p>
+        <p className="text-sm text-gray-600">
+          {relationship} {phone ? `- ${phone}` : ''} {age ? `- ${age}` : ''}
+        </p>
+        <p className="text-xs text-gray-500">Ngày sinh: {dob}</p>
+      </div>
     </div>
   </div>
 )

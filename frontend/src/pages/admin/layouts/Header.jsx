@@ -1,11 +1,15 @@
 import { useNavigate } from 'react-router'
 import { useAuthStore } from '../../../stores/useAuthStore'
+import { useResidentStore } from '@/stores/useResidentStore'
 
 export const Header = () => {
   const navigate = useNavigate()
   const { logout } = useAuthStore()
+  const { clearResident } = useResidentStore()
+
   const handleLogout = () => {
     logout()
+    clearResident()
     navigate('/auth/login')
   }
   return (

@@ -48,13 +48,24 @@ async function updateUserWithResident(userId, data) {
     hometown,
     ethnicity,
     occupation,
+    avatar,
   } = data;
-  console.log("check data", data, userId);
 
-  await User.update({ email, phone }, { where: { id: userId } });
+  await User.update(
+    { email, phone, avatar_url: avatar },
+    { where: { id: userId } }
+  );
 
   await Resident.update(
-    { id_card, dob, full_name, gender, hometown, ethnicity, occupation },
+    {
+      id_card,
+      dob,
+      full_name,
+      gender,
+      hometown,
+      ethnicity,
+      occupation,
+    },
     { where: { user_id: userId } }
   );
 

@@ -1,10 +1,16 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuthStore } from '../../stores/useAuthStore'
 import { useNavigate } from 'react-router'
 
 export const Login = () => {
   const navigate = useNavigate()
   const { user, login, accessToken } = useAuthStore()
+  // 👇 Điều hướng khi accessToken có
+  useEffect(() => {
+    if (accessToken) {
+      navigate('/user')
+    }
+  }, [accessToken, navigate])
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')

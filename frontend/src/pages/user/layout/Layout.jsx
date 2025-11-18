@@ -1,12 +1,13 @@
 import { Outlet } from 'react-router'
 import Header from './Header'
-import Sidebar from './Sidebar'
+import AppSidebar from './AppSidebar'
 import { useResidentStore } from '@/stores/useResidentStore'
 import { fetchResidentInfoApi } from '@/services/api'
 import { useEffect } from 'react'
+import { SidebarProvider, useSidebar } from '@/components/ui/sidebar'
 
 export const UserLayout = () => {
-  const { resident, setResident } = useResidentStore()
+  const { setResident } = useResidentStore()
 
   useEffect(() => {
     const fetchResident = async () => {
@@ -18,19 +19,28 @@ export const UserLayout = () => {
         console.error(error)
       }
     }
-
-    // Chỉ fetch khi chưa có dữ liệu
-    if (!resident) {
-      fetchResident()
-    }
-  }, [resident, setResident])
+    fetchResident()
+  }, [])
 
   return (
-    <div className="bg-gray-50 font-sans">
+    <SidebarProvider>
+      <UserLayoutContent />
+    </SidebarProvider>
+  )
+}
+
+const UserLayoutContent = () => {
+  const { state } = useSidebar()
+
+  return (
+    <div className="system-ui min-h-screen w-full bg-gray-50">
       <Header />
-      <div className="flex min-h-screen">
-        <Sidebar />
-        <main className="flex-1 p-6 md:ml-0">
+      <div className="mt-20 flex transition-all duration-300">
+        <AppSidebar />
+        <main
+          className={`flex-10 p-6 transition-all duration-300 md:ml-0 ${
+            state === 'collapsed' ? 'ml-16' : 'ml-64'
+          }`}>
           <Outlet />
         </main>
       </div>
