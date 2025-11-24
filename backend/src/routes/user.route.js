@@ -28,13 +28,14 @@ import {
   getAllEquipments,
   getEquipmentById,
 } from "../controllers/user/equipment.controller.js";
-const upload = uploadFile();
+const uploadAvatar = uploadFile("avatar");
+const uploadRequestImages = uploadFile("request");
 
 const userRoute = express.Router();
 
 // profle
 userRoute.get("/user/profile", getProfile);
-userRoute.put("/user/profile", upload.single("avatar"), updateProfile);
+userRoute.put("/user/profile", uploadAvatar.single("avatar"), updateProfile);
 userRoute.put("/user/password", updatePassword);
 
 // apartment
@@ -51,7 +52,7 @@ userRoute.put(
 // Maintenance Request
 userRoute.post(
   "/user/maintenance-request",
-  upload.array("images", 5),
+  uploadRequestImages.array("images", 5),
   createMaintenanceRequest
 );
 userRoute.get(
@@ -59,7 +60,11 @@ userRoute.get(
   getPendingRequests
 );
 userRoute.get("/user/maintenance-request/:id", getMaintenanceRequestDetail);
-userRoute.put("/user/maintenance-request/:id", updateMaintenanceRequest);
+userRoute.put(
+  "/user/maintenance-request/:id",
+  uploadRequestImages.array("images", 5),
+  updateMaintenanceRequest
+);
 userRoute.delete("/user/maintenance-request/:id", deleteMaintenanceRequest);
 
 // Maintenance Schedule

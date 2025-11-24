@@ -5,7 +5,8 @@ import {
   updateRequest,
   deleteRequest,
 } from "../../repositories/maintenanceRequest.repository";
-
+import path from "path";
+import fs from "fs";
 const handleCreateMaintenanceRequest = async (
   equipment_id,
   resident_id,
@@ -32,11 +33,55 @@ const handleGetRequestDetail = async (id) => {
   return await findById(id);
 };
 
-const handleUpdateRequest = async (id, data) => {
+const handleUpdateRequest = async (id, data, files) => {
+  const BASE_UPLOAD_FOLDER = path.join(
+    process.cwd(),
+    "public",
+    "images",
+    "request"
+  );
+  const { equipment_id, resident_id, description, priority, removed_images } =
+    data;
   const request = await findById(id);
   if (!request) return null;
 
-  await updateRequest(id, data);
+  let currentImages = JSON.parse(request.images) || [];
+  const imagesToDelete = Array.isArray(removed_images)
+    ? removed_images
+    : JSON.parse(removed_images || "[]");
+
+  imagesToDelete.forEach((imageUrl) => {
+    const filePath = path.join(BASE_UPLOAD_FOLDER, imageUrl);
+
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath); // Xóa file
+      console.log(`Deleted file: ${filePath}`);
+    }
+  });
+
+  // b. Cập nhật mảng ảnh trong DB (Loại bỏ các ảnh đã xóa)
+  const updatedImagesAfterRemoval = currentImages.filter(
+    (url) => !imagesToDelete.includes(url)
+  );
+
+  let newImageUrls = [];
+  if (files && files.length > 0) {
+    newImageUrls = files.map((file) => {
+      return file.filename;
+    });
+  }
+
+  const finalFilenames = [...updatedImagesAfterRemoval, ...newImageUrls];
+
+  const updateData = {
+    equipment_id,
+    resident_id,
+    description,
+    priority,
+    images: finalFilenames, // Cập nhật bằng mảng TÊN TỆP
+  };
+
+  await updateRequest(id, updateData);
   return await findById(id);
 };
 

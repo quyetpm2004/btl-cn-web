@@ -1,450 +1,233 @@
 import React from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem
+} from '@/components/ui/select'
+import { Clock, Mail, Phone } from 'lucide-react'
 
 const Payment = () => {
-  // Các hàm xử lý giả lập (thay bằng logic thật của bạn sau này)
   const viewBillDetail = (id) => alert(`Xem chi tiết hóa đơn: ${id}`)
   const openPaymentModal = (amount, name) =>
     alert(`Thanh toán ${name} (${amount} VNĐ)`)
   const downloadBill = (id) => alert(`Tải hóa đơn ${id}`)
-  const filterPaymentHistory = (value) =>
-    alert(`Lọc lịch sử thanh toán theo: ${value}`)
+  const filterPaymentHistory = (value) => alert(`Lọc lịch sử: ${value}`)
   const exportPaymentHistory = () => alert('Xuất lịch sử thanh toán ra Excel')
   const viewReceipt = (id) => alert(`Xem biên lai: ${id}`)
   const downloadReceipt = (id) => alert(`Tải biên lai: ${id}`)
-  const selectPaymentMethod = (method) => alert(`Chọn phương thức: ${method}`)
-  const managePaymentMethods = () => alert('Quản lý phương thức thanh toán')
-  const toggleAutoPayment = (e) =>
-    alert(`Tự động thanh toán: ${e.target.checked ? 'Bật' : 'Tắt'}`)
-  const viewDetailedReport = () => alert('Xem báo cáo chi tiết')
 
   return (
-    <div id="payment" className="content-section">
+    <div className="space-y-6 text-black">
       {/* Header */}
       <div className="mb-6">
         <h2 className="mb-2 text-2xl font-bold text-gray-800">
           Thanh toán trực tuyến
         </h2>
-        <p className="text-gray-600">
-          Thanh toán các khoản phí một cách nhanh chóng và tiện lợi
-        </p>
+        <p className="text-gray-600">Thanh toán nhanh chóng và tiện lợi</p>
       </div>
 
-      {/* Content */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Left Column */}
-        <div className="lg:col-span-2">
+        <div className="space-y-6 lg:col-span-2">
           {/* Outstanding Bills */}
-          <div className="mb-6 rounded-xl bg-white p-6 shadow-sm">
-            <h3 className="mb-4 flex items-center text-lg font-semibold">
-              <i className="fas fa-exclamation-triangle mr-2 text-red-500"></i>
-              Hóa đơn chưa thanh toán
-            </h3>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                Hóa đơn chưa thanh toán
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Bill 1 */}
+              <Card className="border border-red-300 bg-red-50">
+                <CardContent className="space-y-3 p-4">
+                  <div className="flex justify-between">
+                    <div>
+                      <p className="font-semibold text-red-700">
+                        Hóa đơn tháng 12/2024
+                      </p>
+                      <p className="text-sm text-red-600">Hạn: 15/12/2024</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline">Chưa hết hạn</Badge>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => viewBillDetail('202412')}>
+                        Chi tiết
+                      </Button>
+                    </div>
+                  </div>
 
-            <div className="space-y-4">
-              {/* Overdue Bill */}
-              <div className="rounded-lg border-2 border-red-200 bg-red-50 p-4">
-                <div className="mb-3 flex items-start justify-between">
-                  <div>
-                    <h4 className="font-medium text-red-700">
-                      Hóa đơn tháng 12/2024
-                    </h4>
-                    <p className="text-sm text-red-600">
-                      Hạn thanh toán: 15/12/2024
-                    </p>
-                    <p className="text-xs text-red-500">⚠️ Quá hạn 5 ngày</p>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between">
+                      <span>Phí quản lý</span>
+                      <span>1,125,000 VNĐ</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Phí gửi xe</span>
+                      <span>100,000 VNĐ</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Internet</span>
+                      <span>200,000 VNĐ</span>
+                    </div>
+                    <hr className="border-red-200" />
+                    <div className="flex justify-between font-semibold text-red-700">
+                      <span>Tổng</span>
+                      <span>1,496,250 VNĐ</span>
+                    </div>
                   </div>
-                  <div className="flex space-x-2">
-                    <span className="rounded-full bg-red-100 px-2 py-1 text-xs font-semibold text-red-800">
-                      Quá hạn
-                    </span>
-                    <button
-                      className="text-xs text-blue-600 hover:text-blue-800"
-                      onClick={() => viewBillDetail('202412')}>
-                      <i className="fas fa-eye"></i> Chi tiết
-                    </button>
-                  </div>
-                </div>
 
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span>Phí quản lý (75m²)</span>
-                    <span>1,125,000 VNĐ</span>
+                  <div className="flex gap-2 pt-2">
+                    <Button
+                      className="flex-1 bg-red-600 text-white hover:bg-red-700"
+                      onClick={() =>
+                        openPaymentModal('1496250', 'Hóa đơn tháng 12/2024')
+                      }>
+                      Thanh toán
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      onClick={() => downloadBill('202412')}>
+                      Tải
+                    </Button>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Phí gửi xe máy</span>
-                    <span>100,000 VNĐ</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Phí internet</span>
-                    <span>200,000 VNĐ</span>
-                  </div>
-                  <div className="flex justify-between text-red-600">
-                    <span>Phí chậm thanh toán (5%)</span>
-                    <span>71,250 VNĐ</span>
-                  </div>
-                  <hr className="my-2 border-red-200" />
-                  <div className="flex justify-between text-lg font-semibold">
-                    <span>Tổng cộng</span>
-                    <span className="text-red-600">1,496,250 VNĐ</span>
-                  </div>
-                </div>
-
-                <div className="mt-4 flex space-x-2">
-                  <button
-                    className="flex-1 rounded-lg bg-red-500 py-3 font-medium text-white transition-colors hover:bg-red-600"
-                    onClick={() =>
-                      openPaymentModal('1496250', 'Hóa đơn tháng 12/2024')
-                    }>
-                    <i className="fas fa-credit-card mr-2"></i>Thanh toán ngay
-                  </button>
-                  <button
-                    className="rounded-lg bg-gray-500 px-4 py-3 text-white transition-colors hover:bg-gray-600"
-                    onClick={() => downloadBill('202412')}>
-                    <i className="fas fa-download"></i>
-                  </button>
-                </div>
-              </div>
-
-              {/* Upcoming Bill */}
-              <div className="rounded-lg border-2 border-yellow-200 bg-yellow-50 p-4">
-                <div className="mb-3 flex items-start justify-between">
-                  <div>
-                    <h4 className="font-medium text-yellow-700">
-                      Hóa đơn tháng 1/2025
-                    </h4>
-                    <p className="text-sm text-yellow-600">
-                      Hạn thanh toán: 15/01/2025
-                    </p>
-                    <p className="text-xs text-yellow-500">⏰ Còn 20 ngày</p>
-                  </div>
-                  <div className="flex space-x-2">
-                    <span className="rounded-full bg-yellow-100 px-2 py-1 text-xs font-semibold text-yellow-800">
-                      Sắp đến hạn
-                    </span>
-                    <button
-                      className="text-xs text-blue-600 hover:text-blue-800"
-                      onClick={() => viewBillDetail('202501')}>
-                      <i className="fas fa-eye"></i> Chi tiết
-                    </button>
-                  </div>
-                </div>
-
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span>Phí quản lý (75m²)</span>
-                    <span>1,125,000 VNĐ</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Phí gửi xe máy</span>
-                    <span>100,000 VNĐ</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Phí internet</span>
-                    <span>200,000 VNĐ</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Phí gym</span>
-                    <span>300,000 VNĐ</span>
-                  </div>
-                  <hr className="my-2 border-yellow-200" />
-                  <div className="flex justify-between text-lg font-semibold">
-                    <span>Tổng cộng</span>
-                    <span>1,725,000 VNĐ</span>
-                  </div>
-                </div>
-
-                <div className="mt-4 flex space-x-2">
-                  <button
-                    className="flex-1 rounded-lg bg-yellow-500 py-3 font-medium text-white transition-colors hover:bg-yellow-600"
-                    onClick={() =>
-                      openPaymentModal('1725000', 'Hóa đơn tháng 1/2025')
-                    }>
-                    <i className="fas fa-credit-card mr-2"></i>Thanh toán
-                  </button>
-                  <button
-                    className="rounded-lg bg-gray-500 px-4 py-3 text-white transition-colors hover:bg-gray-600"
-                    onClick={() => downloadBill('202501')}>
-                    <i className="fas fa-download"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+                </CardContent>
+              </Card>
+            </CardContent>
+          </Card>
 
           {/* Payment History */}
-          <div className="rounded-xl bg-white p-6 shadow-sm">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Lịch sử thanh toán</h3>
-              <div className="flex space-x-2">
-                <select
-                  className="rounded border border-gray-300 px-3 py-1 text-sm"
-                  onChange={(e) => filterPaymentHistory(e.target.value)}>
-                  <option value="2024">Năm 2024</option>
-                  <option value="2023">Năm 2023</option>
-                  <option value="all">Tất cả</option>
-                </select>
-                <button
-                  className="rounded bg-green-500 px-3 py-1 text-sm text-white transition-colors hover:bg-green-600"
-                  onClick={exportPaymentHistory}>
-                  <i className="fas fa-file-excel mr-1"></i>Xuất Excel
-                </button>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="text-lg">Lịch sử thanh toán</CardTitle>
+              <div className="flex gap-2">
+                <Select onValueChange={filterPaymentHistory}>
+                  <SelectTrigger className="w-[120px]">
+                    <SelectValue placeholder="Năm" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="2024">2024</SelectItem>
+                    <SelectItem value="2023">2023</SelectItem>
+                    <SelectItem value="all">Tất cả</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button onClick={exportPaymentHistory}>Excel</Button>
               </div>
-            </div>
+            </CardHeader>
 
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    {[
-                      'Tháng',
-                      'Số tiền',
-                      'Ngày thanh toán',
-                      'Phương thức',
-                      'Trạng thái',
-                      'Thao tác'
-                    ].map((col) => (
-                      <th
-                        key={col}
-                        className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                        {col}
-                      </th>
-                    ))}
+            <CardContent>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b">
+                    <th className="py-2 text-left">Tháng</th>
+                    <th className="py-2 text-left">Số tiền</th>
+                    <th className="py-2 text-left">Ngày</th>
+                    <th className="py-2 text-left">PT</th>
+                    <th className="py-2 text-left">Trạng thái</th>
+                    <th className="py-2 text-left">Thao tác</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody>
                   {[
                     {
                       month: '11/2024',
                       amount: '1,425,000 VNĐ',
                       date: '12/11/2024',
-                      method: { name: 'VNPay', color: 'blue' }
+                      method: 'VNPay'
                     },
                     {
                       month: '10/2024',
                       amount: '1,425,000 VNĐ',
                       date: '10/10/2024',
-                      method: { name: 'MoMo', color: 'green' }
+                      method: 'MoMo'
                     },
                     {
                       month: '09/2024',
                       amount: '1,425,000 VNĐ',
                       date: '08/09/2024',
-                      method: { name: 'ZaloPay', color: 'purple' }
+                      method: 'ZaloPay'
                     }
-                  ].map((row, i) => (
-                    <tr key={i}>
-                      <td className="px-4 py-3 text-sm font-medium">
-                        {row.month}
+                  ].map((r, i) => (
+                    <tr key={i} className="border-b">
+                      <td className="py-2">{r.month}</td>
+                      <td>{r.amount}</td>
+                      <td>{r.date}</td>
+                      <td>
+                        <Badge>{r.method}</Badge>
                       </td>
-                      <td className="px-4 py-3 text-sm">{row.amount}</td>
-                      <td className="px-4 py-3 text-sm">{row.date}</td>
-                      <td className="px-4 py-3 text-sm">
-                        <span
-                          className={`rounded-full px-2 py-1 text-xs font-semibold bg-${row.method.color}-100 text-${row.method.color}-800`}>
-                          {row.method.name}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-sm">
-                        <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-800">
+                      <td>
+                        <Badge className="bg-green-200 text-green-800">
                           Thành công
-                        </span>
+                        </Badge>
                       </td>
-                      <td className="px-4 py-3 text-sm">
-                        <button
-                          className="mr-2 text-blue-600 hover:text-blue-800"
-                          onClick={() => viewReceipt(row.month)}>
-                          <i className="fas fa-receipt"></i>
-                        </button>
-                        <button
-                          className="text-green-600 hover:text-green-800"
-                          onClick={() => downloadReceipt(row.month)}>
-                          <i className="fas fa-download"></i>
-                        </button>
+                      <td>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => viewReceipt(r.month)}>
+                          Xem
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => downloadReceipt(r.month)}>
+                          Tải
+                        </Button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Right Column (Phương thức + Auto payment + Summary) */}
-        {/* --- Giữ nguyên bố cục tương tự HTML --- */}
-        <div className="space-y-6">
-          {/* Payment Methods */}
-          <div className="rounded-xl bg-white p-6 shadow-sm">
-            <h4 className="mb-4 font-semibold">Phương thức thanh toán</h4>
-            <div className="space-y-3">
-              <div
-                className="payment-method cursor-pointer rounded-lg border-2 border-blue-200 bg-blue-50 p-4"
-                onClick={() => console.log('VNPay selected')}>
-                <div className="flex items-center space-x-3">
-                  <i className="fab fa-cc-visa text-2xl text-blue-600"></i>
-                  <div>
-                    <p className="font-medium text-blue-700">VNPay</p>
-                    <p className="text-sm text-blue-600">
-                      Thanh toán qua ngân hàng
-                    </p>
-                    <p className="text-xs text-blue-500">
-                      Phí: 0% - Nhanh chóng
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className="payment-method cursor-pointer rounded-lg border-2 border-green-200 bg-green-50 p-4"
-                onClick={() => console.log('MoMo selected')}>
-                <div className="flex items-center space-x-3">
-                  <i className="fas fa-mobile-alt text-2xl text-green-600"></i>
-                  <div>
-                    <p className="font-medium text-green-700">MoMo</p>
-                    <p className="text-sm text-green-600">Ví điện tử MoMo</p>
-                    <p className="text-xs text-green-500">Phí: 0% - Tiện lợi</p>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className="payment-method cursor-pointer rounded-lg border-2 border-purple-200 bg-purple-50 p-4"
-                onClick={() => console.log('ZaloPay selected')}>
-                <div className="flex items-center space-x-3">
-                  <i className="fas fa-wallet text-2xl text-purple-600"></i>
-                  <div>
-                    <p className="font-medium text-purple-700">ZaloPay</p>
-                    <p className="text-sm text-purple-600">
-                      Ví điện tử ZaloPay
-                    </p>
-                    <p className="text-xs text-purple-500">Phí: 0% - An toàn</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <button
-              className="mt-4 w-full rounded-lg bg-gray-500 py-2 text-sm text-white transition-colors hover:bg-gray-600"
-              onClick={() => console.log('Manage payment methods')}>
-              <i className="fas fa-cog mr-2"></i>Quản lý phương thức
-            </button>
-          </div>
-
-          {/* Auto Payment */}
-          <div className="rounded-xl bg-white p-6 shadow-sm">
-            <h4 className="mb-4 font-semibold">Thanh toán tự động</h4>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between rounded-lg bg-gray-50 p-3">
-                <div>
-                  <p className="font-medium">Kích hoạt thanh toán tự động</p>
-                  <p className="text-sm text-gray-600">
-                    Tự động thanh toán vào ngày 10 hàng tháng
-                  </p>
-                </div>
-                <label className="relative inline-flex cursor-pointer items-center">
-                  <input
-                    type="checkbox"
-                    className="peer sr-only"
-                    onChange={(e) =>
-                      console.log('Auto payment toggled:', e.target.checked)
-                    }
-                  />
-                  <div className="peer h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-blue-600 peer-focus:ring-4 peer-focus:ring-blue-300 peer-focus:outline-none after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
-                </label>
-              </div>
-
-              <div className="space-y-3">
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
-                    Ngày thanh toán hàng tháng
-                  </label>
-                  <select className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
-                    <option value="5">Ngày 5</option>
-                    <option value="10" selected>
-                      Ngày 10
-                    </option>
-                    <option value="15">Ngày 15</option>
-                    <option value="20">Ngày 20</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
-                    Phương thức mặc định
-                  </label>
-                  <select className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
-                    <option value="vnpay" selected>
-                      VNPay
-                    </option>
-                    <option value="momo">MoMo</option>
-                    <option value="zalopay">ZaloPay</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="rounded-lg bg-blue-50 p-3 text-sm text-gray-600">
-                <p className="mb-1 font-medium text-blue-700">
-                  Lợi ích thanh toán tự động:
-                </p>
-                <ul className="space-y-1 text-blue-600">
-                  <li>• Không bao giờ quên thanh toán</li>
-                  <li>• Tránh phí chậm thanh toán</li>
-                  <li>• Tiết kiệm thời gian</li>
-                  <li>• Nhận thông báo trước 3 ngày</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          {/* Payment Summary */}
-          <div className="rounded-xl bg-white p-6 shadow-sm">
-            <h4 className="mb-4 font-semibold">Tóm tắt tài chính</h4>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">
-                  Tổng đã thanh toán năm 2024
-                </span>
-                <span className="font-semibold text-green-600">
-                  15,675,000 VNĐ
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Còn nợ</span>
-                <span className="font-semibold text-red-600">
-                  3,221,250 VNĐ
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">
-                  Phí trung bình/tháng
-                </span>
-                <span className="font-semibold">1,425,000 VNĐ</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">
-                  Tiết kiệm được (thanh toán đúng hạn)
-                </span>
-                <span className="font-semibold text-green-600">
-                  285,000 VNĐ
-                </span>
-              </div>
-              <hr className="my-2" />
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Dự kiến tháng tới</span>
-                <span className="font-semibold text-blue-600">
-                  1,725,000 VNĐ
-                </span>
-              </div>
-            </div>
-            <button
-              className="mt-4 w-full rounded-lg bg-blue-500 py-2 text-sm text-white transition-colors hover:bg-blue-600"
-              onClick={() => console.log('View detailed report')}>
-              <i className="fas fa-chart-line mr-2"></i>Xem báo cáo chi tiết
-            </button>
-          </div>
+        <div className="space-y-6 lg:col-span-1">
+          <Card>
+            <CardContent>
+              <h2 className="mb-2 text-lg font-semibold">
+                Hỗ trợ giao dịch & thanh toán
+              </h2>
+              <p className="text-sm leading-relaxed text-gray-600">
+                Nếu bạn gặp bất kỳ vấn đề nào liên quan đến hóa đơn hoặc thanh
+                toán, vui lòng liên hệ đội ngũ hỗ trợ của chúng tôi ở thông tin
+                bên dưới. Chúng tôi luôn sẵn sàng đồng hành và hỗ trợ bạn.
+              </p>
+              <SupportItem icon={Phone} title="Hotline" content="1900-xxxx" />
+              <SupportItem
+                icon={Mail}
+                title="Email"
+                content="support@chungcu.vn"
+              />
+              <SupportItem
+                icon={Clock}
+                title="Giờ làm việc"
+                content="8:00 - 17:00 (T2-T6)"
+              />
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
   )
 }
+
+const SupportItem = ({ icon: Icon, title, content }) => (
+  <div className="my-3 flex cursor-pointer items-center space-x-4 rounded-lg border border-gray-100 bg-gray-50 p-4 transition-colors hover:bg-gray-100">
+    <div className="rounded-full border border-gray-200 bg-white p-3 shadow-sm">
+      <Icon className="h-5 w-5 text-blue-500" />
+    </div>
+    <div>
+      <p className="text-sm font-semibold text-gray-700">{title}</p>
+      <p className="text-base font-medium">{content}</p>
+    </div>
+  </div>
+)
 
 export default Payment

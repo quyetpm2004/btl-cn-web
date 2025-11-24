@@ -74,7 +74,6 @@ export default function MaintenanceRequestModal({
       description,
       images: images.map((img) => img.file)
     }
-    console.log('Submitting payload:', payload)
     onSubmit?.(payload)
   }
 

@@ -21,6 +21,10 @@ import {
 } from '@/components/ui/select'
 import { X, Plus, Eye } from 'lucide-react'
 import { useResidentStore } from '@/stores/useResidentStore'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import LightboxModal from './LightboxModal'
+
+const baseURL = import.meta.env.VITE_BASE_URL_BACKEND || 'http://localhost:8000'
 
 // Edit modal for existing maintenance request
 const EditMaintenanceRequestModal = ({
@@ -46,9 +50,6 @@ const EditMaintenanceRequestModal = ({
   const fileInputRef = useRef(null)
   const MAX_IMAGES = 5
 
-  const baseURL =
-    import.meta.env.VITE_BASE_URL_BACKEND || 'http://localhost:8000'
-
   // populate from initialData when modal opens / initialData changes
   useEffect(() => {
     if (initialData) {
@@ -63,9 +64,7 @@ const EditMaintenanceRequestModal = ({
       } else if (Array.isArray(initialData?.images)) {
         imgs = initialData.images
       }
-      // normalize to array of urls
-      const urls = imgs.map((img) => `${baseURL}/images/avatar/${img}`)
-      setExistingImages(urls)
+      setExistingImages(imgs)
       setNewImages([])
       setRemovedImageUrls([])
     } else {
@@ -136,7 +135,7 @@ const EditMaintenanceRequestModal = ({
   return (
     <>
       <Dialog open={isOpenModal} onOpenChange={() => setIsOpenModal(false)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg" aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle>Chỉnh sửa yêu cầu bảo trì</DialogTitle>
           </DialogHeader>
@@ -218,25 +217,25 @@ const EditMaintenanceRequestModal = ({
                 {/* Existing images */}
                 {existingImages.length > 0 && (
                   <div className="mb-2 grid grid-cols-3 gap-2">
-                    {existingImages.map((url, idx) => (
+                    {existingImages.map((img, idx) => (
                       <div
                         key={idx}
                         className="group relative overflow-hidden rounded bg-gray-100">
                         <img
-                          src={url}
+                          src={`${baseURL}/images/request/${img}`}
                           alt={`existing-${idx}`}
                           className="h-28 w-full object-cover"
                         />
                         <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
                           <button
                             type="button"
-                            onClick={() => setLightboxImage(url)}
+                            onClick={() => setLightboxImage(img)}
                             className="rounded-full bg-white/20 p-1.5 hover:bg-white/40">
                             <Eye size={18} className="text-white" />
                           </button>
                           <button
                             type="button"
-                            onClick={() => removeExistingImage(url)}
+                            onClick={() => removeExistingImage(img)}
                             className="rounded-full bg-white/20 p-1.5 hover:bg-white/40">
                             <X size={18} className="text-white" />
                           </button>
@@ -298,21 +297,6 @@ const EditMaintenanceRequestModal = ({
         onClose={() => setLightboxImage(null)}
       />
     </>
-  )
-}
-
-// Lightbox component for full-screen image preview
-const LightboxModal = ({ imageSrc, onClose }) => {
-  return (
-    <Dialog open={!!imageSrc} onOpenChange={onClose}>
-      <DialogContent className="flex max-h-[80vh] max-w-[80vw] items-center justify-center border-none bg-black/80 p-0 shadow-none">
-        <img
-          src={imageSrc}
-          alt="preview"
-          className="max-h-[75vh] max-w-[75vw] rounded object-contain"
-        />
-      </DialogContent>
-    </Dialog>
   )
 }
 

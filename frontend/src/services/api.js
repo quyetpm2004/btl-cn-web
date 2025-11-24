@@ -88,10 +88,50 @@ const createMaintenanceRequestApi = async (data) => {
   data.images.forEach((image, index) => {
     formData.append(`images`, image)
   })
-  console.log('FormData entries:', Array.from(formData.entries()))
   const response = await instance.post(
     '/api-v1/user/maintenance-request',
-    formData
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }
+  )
+  return response
+}
+
+const updateMaintenanceRequestApi = async (id, data) => {
+  const formData = new FormData()
+  formData.append('equipment_id', data.equipment_id)
+  formData.append('resident_id', data.resident_id)
+  formData.append('priority', data.priority)
+  formData.append('description', data.description)
+  formData.append('removed_images', JSON.stringify(data.removed_images))
+  data.images.forEach((image, index) => {
+    formData.append(`images`, image)
+  })
+  const response = await instance.put(
+    `/api-v1/user/maintenance-request/${id}`,
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }
+  )
+  return response
+}
+
+const deleteMaintenanceRequestApi = async (id) => {
+  const response = await instance.delete(
+    `/api-v1/user/maintenance-request/${id}`
+  )
+  return response
+}
+
+const getMaintenanceSchedule = async (residentId) => {
+  const response = await instance.get(
+    `/api-v1/user/maintenance-schedule/resident/${residentId}`
   )
   return response
 }
@@ -108,5 +148,8 @@ export {
   getMaintenanceRequestsApi,
   getAllEquipmentApi,
   getEquipmentByIdApi,
-  createMaintenanceRequestApi
+  createMaintenanceRequestApi,
+  updateMaintenanceRequestApi,
+  deleteMaintenanceRequestApi,
+  getMaintenanceSchedule
 }

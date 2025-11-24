@@ -21,13 +21,28 @@ import {
 import MaintenanceRequestModal from './MaintenanceRequestModal'
 import {
   createMaintenanceRequestApi,
+  deleteMaintenanceRequestApi,
   getAllEquipmentApi,
-  getMaintenanceRequestsApi
+  getMaintenanceRequestsApi,
+  getMaintenanceSchedule,
+  updateMaintenanceRequestApi
 } from '@/services/api'
 import { useResidentStore } from '@/stores/useResidentStore'
 import { toast } from 'sonner'
-import { PencilLine, Trash2 } from 'lucide-react'
+import { Eye, PencilLine, Trash2 } from 'lucide-react'
 import EditMaintenanceRequestModal from './EditMaintenanceRequestModal'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '@/components/ui/alert-dialog'
+import LightboxModal from './LightboxModal'
 
 export default function Maintenance() {
   // Convert priority number → label
@@ -72,7 +87,6 @@ export default function Maintenance() {
   const [selectedRequest, setSelectedRequest] = useState(null)
 
   const openRequest = (req) => {
-    console.log('Opening request:', req)
     setSelectedRequest(req)
     setSheetOpen(true)
   }
@@ -87,9 +101,20 @@ export default function Maintenance() {
     }
   }
 
+  const fetchSchedules = async () => {
+    try {
+      const residentId = resident?.id
+      const res = await getMaintenanceSchedule(residentId)
+      setMaintenanceSchedules(res.data.schedules)
+    } catch (error) {
+      console.error('Error fetching maintenance schedules:', error)
+    }
+  }
+
   useEffect(() => {
     fetchData()
     fetchEquipmentData()
+    fetchSchedules()
   }, [])
 
   const [isOpenModal, setIsOpenModal] = useState(false)
@@ -104,7 +129,6 @@ export default function Maintenance() {
   }
 
   const handleCreateNewRequest = async (data) => {
-    console.log('Creating new maintenance request with data:', data)
     const res = await createMaintenanceRequestApi(data)
     if (res.data) {
       fetchData()
@@ -114,11 +138,38 @@ export default function Maintenance() {
     }
   }
 
+  const updateRequest = async (data) => {
+    const res = await updateMaintenanceRequestApi(data.id, data)
+    if (res.data) {
+      fetchData()
+      toast.success('Cập nhật yêu cầu bảo trì thành công')
+    } else {
+      toast.error('Cập nhật yêu cầu bảo trì thất bại')
+    }
+  }
+
+  const handleDeleteRequest = async () => {
+    try {
+      const res = await deleteMaintenanceRequestApi(selectedRequest.id)
+      if (res.data) {
+        fetchData()
+        toast.success('Hủy yêu cầu bảo trì thành công')
+        setSheetOpen(false)
+      } else {
+        toast.error('Hủy yêu cầu bảo trì thất bại')
+      }
+    } catch (error) {
+      console.error('Error deleting maintenance request:', error)
+      toast.error('Hủy yêu cầu bảo trì thất bại')
+    }
+  }
+
   const baseURL =
     import.meta.env.VITE_BASE_URL_BACKEND || 'http://localhost:8000'
 
   const [isOpenEditModal, setIsOpenEditModal] = useState(false)
   const [editInitialData, setEditInitialData] = useState(null)
+  const [lightboxImage, setLightboxImage] = useState(null) // for fullscreen preview
 
   return (
     <div className="space-y-6">
@@ -204,7 +255,30 @@ export default function Maintenance() {
                         setIsOpenEditModal(true)
                       }}
                     />{' '}
-                    <Trash2 size={20} />
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Trash2
+                          size={20}
+                          onClick={() => setSelectedRequest(req)}
+                        />
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Bạn có chắc chắn muốn xóa yêu cầu này?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Hành động này không thể hoàn tác.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Hủy</AlertDialogCancel>
+                          <AlertDialogAction onClick={handleDeleteRequest}>
+                            Xóa
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </TableCell>
                 </TableRow>
               ))}
@@ -223,7 +297,6 @@ export default function Maintenance() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>ID</TableHead>
                 <TableHead>Thiết bị</TableHead>
                 <TableHead>Bắt đầu</TableHead>
                 <TableHead>Kết thúc</TableHead>
@@ -246,17 +319,38 @@ export default function Maintenance() {
 
               {maintenanceSchedules.map((sch) => (
                 <TableRow key={sch.id}>
-                  <TableCell>{sch.id}</TableCell>
-                  <TableCell>{sch.equipment_name}</TableCell>
-                  <TableCell>{sch.start_at}</TableCell>
-                  <TableCell>{sch.end_at}</TableCell>
-                  <TableCell>{sch.staff_name}</TableCell>
+                  <TableCell>
+                    {equipments.find(
+                      (equipment) => equipment.id === sch.equipment_id
+                    )?.name || '—'}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(sch.start_at).toLocaleString('vi-VN', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit'
+                    })}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(sch.end_at).toLocaleString('vi-VN', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit'
+                    })}
+                  </TableCell>
+                  <TableCell>{sch.assignee.full_name}</TableCell>
                   <TableCell className="max-w-[200px] truncate">
                     {sch.description}
                   </TableCell>
 
                   <TableCell>
-                    <Badge variant="outline">
+                    <Badge variant="success">
                       {scheduleStatusMap[sch.status]}
                     </Badge>
                   </TableCell>
@@ -332,16 +426,24 @@ export default function Maintenance() {
                   return (
                     <div className="grid grid-cols-2 gap-2">
                       {imgs.map((img, idx) => {
-                        const src = `${baseURL}/images/avatar/${img}`
+                        const src = `${baseURL}/images/request/${img}`
                         return (
                           <div
                             key={idx}
-                            className="overflow-hidden rounded bg-gray-100">
+                            className="group relative overflow-hidden rounded bg-gray-100">
                             <img
                               src={src}
                               alt={`img-${idx}`}
                               className="h-40 w-full object-cover"
                             />
+                            <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                              <button
+                                type="button"
+                                onClick={() => setLightboxImage(img)}
+                                className="rounded-full bg-white/20 p-1.5 hover:bg-white/40">
+                                <Eye size={18} className="text-white" />
+                              </button>
+                            </div>
                           </div>
                         )
                       })}
@@ -367,7 +469,12 @@ export default function Maintenance() {
         initialData={editInitialData}
         setIsOpenModal={setIsOpenEditModal}
         equipments={equipments}
-        onSubmit={() => {}}
+        onSubmit={updateRequest}
+      />
+
+      <LightboxModal
+        imageSrc={lightboxImage}
+        onClose={() => setLightboxImage(null)}
       />
     </div>
   )
