@@ -1,40 +1,51 @@
-import pkg from "../models/index.js";
-const { User, Resident } = pkg;
+import { User, Resident, Staff, Role } from '../models/index.js'
 
-async function createUser(userData, options = {}) {
-  return User.create(userData, options);
+async function createUser(data, options = {}) {
+  return User.create(data, options)
 }
 
-async function getUserById(userId) {
-  return User.findByPk(userId);
+async function getUserById(id) {
+  return User.findByPk(id)
 }
 
 async function getAllUsers() {
-  return User.findAll();
+  return User.findAll()
 }
 
 async function getUserByUsername(username) {
-  return User.findOne({ where: { username } });
+  return User.findOne({ where: { username } })
 }
 
 async function getUserByEmail(email) {
-  return User.findOne({ where: { email } });
+  return User.findOne({ where: { email } })
 }
 
-async function updateUser(userId, updateData) {
-  return User.update(updateData, { where: { id: userId } });
+async function updateUser(id, data) {
+  return User.update(data, { where: { id } })
 }
 
-async function deleteUser(userId) {
-  return User.destroy({ where: { id: userId } });
+async function deleteUser(id) {
+  return User.destroy({ where: { id } })
 }
 
 async function getUserWithResident(userId) {
   return User.findOne({
     where: { id: userId },
-    include: [{ model: Resident, as: "resident" }],
-    attributes: { exclude: ["password"] },
-  });
+    include: [{ model: Resident, as: 'resident' }],
+    attributes: { exclude: ['password'] }
+  })
+}
+
+async function getUserWithProfile(userId) {
+  return User.findOne({
+    where: { id: userId },
+    include: [
+      { model: Resident, as: 'resident' },
+      { model: Staff, as: 'staff' },
+      { model: Role, as: 'role' }
+    ],
+    attributes: { exclude: ['password'] }
+  })
 }
 
 async function updateUserWithResident(userId, data) {
@@ -48,16 +59,16 @@ async function updateUserWithResident(userId, data) {
     hometown,
     ethnicity,
     occupation,
-    avatar,
-  } = data;
+    avatar
+  } = data
 
   if (avatar !== null) {
     await User.update(
       { email, phone, avatar_url: avatar },
       { where: { id: userId } }
-    );
+    )
   } else {
-    await User.update({ email, phone }, { where: { id: userId } });
+    await User.update({ email, phone }, { where: { id: userId } })
   }
 
   await Resident.update(
@@ -68,16 +79,16 @@ async function updateUserWithResident(userId, data) {
       gender,
       hometown,
       ethnicity,
-      occupation,
+      occupation
     },
     { where: { user_id: userId } }
-  );
+  )
 
   return await User.findOne({
     where: { id: userId },
-    include: [{ model: Resident, as: "resident" }],
-    attributes: { exclude: ["password"] },
-  });
+    include: [{ model: Resident, as: 'resident' }],
+    attributes: { exclude: ['password'] }
+  })
 }
 
 export {
@@ -89,5 +100,6 @@ export {
   updateUser,
   deleteUser,
   getUserWithResident,
-  updateUserWithResident,
-};
+  getUserWithProfile,
+  updateUserWithResident
+}

@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { updatePasswordApi } from '@/services/api'
+import { updatePasswordApi } from '@/services/user.api.js'
 import { useState } from 'react'
 import { toast } from 'sonner'
 

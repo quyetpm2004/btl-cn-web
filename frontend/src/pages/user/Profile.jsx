@@ -1,7 +1,7 @@
 import { getProfileApi, updateProfileApi } from '@/services/api'
 import React, { useEffect, useState, useRef } from 'react'
 import { toast } from 'sonner'
-import { ModalChangePassword } from './ModalChangePassword'
+import { ModalChangePassword } from './ModalChangePassword.jsx'
 import { useResidentStore } from '@/stores/useResidentStore'
 import { Button } from '@/components/ui/button'
 import { PenLine } from 'lucide-react'

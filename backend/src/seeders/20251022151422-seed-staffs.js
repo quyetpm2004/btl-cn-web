@@ -3,60 +3,57 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.bulkInsert('staffs', [
-      {
-        user_id: 1,
-        full_name: 'Nguyễn Văn A',
-        dob: '2000-12-12',
-        gender: 1,
-        position: 'Quản trị viên',
-        department: 'Phòng Quản trị hệ thống',
-        id_card: '123456789012',
-        address: '123 Đường ABC, Phường 1, Quận 1, Hà Nội',
-        start_date: '2020-01-01',
-        salary: 15000000,
+    // Lấy tất cả user KHÔNG phải Resident => là Staff
+    const [rows] = await queryInterface.sequelize.query(`
+      SELECT u.id, u.username, r.name AS role_name
+      FROM users u
+      JOIN roles r ON u.role_id = r.id
+      WHERE r.name <> 'Resident'
+      ORDER BY u.id ASC
+    `)
+
+    const roleToDepartment = {
+      Admin: 'Ban quản trị',
+      Manager: 'Ban quản lý',
+      Accountant: 'Phòng tài chính',
+      Technician: 'Phòng kỹ thuật'
+    }
+    const roleToPosition = {
+      Admin: 'Quản trị viên',
+      Manager: 'Quản lý',
+      Accountant: 'Kế toán',
+      Technician: 'Kỹ thuật viên'
+    }
+
+    const staffs = []
+    const baseStart = new Date(2021, 0, 1)
+
+    for (let i = 0; i < rows.length; i++) {
+      const u = rows[i]
+      const dob = new Date(
+        1980 + Math.floor(Math.random() * 20),
+        Math.floor(Math.random() * 12),
+        1 + Math.floor(Math.random() * 28)
+      )
+      const idCard = `${100000000 + i}`
+      staffs.push({
+        user_id: u.id,
+        full_name: `${roleToPosition[u.role_name] || 'Nhân viên'} ${i + 1}`,
+        dob: dob.toISOString().split('T')[0],
+        gender: Math.floor(Math.random() * 3) + 1,
+        position: roleToPosition[u.role_name] || 'Nhân viên',
+        department: roleToDepartment[u.role_name] || 'Hành chính',
+        id_card: idCard,
+        address: `Địa chỉ ${i + 1}`,
+        start_date: baseStart.toISOString().split('T')[0],
+        salary: 10000000 + Math.floor(Math.random() * 10000000),
         status: 1
-      },
-      {
-        user_id: 3,
-        full_name: 'Nguyễn Văn B',
-        dob: '1990-01-01',
-        gender: 1,
-        position: 'Quản lý',
-        department: 'Ban Quản lý chung cư',
-        id_card: '123456789012',
-        address: '123 Đường ABC, Phường 1, Quận 1, Hà Nội',
-        start_date: '2020-01-01',
-        salary: 18000000,
-        status: 1
-      },
-      {
-        user_id: 4,
-        full_name: 'Nguyễn Thị C',
-        dob: '1995-05-05',
-        gender: 2,
-        position: 'Thu ngân',
-        department: 'Phòng Kinh doanh',
-        id_card: '987654321012',
-        address: '456 Đường DEF, Phường 2, Quận 2, Hà Nội',
-        start_date: '2021-06-15',
-        salary: 10000000,
-        status: 1
-      },
-      {
-        user_id: 5,
-        full_name: 'Nguyễn Văn D',
-        dob: '1999-02-02',
-        gender: 1,
-        position: 'Kỹ thuật viên',
-        department: 'Phòng Bảo trì',
-        id_card: '123456789012',
-        address: '123 Đường ABC, Phường 1, Quận 1, Hà Nội',
-        start_date: '2020-01-01',
-        salary: 12000000,
-        status: 1
-      }
-    ])
+      })
+    }
+
+    if (staffs.length) {
+      await queryInterface.bulkInsert('staffs', staffs)
+    }
   },
 
   async down(queryInterface, Sequelize) {

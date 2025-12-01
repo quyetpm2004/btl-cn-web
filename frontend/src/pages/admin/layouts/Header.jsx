@@ -1,19 +1,17 @@
 import { useNavigate } from 'react-router'
-import { useAuthStore } from '../../../stores/useAuthStore'
-import { useResidentStore } from '@/stores/useResidentStore'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 export const Header = () => {
-  const navigate = useNavigate()
   const { logout } = useAuthStore()
-  const { clearResident } = useResidentStore()
-
-  const handleLogout = () => {
-    logout()
-    clearResident()
+  const user = useAuthStore((s) => s.user)
+  const navigate = useNavigate()
+  const handleLogout = async () => {
+    await logout()
     navigate('/auth/login')
   }
+
   return (
-    <header className="fixed top-0 z-50 w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg">
+    <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg">
       <div className="mx-auto px-8 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-x-4">
@@ -26,7 +24,7 @@ export const Header = () => {
           <div className="flex items-center gap-x-4">
             <div className="hidden items-center gap-x-2 md:flex">
               <i className="fas fa-user-circle text-xl"></i>
-              <span>Nguyễn Văn An</span>
+              <span>{user?.display_name}</span>
             </div>
             <button
               onClick={handleLogout}

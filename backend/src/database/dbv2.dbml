@@ -15,7 +15,7 @@ Table users {
   email varchar                                 // Email
   phone varchar                                 // Số điện thoại
   avatar_url varchar                            // Ảnh đại diện
-  status tinyint                                // 0:'inactive', 1:'active'
+  status tinyint [default: 1]                   // 0:'inactive', 1:'active'
   created_at timestamp                          // Ngày tạo
   updated_at timestamp                          // Cập nhật gần nhất
 }
@@ -32,7 +32,7 @@ Table staffs {
   address varchar                               // Địa chỉ
   start_date date                               // Ngày bắt đầu làm
   salary int                                    // Lương
-  status tinyint                                // 0:'nghỉ', 1:'đang làm', 2:'nghỉ phép'
+  status tinyint [default: 1]                   // 0:'nghỉ', 1:'đang làm', 2:'nghỉ phép'
 }
 
 //////////////////////////////////////////////////////////////
@@ -43,14 +43,15 @@ Table residents {
   user_id int [ref: > users.id]                 // Tài khoản liên kết
   full_name varchar                             // Họ tên
   gender tinyint                                // 1:nam, 2:nữ, 3:khác
+  phone varchar                                 // Số điện thoại
   dob date                                      // Ngày sinh
   place_of_birth varchar                        // Nơi sinh
   ethnicity varchar                             // Dân tộc
   occupation varchar                            // Nghề nghiệp
   hometown varchar                              // Quê quán
-  id_card varchar                               // CCCD
+  id_card varchar [unique]                      // CCCD
   household_no varchar                          // Mã hộ dân
-  status tinyint                                // 1:'đang ở', 2:'tạm vắng', 3:'chuyển đi'
+  status tinyint [default: 1]                   // 1:'đang ở', 2:'tạm vắng', 3:'chuyển đi'
   registered_at timestamp                       // Ngày đăng ký
 }
 
@@ -67,18 +68,19 @@ Table apartments {
   building varchar                              // Tòa nhà
   type_id int [ref: > apartment_types.id]       // Loại căn
   area float                                    // Diện tích (m2)
-  status tinyint                                // 0:'Trống', 1:'Đang ở', 2:'Đang thuê'
+  status tinyint                                // 0:'Trống', 1:'Đang ở'
   floor int                                     // Tầng
-  owner_id int [ref: > residents.id]            // Chủ sở hữu
 }
 
 Table resident_apartment {
   id int [pk, increment]                        // Liên kết cư dân - căn hộ
   resident_id int [ref: > residents.id]
   apartment_id int [ref: > apartments.id]
-  relationship varchar                          // Quan hệ (chủ hộ, thuê,...)
+  relationship varchar                          // Quan hệ (chủ hộ, người thân) 
+  is_living boolean [not null, default: 1]      // Đang ở (1 người có thể chủ nhiều hộ nhưng chỉ ở 1 hộ)
   start_date date                               // Ngày bắt đầu
   end_date date                                 // Ngày kết thúc
+  create_at date                                // Ngày thêm
 }
 
 Table vehicles {
@@ -88,7 +90,7 @@ Table vehicles {
   brand varchar
   license_plate varchar [unique]
   color varchar
-  status tinyint                                // 0:'inactive', 1:'active'
+  status tinyint [default: 1]                   // 0:'inactive', 1:'active'
 }
 
 //////////////////////////////////////////////////////////////
@@ -103,7 +105,7 @@ Table collection_periods {
   description text
   created_at timestamp
   created_by int [ref: > users.id]
-  status tinyint                                // 0:'closed', 1:'active'
+  status tinyint [default: 1]                   // 0:'closed', 1:'active'
 }
 
 //////////////////////////////////////////////////////////////
@@ -123,7 +125,7 @@ Table service_registrations {
   service_id int [ref: > services.id]
   start_date date
   end_date date
-  status tinyint                                // 0:'inactive', 1:'active'
+  status tinyint [default: 1]                   // 0:'inactive', 1:'active'
 }
 
 //////////////////////////////////////////////////////////////
@@ -134,7 +136,7 @@ Table invoices {
   apartment_id int [ref: > apartments.id]
   period_id int [ref: > collection_periods.id]
   total_amount bigint
-  status tinyint                                // 0:'unpaid', 1:'paid', 2:'overdue', 3:'cancelled'
+  status tinyint [default: 0]                    // 0:'unpaid', 1:'paid', 2:'overdue', 3:'cancelled'
   created_at timestamp
   created_by int [ref: > users.id]
   note text
@@ -164,7 +166,7 @@ Table equipments {
   id int [pk, increment]
   name varchar
   location varchar
-  status tinyint                                // 0:'inactive', 1:'active', 2:'maintenance', 3:'broken'
+  status tinyint [default: 1]                   // 0:'inactive', 1:'active', 2:'maintenance', 3:'broken'
   last_maintenance timestamp
 }
 
@@ -174,7 +176,7 @@ Table maintenance_requests {
   resident_id int [ref: > residents.id]
   description text
   priority tinyint                              // 1:'low', 2:'medium', 3:'high', 4:'urgent'
-  status tinyint                                // 0:'pending', 1:'in_progress', 2:'done', 3:'cancelled'
+  status tinyint [default: 0]                   // 0:'pending', 1:'in_progress', 2:'done', 3:'cancelled'
   created_at timestamp
   assigned_to int [ref: > staffs.id]
   resolved_at timestamp
@@ -187,7 +189,7 @@ Table maintenance_schedules {
   end_at timestamp
   assigned_to int [ref: > staffs.id]
   description text
-  status tinyint                                // 0:'scheduled', 1:'completed'
+  status tinyint [default: 0]                   // 0:'scheduled', 1:'completed'
 }
 
 //////////////////////////////////////////////////////////////

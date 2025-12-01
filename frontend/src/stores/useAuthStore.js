@@ -5,7 +5,7 @@ import { loginApi, registerApi } from '../services/api'
 
 export const useAuthStore = create(
   persist(
-    (set, get) => ({
+    (set) => ({
       accessToken: null,
       isAuthenticated: false,
       user: null,
@@ -53,6 +53,7 @@ export const useAuthStore = create(
           set({ loading: true })
           const res = await loginApi(username, password)
 
+          console.log('Login response:', res.data)
           set({
             accessToken: res.data.token,
             isAuthenticated: true,

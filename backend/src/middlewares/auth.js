@@ -9,7 +9,7 @@ export const authMiddleware = (req, res, next) => {
   try {
     const auth = req.headers['authorization'] || req.headers['Authorization']
     if (!auth || !auth.startsWith('Bearer ')) {
-      return res.status(401).json({ message: 'Missing authentication token' })
+      return res.status(401).json({ error: 'Missing authentication token' })
     }
     const token = auth.substring('Bearer '.length)
     const payload = jwt.verify(token, process.env.JWT_SECRET)
@@ -21,6 +21,6 @@ export const authMiddleware = (req, res, next) => {
     }
     return next()
   } catch (err) {
-    return res.status(401).json({ message: 'Invalid or expired token' })
+    return res.status(401).json({ error: 'Invalid or expired token' })
   }
 }

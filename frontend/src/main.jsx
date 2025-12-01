@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import './index.css'
 import { Layout } from './pages/admin/layouts/Layout.jsx'
 import { Dashboard } from './pages/admin/Dashboard.jsx'
@@ -16,7 +17,6 @@ import { AuthLayout } from './pages/auth/AuthLayout.jsx'
 import { Login } from './pages/auth/Login.jsx'
 import { Register } from './pages/auth/Register.jsx'
 import { Toaster } from 'sonner'
-import 'sonner'
 import { ProtectedRoute } from './routes/ProtectedRoute.jsx'
 import { UserLayout } from './pages/user/layout/Layout'
 import UserDashboard from './pages/user/Dashboard'
@@ -25,6 +25,8 @@ import Apartment from './pages/user/Apartment'
 import Payment from './pages/user/Payment'
 import Notification from './pages/user/Notification'
 import Maintenance from './pages/user/Maintenance'
+
+const queryClient = new QueryClient()
 
 const router = createBrowserRouter([
   {
@@ -81,7 +83,9 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
-    <Toaster position="top-right" richColors />
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+      <Toaster position="top-center" richColors />
+    </QueryClientProvider>
   </StrictMode>
 )

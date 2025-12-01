@@ -21,8 +21,8 @@ module.exports = {
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       category: {
-        type: Sequelize.INTEGER,
-        comment: 'event | thông báo | hướng dẫn | tin nội khu'
+        type: Sequelize.TINYINT,
+        comment: '1:event | 2:thông báo | 3:hướng dẫn | 4:tin nội khu'
       }
     })
   },

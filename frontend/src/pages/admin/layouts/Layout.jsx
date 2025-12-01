@@ -4,10 +4,10 @@ import { Sidebar } from './Sidebar'
 
 export const Layout = () => {
   return (
-    <div className="bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       <Header />
       <Sidebar />
-      <main className="mt-18 ml-64 overflow-y-auto p-6">
+      <main className="ml-64 overflow-y-auto p-6">
         <Outlet />
       </main>
     </div>

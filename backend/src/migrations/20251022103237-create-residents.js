@@ -25,6 +25,9 @@ module.exports = {
         type: Sequelize.TINYINT,
         comment: '1: male | 2: female | 3: other'
       },
+      phone: {
+        type: Sequelize.STRING
+      },
       dob: {
         type: Sequelize.DATEONLY
       },
@@ -41,7 +44,8 @@ module.exports = {
         type: Sequelize.STRING
       },
       id_card: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true
       },
       household_no: {
         type: Sequelize.STRING

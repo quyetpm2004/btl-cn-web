@@ -1,7 +1,7 @@
 import instance from './axios.customize.js'
 
 const loginApi = async (username, password) => {
-  const response = await instance.post('/api-v1/login', {
+  const response = await instance.post('/login', {
     username,
     password
   })
@@ -16,7 +16,7 @@ const registerApi = async (
   phone,
   apartment_code
 ) => {
-  const response = await instance.post('/api-v1/register', {
+  const response = await instance.post('/register', {
     username,
     password,
     full_name,
@@ -29,53 +29,51 @@ const registerApi = async (
 }
 
 const getProfileApi = async () => {
-  const response = await instance.get('/api-v1/user/profile')
+  const response = await instance.get('/user/profile')
   return response
 }
 
 const updateProfileApi = async (profileData) => {
-  const response = await instance.put('/api-v1/user/profile', profileData)
+  const response = await instance.put('/user/profile', profileData)
   return response
 }
 
 const updatePasswordApi = async (passwordData) => {
-  const response = await instance.put('/api-v1/user/password', passwordData)
+  const response = await instance.put('/user/password', passwordData)
   return response
 }
 
 const fetchResidentInfoApi = async () => {
-  const response = await instance.get('/api-v1/user/fetch-resident')
+  const response = await instance.get('/user/fetch-resident')
   return response
 }
 
 const getNotification = async (residentId, filter) => {
   const response = await instance.get(
-    `/api-v1/user/notification/${residentId}?filter=${filter}`
+    `/user/notification/${residentId}?filter=${filter}`
   )
   return response
 }
 
 const markNotification = async (notificationReceiverId, isRead) => {
   const response = instance.put(
-    `/api-v1/user/notification/${notificationReceiverId}/${isRead}`
+    `/user/notification/${notificationReceiverId}/${isRead}`
   )
   return response
 }
 
 const getMaintenanceRequestsApi = async (residentId) => {
-  const response = await instance.get(
-    `/api-v1/user/maintenance-request/${residentId}`
-  )
+  const response = await instance.get(`/user/maintenance-request/${residentId}`)
   return response
 }
 
 const getAllWorkType = async () => {
-  const response = await instance.get('/api-v1/user/work-type')
+  const response = await instance.get('/user/work-type')
   return response
 }
 
 const getEquipmentByIdApi = async (id) => {
-  const response = await instance.get(`/api-v1/user/equipment/${id}`)
+  const response = await instance.get(`/user/equipment/${id}`)
   return response
 }
 
@@ -88,15 +86,11 @@ const createMaintenanceRequestApi = async (data) => {
   data.images.forEach((image) => {
     formData.append(`images`, image)
   })
-  const response = await instance.post(
-    '/api-v1/user/maintenance-request',
-    formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+  const response = await instance.post('/user/maintenance-request', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
     }
-  )
+  })
   return response
 }
 
@@ -111,7 +105,7 @@ const updateMaintenanceRequestApi = async (id, data) => {
     formData.append(`images`, image)
   })
   const response = await instance.put(
-    `/api-v1/user/maintenance-request/${id}`,
+    `/user/maintenance-request/${id}`,
     formData,
     {
       headers: {
@@ -123,15 +117,13 @@ const updateMaintenanceRequestApi = async (id, data) => {
 }
 
 const deleteMaintenanceRequestApi = async (id) => {
-  const response = await instance.delete(
-    `/api-v1/user/maintenance-request/${id}`
-  )
+  const response = await instance.delete(`/user/maintenance-request/${id}`)
   return response
 }
 
 const getMaintenanceSchedule = async (residentId) => {
   const response = await instance.get(
-    `/api-v1/user/maintenance-schedule/resident/${residentId}`
+    `/user/maintenance-schedule/resident/${residentId}`
   )
   return response
 }

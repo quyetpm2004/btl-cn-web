@@ -24,6 +24,10 @@ module.exports = (sequelize, DataTypes) => {
       relationship: {
         type: DataTypes.STRING
       },
+      is_living: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+      },
       start_date: {
         type: DataTypes.DATEONLY
       },
@@ -35,8 +39,7 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: 'ResidentApartment',
       tableName: 'resident_apartment',
-      underscored: true,
-      timestamps: false
+      underscored: true
     }
   )
 

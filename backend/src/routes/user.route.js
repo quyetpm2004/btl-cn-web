@@ -1,82 +1,82 @@
-import express from "express";
-import uploadFile from "../middlewares/multer.js";
+import express from 'express'
+import uploadFile from '../middlewares/multer.js'
 import {
   getProfile,
   updatePassword,
-  updateProfile,
-} from "../controllers/user/profile.controller.js";
+  updateProfile
+} from '../controllers/user/profile.controller.js'
 import {
   fetchResident,
-  getApartment,
-} from "../controllers/user/apartment.controller.js";
+  getApartment
+} from '../controllers/user/apartment.controller.js'
 import {
   getNotification,
-  markNotificationRead,
-} from "../controllers/user/notification.controller.js";
+  markNotificationRead
+} from '../controllers/user/notification.controller.js'
 import {
   createMaintenanceRequest,
   deleteMaintenanceRequest,
   getMaintenanceRequestDetail,
   getPendingRequests,
-  updateMaintenanceRequest,
-} from "../controllers/user/maintenance.req.controller.js";
+  updateMaintenanceRequest
+} from '../controllers/user/maintenance.req.controller.js'
 import {
   getMaintenanceScheduleDetail,
-  getResidentSchedules,
-} from "../controllers/user/maintenance.sche.controller.js";
+  getResidentSchedules
+} from '../controllers/user/maintenance.sche.controller.js'
 import {
   getAllEquipments,
-  getEquipmentById,
-} from "../controllers/user/equipment.controller.js";
-import { getAllWorkType } from "../controllers/user/worktype.controller.js";
-const uploadAvatar = uploadFile("avatar");
-const uploadRequestImages = uploadFile("request");
+  getEquipmentById
+} from '../controllers/user/equipment.controller.js'
+import { getAllWorkType } from '../controllers/user/worktype.controller.js'
+const uploadAvatar = uploadFile('avatar')
+const uploadRequestImages = uploadFile('request')
 
-const userRoute = express.Router();
+const userRoute = express.Router()
 
 // profle
-userRoute.get("/user/profile", getProfile);
-userRoute.put("/user/profile", uploadAvatar.single("avatar"), updateProfile);
-userRoute.put("/user/password", updatePassword);
+userRoute.get('/profile', getProfile)
+userRoute.put('/profile', uploadAvatar.single('avatar'), updateProfile)
+userRoute.put('/password', updatePassword)
 
 // apartment
-userRoute.get("/user/apartment", getApartment);
-userRoute.get("/user/fetch-resident", fetchResident);
+userRoute.get('/apartment', getApartment)
+userRoute.get('/fetch-resident', fetchResident)
 
 // notification
-userRoute.get("/user/notification/:residentId", getNotification);
+userRoute.get('/notification/:residentId', getNotification)
 userRoute.put(
-  "/user/notification/:notificationReceiverId/:isRead",
+  '/notification/:notificationReceiverId/:isRead',
   markNotificationRead
-);
+)
 
 // Maintenance Request
 userRoute.post(
-  "/user/maintenance-request",
-  uploadRequestImages.array("images", 5),
+  '/maintenance-request',
+  uploadRequestImages.array('images', 5),
   createMaintenanceRequest
-);
-userRoute.get("/user/maintenance-request/:residentId", getPendingRequests);
-userRoute.get("/user/maintenance-request/:id", getMaintenanceRequestDetail);
+)
+userRoute.get('/maintenance-request/:residentId', getPendingRequests)
+userRoute.get('/maintenance-request/:id', getMaintenanceRequestDetail)
 userRoute.put(
-  "/user/maintenance-request/:id",
-  uploadRequestImages.array("images", 5),
+  '/maintenance-request/:id',
+  uploadRequestImages.array('images', 5),
   updateMaintenanceRequest
-);
-userRoute.delete("/user/maintenance-request/:id", deleteMaintenanceRequest);
+)
+userRoute.delete('/maintenance-request/:id', deleteMaintenanceRequest)
 
 // Maintenance Schedule
 userRoute.get(
-  "/user/maintenance-schedule/resident/:residentId",
+  '/maintenance-schedule/resident/:residentId',
   getResidentSchedules
-);
-userRoute.get("/user/maintenance-schedule/:id", getMaintenanceScheduleDetail);
+)
+userRoute.get('/maintenance-schedule/:id', getMaintenanceScheduleDetail)
 
 // Equipment
-userRoute.get("/user/equipment", getAllEquipments);
-userRoute.get("/user/equipment/:id", getEquipmentById);
+userRoute.get('/equipment', getAllEquipments)
+userRoute.get('/equipment/:id', getEquipmentById)
 
 // Work Type
-userRoute.get("/user/work-type", getAllWorkType);
+userRoute.get('/work-type', getAllWorkType)
 
-export default userRoute;
+export default userRoute
