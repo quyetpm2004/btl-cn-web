@@ -17,6 +17,8 @@ apartmentRouter.post(
 apartmentRouter.get('/', apartmentController.getApartments)
 apartmentRouter.get('/filter', apartmentController.filterApartments)
 apartmentRouter.get('/count', apartmentController.getApartmentCount)
+apartmentRouter.get('/buildings', apartmentController.getBuildingsApartment)
+apartmentRouter.get('/types', apartmentController.getTypesApartment)
 apartmentRouter.get(
   '/:id',
   validateParams(apartmentIdParamSchema),

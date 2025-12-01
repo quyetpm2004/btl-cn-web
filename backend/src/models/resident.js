@@ -1,51 +1,45 @@
-"use strict";
-const { Model } = require("sequelize");
+'use strict'
+const { Model } = require('sequelize')
 
 module.exports = (sequelize, DataTypes) => {
   class Resident extends Model {
     static associate(models) {
       // Resident belongs to User
       Resident.belongsTo(models.User, {
-        foreignKey: "user_id",
-        as: "user",
-      });
-
-      // Resident owns Apartments
-      Resident.hasMany(models.Apartment, {
-        foreignKey: "owner_id",
-        as: "ownedApartments",
-      });
+        foreignKey: 'user_id',
+        as: 'user'
+      })
 
       // Resident and Apartments many-to-many through ResidentApartment
       Resident.belongsToMany(models.Apartment, {
         through: {
           model: models.ResidentApartment,
-          timestamps: false, // 👈 thêm dòng này
+          timestamps: false
         },
-        foreignKey: "resident_id",
-        otherKey: "apartment_id",
-        as: "apartments",
-      });
+        foreignKey: 'resident_id',
+        otherKey: 'apartment_id',
+        as: 'apartments'
+      })
 
       // Resident has many Payments
       Resident.hasMany(models.Payment, {
-        foreignKey: "resident_id",
-        as: "payments",
-      });
+        foreignKey: 'resident_id',
+        as: 'payments'
+      })
 
       // Resident has many Maintenance Requests
       Resident.hasMany(models.MaintenanceRequest, {
-        foreignKey: "resident_id",
-        as: "maintenanceRequests",
-      });
+        foreignKey: 'resident_id',
+        as: 'maintenanceRequests'
+      })
 
       // Resident receives Notifications
       Resident.belongsToMany(models.Notification, {
-        through: "notification_receivers",
-        foreignKey: "resident_id",
-        otherKey: "notification_id",
-        as: "notifications",
-      });
+        through: 'notification_receivers',
+        foreignKey: 'resident_id',
+        otherKey: 'notification_id',
+        as: 'notifications'
+      })
     }
   }
 
@@ -54,54 +48,58 @@ module.exports = (sequelize, DataTypes) => {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoIncrement: true,
+        autoIncrement: true
       },
       user_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER
       },
       full_name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING
       },
       gender: {
-        type: DataTypes.TINYINT,
+        type: DataTypes.TINYINT
+      },
+      phone: {
+        type: DataTypes.STRING
       },
       dob: {
-        type: DataTypes.DATEONLY,
+        type: DataTypes.DATEONLY
       },
       place_of_birth: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING
       },
       ethnicity: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING
       },
       occupation: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING
       },
       hometown: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING
       },
       id_card: {
         type: DataTypes.STRING,
+        unique: true
       },
       household_no: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING
       },
       status: {
         type: DataTypes.TINYINT,
-        defaultValue: 1,
+        defaultValue: 1
       },
       registered_at: {
-        type: DataTypes.DATE,
-      },
+        type: DataTypes.DATE
+      }
     },
     {
       sequelize,
-      modelName: "Resident",
-      tableName: "residents",
+      modelName: 'Resident',
+      tableName: 'residents',
       underscored: true,
-      timestamps: false,
+      timestamps: false
     }
-  );
+  )
 
-  return Resident;
-};
+  return Resident
+}

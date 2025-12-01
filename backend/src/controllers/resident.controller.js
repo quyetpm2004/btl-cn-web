@@ -53,8 +53,8 @@ async function updateResident(req, res) {
 async function filterResidents(req, res) {
   try {
     const filters = req.query
-    const residents = await residentService.filterResidentsService(filters)
-    return res.status(StatusCodes.OK).json({ residents })
+    const result = await residentService.filterResidentsService(filters)
+    return res.status(StatusCodes.OK).json(result)
   } catch (err) {
     const http = toHttpError(err)
     return res.status(http.status).json(http.body)

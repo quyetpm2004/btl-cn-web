@@ -31,11 +31,26 @@ module.exports = {
         type: Sequelize.STRING,
         comment: 'owner | relative'
       },
+      is_living: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true,
+        allowNull: false
+      },
       start_date: {
         type: Sequelize.DATEONLY
       },
       end_date: {
         type: Sequelize.DATEONLY
+      },
+      created_at: {
+        allowNull: false,
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      },
+      updated_at: {
+        allowNull: false,
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
     })
   },

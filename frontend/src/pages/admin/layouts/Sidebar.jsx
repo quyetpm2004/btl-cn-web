@@ -1,7 +1,10 @@
 import { User } from 'lucide-react'
 import { Link } from 'react-router'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 export const Sidebar = () => {
+  const user = useAuthStore((s) => s.user)
+
   return (
     <div className="fixed top-16 bottom-0 left-0 z-40 w-64 overflow-y-auto bg-white shadow-lg">
       <div className="p-6">
@@ -12,8 +15,10 @@ export const Sidebar = () => {
                 <User className="text-white" />
               </div>
               <div>
-                <p className="font-semibold text-gray-800">Nguyễn Văn An</p>
-                <p className="text-sm text-gray-600">Ban Quản Lý</p>
+                <p className="font-semibold text-gray-800">
+                  {user?.display_name}
+                </p>
+                <p className="text-sm text-gray-600">{user?.role_name}</p>
               </div>
             </div>
           </div>
@@ -107,18 +112,18 @@ export const Sidebar = () => {
             </button>
           </div> */}
 
-          <Link className="flex w-full items-center space-x-3 rounded-lg px-4 py-3 text-left transition-colors hover:bg-blue-50">
+          {/* <Link className="flex w-full items-center space-x-3 rounded-lg px-4 py-3 text-left transition-colors hover:bg-blue-50">
             <i className="fas fa-comments text-blue-500"></i>
             <span>Diễn đàn</span>
-          </Link>
+          </Link> */}
         </nav>
 
-        <div className="mt-8 border-t border-gray-200 pt-6">
+        {/* <div className="mt-8 border-t border-gray-200 pt-6">
           <button className="w-full rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 px-4 py-2 text-white transition-all hover:from-blue-600 hover:to-purple-700">
             <i className="fas fa-exchange-alt mr-2"></i>
             Chuyển vai trò
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   )

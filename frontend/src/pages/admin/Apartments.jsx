@@ -1,173 +1,378 @@
+import { useEffect, useState, useMemo } from 'react'
+import {
+  filterApartmentsApi,
+  getBuildingsApartmentApi,
+  getTypesApartmentApi,
+  createApartmentApi,
+  updateApartmentApi
+} from '@/services/apartment.api.js'
+import { toast } from 'sonner'
+import { usePagination } from '@/hooks/use-pagination'
+import { PaginationControls } from '@/components/pagination-controls'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select.jsx'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { ApartmentDialog } from '@/components/apartments/apartments-dialog'
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient
+} from '@tanstack/react-query'
+
 export const Apartments = () => {
+  const queryClient = useQueryClient()
+  const [queryInput, setQueryInput] = useState('')
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [selectedApartment, setSelectedApartment] = useState(null)
+  const [dialogMode, setDialogMode] = useState('view') // 'view', 'edit', 'create'
+
+  const pagination = usePagination(1, 9)
+  const [building, setBuilding] = useState('')
+  const [status, setStatus] = useState('')
+  const [typeId, setTypeId] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const filters = useMemo(
+    () => ({
+      page: pagination.page,
+      limit: pagination.limit,
+      building,
+      status,
+      type_id: typeId,
+      query: searchQuery
+    }),
+    [pagination.page, pagination.limit, building, status, typeId, searchQuery]
+  )
+
+  // Queries for options
+  const { data: buildingsData } = useQuery({
+    queryKey: ['buildings'],
+    queryFn: getBuildingsApartmentApi,
+    staleTime: 5 * 60 * 1000
+  })
+
+  const { data: typesData } = useQuery({
+    queryKey: ['apartmentTypes'],
+    queryFn: getTypesApartmentApi,
+    staleTime: 5 * 60 * 1000
+  })
+
+  const buildingFilter = buildingsData?.buildings || []
+  const typeFilter = typesData?.types || []
+
+  // Main Query
+  const {
+    data: apartmentsData,
+    isLoading,
+    isError
+  } = useQuery({
+    queryKey: ['apartments', filters],
+    queryFn: () => filterApartmentsApi(filters),
+    placeholderData: keepPreviousData
+  })
+
+  const apartments = apartmentsData?.items || []
+
+  // Sync total items to pagination
+  useEffect(() => {
+    if (apartmentsData?.total !== undefined) {
+      pagination.setTotal(apartmentsData.total)
+    }
+  }, [apartmentsData?.total, pagination])
+
+  // Mutations
+  const createMutation = useMutation({
+    mutationFn: createApartmentApi,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['apartments'] })
+      toast.success('Thêm căn hộ thành công', {
+        id: 'apartment-save-success'
+      })
+      handleCloseDialog()
+      pagination.setPage(1)
+    },
+    onError: (error) => {
+      toast.error('Lưu căn hộ thất bại', { id: 'apartment-save-error' })
+      console.error(error)
+    }
+  })
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }) => updateApartmentApi(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['apartments'] })
+      toast.success('Cập nhật căn hộ thành công', {
+        id: 'apartment-save-success'
+      })
+      handleCloseDialog()
+    },
+    onError: (error) => {
+      toast.error('Lưu căn hộ thất bại', { id: 'apartment-save-error' })
+      console.error(error)
+    }
+  })
+
+  /** Handle filter change */
+  const handleFilterChange = (filterKey) => (e) => {
+    const value = e.target.value
+    pagination.setPage(1)
+
+    switch (filterKey) {
+      case 'building':
+        setBuilding(value)
+        break
+      case 'status':
+        setStatus(value)
+        break
+      case 'type_id':
+        setTypeId(value)
+        break
+      default:
+        break
+    }
+  }
+
+  const handleQueryChange = (e) => {
+    const value = e.target.value
+    setQueryInput(value)
+  }
+
+  const handleSearch = () => {
+    pagination.setPage(1)
+    setSearchQuery(queryInput)
+  }
+
+  const handleReset = () => {
+    setQueryInput('')
+    setSearchQuery('')
+    setBuilding('')
+    setStatus('')
+    setTypeId('')
+  }
+
+  /** Dialog handlers */
+  const handleOpenDialog = (apartment = null, mode = 'view') => {
+    setSelectedApartment(apartment)
+    setDialogMode(mode)
+    setDialogOpen(true)
+  }
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false)
+    setSelectedApartment(null)
+    setDialogMode('view')
+  }
+
+  const handleSaveApartment = async (formData) => {
+    if (dialogMode === 'create') {
+      createMutation.mutate(formData)
+    } else if (dialogMode === 'edit' && selectedApartment?.id) {
+      updateMutation.mutate({ id: selectedApartment.id, data: formData })
+    } else {
+      handleCloseDialog()
+    }
+  }
+
+  if (isError) return <div>Lỗi tải dữ liệu</div>
+
   return (
-    <div>
+    <>
+      {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h2 className="mb-2 text-2xl font-bold text-gray-800">
             Quản lý Căn hộ
           </h2>
-          <p className="text-gray-600">Quản lý thông tin căn hộ và hợp đồng</p>
+          <p className="text-gray-600">Quản lý thông tin căn hộ</p>
         </div>
-        <button className="rounded-lg bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-600">
+        <Button variant="blue" onClick={() => handleOpenDialog(null, 'create')}>
           <i className="fas fa-plus mr-2"></i>
           Thêm căn hộ
-        </button>
+        </Button>
+
+        <ApartmentDialog
+          mode={dialogMode}
+          apartment={selectedApartment}
+          typeFilter={typeFilter}
+          open={dialogOpen}
+          onOpenChange={handleCloseDialog}
+          onSave={handleSaveApartment}
+        />
       </div>
 
-      <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
-        <div className="rounded-xl bg-white p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Đã bán</p>
-              <p className="text-2xl font-bold text-green-600">186</p>
-            </div>
-            <i className="fas fa-check-circle text-2xl text-green-500"></i>
-          </div>
-        </div>
-        <div className="rounded-xl bg-white p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Cho thuê</p>
-              <p className="text-2xl font-bold text-blue-600">42</p>
-            </div>
-            <i className="fas fa-key text-2xl text-blue-500"></i>
-          </div>
-        </div>
-        <div className="rounded-xl bg-white p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Trống</p>
-              <p className="text-2xl font-bold text-yellow-600">20</p>
-            </div>
-            <i className="fas fa-home text-2xl text-yellow-500"></i>
-          </div>
-        </div>
-      </div>
-
-      <div className="overflow-hidden rounded-xl bg-white shadow-sm">
+      <div className="rounded-xl bg-white shadow-sm">
+        {/* Filters */}
         <div className="border-b border-gray-200 p-6">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-            <input
-              type="text"
-              placeholder="Tìm kiếm căn hộ..."
-              className="rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500"
-            />
-            <select className="rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500">
-              <option>Tất cả tòa</option>
-              <option>Tòa A</option>
-              <option>Tòa B</option>
-              <option>Tòa C</option>
-            </select>
-            <select className="rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500">
-              <option>Tất cả trạng thái</option>
-              <option>Đã bán</option>
-              <option>Cho thuê</option>
-              <option>Trống</option>
-            </select>
-            <select className="rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500">
-              <option>Tất cả diện tích</option>
-              <option>&lt; 50m²</option>
-              <option>50-80m²</option>
-              <option>&gt; 80m²</option>
-            </select>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-10">
+            <div className="relative md:col-span-3">
+              <Input
+                name="search"
+                type="text"
+                placeholder="Tìm kiếm căn hộ / chủ hộ..."
+                value={queryInput}
+                onChange={handleQueryChange}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              />
+              <Button
+                onClick={handleSearch}
+                className="absolute right-0.5 cursor-pointer text-gray-500 hover:text-blue-500"
+                variant="icon"
+                size="icon">
+                <i className="fas fa-search"></i>
+              </Button>
+            </div>
+
+            <div className="md:col-span-2">
+              <Select
+                value={building || '-1'}
+                onValueChange={(value) =>
+                  handleFilterChange('building')({
+                    target: { value: value === '-1' ? '' : value }
+                  })
+                }>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Tất cả tòa" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="-1">Tất cả tòa</SelectItem>
+                  {buildingFilter.map((b) => (
+                    <SelectItem key={b} value={b}>
+                      {b}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="md:col-span-2">
+              <Select
+                value={status || '-1'}
+                onValueChange={(value) =>
+                  handleFilterChange('status')({
+                    target: { value: value === '-1' ? '' : value }
+                  })
+                }>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Tất cả trạng thái" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="-1">Tất cả trạng thái</SelectItem>
+                  <SelectItem value="1">Đang ở</SelectItem>
+                  <SelectItem value="0">Trống</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="md:col-span-2">
+              <Select
+                value={String(typeId) || '-1'}
+                onValueChange={(value) =>
+                  handleFilterChange('type_id')({
+                    target: { value: value === '-1' ? '' : value }
+                  })
+                }>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Tất cả loại" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="-1">Tất cả loại</SelectItem>
+                  {typeFilter.map((t, idx) => (
+                    <SelectItem key={t} value={String(idx + 1)}>
+                      {t}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Button onClick={handleReset} variant="outline">
+              Đặt lại
+            </Button>
           </div>
         </div>
 
+        {/* Apartments List */}
         <div className="grid grid-cols-1 gap-6 p-6 md:grid-cols-2 lg:grid-cols-3">
-          <div className="rounded-lg border border-gray-200 p-4 transition-shadow hover:shadow-md">
-            <div className="mb-3 flex items-start justify-between">
-              <h3 className="text-lg font-semibold">A1205</h3>
-              <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-800">
-                Đã bán
-              </span>
+          {isLoading && (!apartments || apartments.length === 0) && (
+            <div className="col-span-full text-center text-gray-500">
+              Đang tải danh sách...
             </div>
-            <div className="flex flex-col gap-y-2 text-sm text-gray-600">
-              <p>
-                <i className="fas fa-ruler-combined mr-2"></i>75m² - 2PN, 2WC
-              </p>
-              <p>
-                <i className="fas fa-user mr-2"></i>Nguyễn Văn An
-              </p>
-              <p>
-                <i className="fas fa-calendar mr-2"></i>Hợp đồng: 15/03/2020
-              </p>
-              <p>
-                <i className="fas fa-money-bill mr-2"></i>2.5 tỷ VNĐ
-              </p>
-            </div>
-            <div className="mt-4 flex gap-x-2">
-              <button className="flex-1 rounded bg-blue-500 px-3 py-2 text-sm text-white transition-colors hover:bg-blue-600">
-                Xem chi tiết
-              </button>
-              <button className="rounded border border-gray-300 px-3 py-2 transition-colors hover:bg-gray-50">
-                <i className="fas fa-edit"></i>
-              </button>
-            </div>
-          </div>
+          )}
 
-          <div className="rounded-lg border border-gray-200 p-4 transition-shadow hover:shadow-md">
-            <div className="mb-3 flex items-start justify-between">
-              <h3 className="text-lg font-semibold">B0801</h3>
-              <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-800">
-                Cho thuê
-              </span>
+          {!isLoading && (!apartments || apartments.length === 0) && (
+            <div className="col-span-full text-center text-gray-500">
+              Không có dữ liệu
             </div>
-            <div className="flex flex-col gap-y-2 text-sm text-gray-600">
-              <p>
-                <i className="fas fa-ruler-combined mr-2"></i>65m² - 2PN, 1WC
-              </p>
-              <p>
-                <i className="fas fa-user mr-2"></i>Lê Thị Bình
-              </p>
-              <p>
-                <i className="fas fa-calendar mr-2"></i>Thuê từ: 01/06/2023
-              </p>
-              <p>
-                <i className="fas fa-money-bill mr-2"></i>15 triệu/tháng
-              </p>
-            </div>
-            <div className="mt-4 flex gap-x-2">
-              <button className="flex-1 rounded bg-blue-500 px-3 py-2 text-sm text-white transition-colors hover:bg-blue-600">
-                Xem chi tiết
-              </button>
-              <button className="rounded border border-gray-300 px-3 py-2 transition-colors hover:bg-gray-50">
-                <i className="fas fa-edit"></i>
-              </button>
-            </div>
-          </div>
+          )}
 
-          <div className="rounded-lg border border-gray-200 p-4 transition-shadow hover:shadow-md">
-            <div className="mb-3 flex items-start justify-between">
-              <h3 className="text-lg font-semibold">C1501</h3>
-              <span className="rounded-full bg-yellow-100 px-2 py-1 text-xs font-semibold text-yellow-800">
-                Trống
-              </span>
+          {apartments.map((apt) => (
+            <div
+              key={apt?.id}
+              className="rounded-lg border border-gray-200 p-4 transition-shadow hover:shadow-md">
+              <div className="mb-3 flex items-start justify-between">
+                <h3 className="text-lg font-semibold">
+                  {apt?.apartment_code || '—'}
+                </h3>
+                <span
+                  className={`rounded-full px-2 py-1 text-xs font-semibold ${apt?.status ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-700'}`}>
+                  {apt?.status ? 'Đang ở' : 'Trống'}
+                </span>
+              </div>
+
+              <div className="space-y-2 text-sm text-gray-600">
+                <p>
+                  <i className="fas fa-ruler-combined mr-2"></i>
+                  {apt?.area ? `${apt.area}m²` : '—'}
+                </p>{' '}
+                <p>
+                  <i className="fas fa-building mr-2"></i>
+                  {apt?.type?.name ? `${apt.type.name}` : '—'}
+                </p>
+                <p>
+                  <i className="fas fa-user mr-2"></i>
+                  {/* {apt?.owner?.full_name || '—'} */}
+                  {apt?.residents?.[0]?.full_name || '—'}
+                </p>
+                <p>
+                  <i className="fas fa-calendar mr-2"></i>
+                  {/* {apt?.owner
+                    ? new Date(apt?.owner?.registered_at).toLocaleDateString()
+                    : '—'} */}
+                  {apt?.residents?.[0]
+                    ? new Date(
+                        apt?.residents[0]?.registered_at
+                      ).toLocaleDateString()
+                    : '—'}
+                </p>
+              </div>
+
+              <div className="mt-4 flex gap-x-2">
+                <Button
+                  onClick={() => handleOpenDialog(apt, 'view')}
+                  variant="blue"
+                  className="flex-1">
+                  Xem chi tiết
+                </Button>
+                <Button
+                  onClick={() => handleOpenDialog(apt, 'edit')}
+                  variant="outline">
+                  <i className="fas fa-edit"></i>
+                </Button>
+              </div>
             </div>
-            <div className="flex flex-col gap-y-2 text-sm text-gray-600">
-              <p>
-                <i className="fas fa-ruler-combined mr-2"></i>90m² - 3PN, 2WC
-              </p>
-              <p>
-                <i className="fas fa-user mr-2"></i>Chưa có chủ
-              </p>
-              <p>
-                <i className="fas fa-calendar mr-2"></i>Sẵn sàng bán/cho thuê
-              </p>
-              <p>
-                <i className="fas fa-money-bill mr-2"></i>3.2 tỷ VNĐ
-              </p>
-            </div>
-            <div className="mt-4 flex gap-x-2">
-              <button className="flex-1 rounded bg-green-500 px-3 py-2 text-sm text-white transition-colors hover:bg-green-600">
-                Đăng bán
-              </button>
-              <button className="rounded border border-gray-300 px-3 py-2 transition-colors hover:bg-gray-50">
-                <i className="fas fa-edit"></i>
-              </button>
-            </div>
-          </div>
+          ))}
         </div>
+
+        {/* Pagination */}
+        <PaginationControls pagination={pagination} />
       </div>
-    </div>
+    </>
   )
 }

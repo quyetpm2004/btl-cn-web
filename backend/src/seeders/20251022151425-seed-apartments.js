@@ -20,11 +20,6 @@ module.exports = {
       typeAreaRangeById[t.id] = range
     }
 
-    const [residentRows] = await queryInterface.sequelize.query(
-      `SELECT id FROM residents ORDER BY id ASC LIMIT 100`
-    )
-    const ownerIds = residentRows.map((r) => r.id)
-
     const apartments = []
 
     // Tạo lần lượt theo tòa A -> B -> C -> D, mỗi tòa 25 căn
@@ -58,10 +53,6 @@ module.exports = {
           const area = minA + Math.floor(Math.random() * (maxA - minA + 1))
 
           const status = created < occupiedCount ? 1 : 0
-          const owner_id =
-            status === 1 && ownerIds.length
-              ? ownerIds[created % ownerIds.length]
-              : null
 
           apartments.push({
             apartment_code,
@@ -69,8 +60,7 @@ module.exports = {
             type_id,
             area,
             status,
-            floor,
-            owner_id
+            floor
           })
 
           created++

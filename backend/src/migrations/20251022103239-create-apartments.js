@@ -36,15 +36,6 @@ module.exports = {
       },
       floor: {
         type: Sequelize.INTEGER
-      },
-      owner_id: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'residents',
-          key: 'id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
       }
     })
   },

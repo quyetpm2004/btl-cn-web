@@ -10,15 +10,9 @@ module.exports = (sequelize, DataTypes) => {
         as: 'type'
       })
 
-      // Apartment belongs to Resident (owner)
-      Apartment.belongsTo(models.Resident, {
-        foreignKey: 'owner_id',
-        as: 'owner'
-      })
-
       // Apartment and Residents many-to-many through ResidentApartment
       Apartment.belongsToMany(models.Resident, {
-        through: 'resident_apartment',
+        through: models.ResidentApartment,
         foreignKey: 'apartment_id',
         otherKey: 'resident_id',
         as: 'residents'
@@ -76,9 +70,6 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: 0
       },
       floor: {
-        type: DataTypes.INTEGER
-      },
-      owner_id: {
         type: DataTypes.INTEGER
       }
     },

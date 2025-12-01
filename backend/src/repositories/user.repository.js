@@ -1,4 +1,4 @@
-import { User, Resident } from '../models/index.js'
+import { User, Resident, Staff, Role } from '../models/index.js'
 
 async function createUser(data, options = {}) {
   return User.create(data, options)
@@ -32,6 +32,18 @@ async function getUserWithResident(userId) {
   return User.findOne({
     where: { id: userId },
     include: [{ model: Resident, as: 'resident' }],
+    attributes: { exclude: ['password'] }
+  })
+}
+
+async function getUserWithProfile(userId) {
+  return User.findOne({
+    where: { id: userId },
+    include: [
+      { model: Resident, as: 'resident' },
+      { model: Staff, as: 'staff' },
+      { model: Role, as: 'role' }
+    ],
     attributes: { exclude: ['password'] }
   })
 }
@@ -72,5 +84,6 @@ export {
   updateUser,
   deleteUser,
   getUserWithResident,
+  getUserWithProfile,
   updateUserWithResident
 }

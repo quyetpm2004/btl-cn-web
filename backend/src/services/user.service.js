@@ -1,17 +1,17 @@
-import { getApartmentByUserId } from "../repositories/apartment.repository.js";
-import { getResidentApartmentByResidentId } from "../repositories/residentApartment.repository.js";
+import { getApartmentByUserId } from '../repositories/apartment.repository.js'
+import { getResidentApartmentByResidentId } from '../repositories/residentApartment.repository.js'
 import {
   getUserById,
   getUserWithResident,
   updateUser,
-  updateUserWithResident,
-} from "../repositories/user.repository.js";
-import { comparePassword, hashPassword } from "../validations/password.js";
-import { User, Apartment, Resident } from "../models/index.js";
+  updateUserWithResident
+} from '../repositories/user.repository.js'
+import { comparePassword, hashPassword } from '../validations/password.js'
+import { User, Apartment, Resident } from '../models/index.js'
 
 const handleGetProfile = async (userId) => {
-  const result = await getUserWithResident(userId);
-  const { email, phone, resident } = result;
+  const result = await getUserWithResident(userId)
+  const { email, phone, resident } = result
   if (resident) {
     const {
       full_name,
@@ -21,8 +21,8 @@ const handleGetProfile = async (userId) => {
       hometown,
       ethnicity,
       occupation,
-      household_no,
-    } = resident;
+      household_no
+    } = resident
     return {
       email,
       full_name,
@@ -33,12 +33,12 @@ const handleGetProfile = async (userId) => {
       hometown,
       ethnicity,
       occupation,
-      household_no,
-    };
+      household_no
+    }
   } else {
-    return { email, phone };
+    return { email, phone }
   }
-};
+}
 
 const handleUpdateProfile = async (
   userId,
@@ -61,9 +61,9 @@ const handleUpdateProfile = async (
     dob,
     hometown,
     ethnicity,
-    occupation,
-  });
-};
+    occupation
+  })
+}
 
 const handleUpdatePassword = async (
   userId,
@@ -72,39 +72,39 @@ const handleUpdatePassword = async (
   confirmPassword
 ) => {
   // Implementation for updating password goes here
-  const { password } = await getUserById(userId);
+  const { password } = await getUserById(userId)
 
-  const isMatch = await comparePassword(oldPassword, password);
+  const isMatch = await comparePassword(oldPassword, password)
 
   if (!isMatch) {
-    throw new Error("Old password is incorrect");
+    throw new Error('Old password is incorrect')
   }
 
   if (newPassword !== confirmPassword) {
-    throw new Error("New password and confirm password do not match");
+    throw new Error('New password and confirm password do not match')
   }
 
-  const hashedNewPassword = await hashPassword(newPassword);
-  await updateUser(userId, { password: hashedNewPassword });
+  const hashedNewPassword = await hashPassword(newPassword)
+  await updateUser(userId, { password: hashedNewPassword })
 
   return {
-    success: true,
-  };
-};
+    success: true
+  }
+}
 
 const handleGetApartment = async (userId) => {
-  const apartment = await getApartmentByUserId(userId);
-  const { owner } = apartment;
-  const residentId = owner.id;
-  const residentApartment = await getResidentApartmentByResidentId(residentId);
+  const apartment = await getApartmentByUserId(userId)
+  const { owner } = apartment
+  const residentId = owner.id
+  const residentApartment = await getResidentApartmentByResidentId(residentId)
 
-  return { apartment, residentApartment };
-};
+  return { apartment, residentApartment }
+}
 
 async function handleFetchResident(userId) {
   try {
     if (!userId) {
-      throw new AppError(StatusCodes.UNAUTHORIZED, "Unauthorized");
+      throw new AppError(StatusCodes.UNAUTHORIZED, 'Unauthorized')
     }
 
     const resident = await Resident.findOne({
@@ -112,19 +112,19 @@ async function handleFetchResident(userId) {
       include: [
         {
           model: Apartment,
-          as: "apartments",
-          attributes: ["id", "apartment_code", "building", "area", "floor"],
+          as: 'apartments',
+          attributes: ['id', 'apartment_code', 'building', 'area', 'floor']
         },
         {
           model: User,
-          as: "user",
-          attributes: ["username", "email", "phone"],
-        },
-      ],
-    });
+          as: 'user',
+          attributes: ['username', 'email', 'phone']
+        }
+      ]
+    })
 
     if (!resident) {
-      throw new AppError(StatusCodes.NOT_FOUND, "Resident profile not found");
+      throw new AppError(StatusCodes.NOT_FOUND, 'Resident profile not found')
     }
 
     const result = {
@@ -134,13 +134,13 @@ async function handleFetchResident(userId) {
         floor: a.floor,
         building: a.building,
         relationship: a.ResidentApartment.relationship,
-        startDate: a.ResidentApartment.start_date,
-      })),
-    };
+        startDate: a.ResidentApartment.start_date
+      }))
+    }
 
-    return result;
+    return result
   } catch (err) {
-    throw err;
+    throw err
   }
 }
 
@@ -149,5 +149,5 @@ export {
   handleUpdateProfile,
   handleUpdatePassword,
   handleGetApartment,
-  handleFetchResident,
-};
+  handleFetchResident
+}

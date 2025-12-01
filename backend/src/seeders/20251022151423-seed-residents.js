@@ -31,6 +31,7 @@ module.exports = {
         user_id: userIds[i],
         full_name: `Cư dân ${i + 1}`,
         gender: Math.floor(Math.random() * 3) + 1,
+        phone: `0${900000000 + i}`,
         dob: dob.toISOString().split('T')[0],
         place_of_birth: `Tỉnh ${Math.floor(Math.random() * 63) + 1}`,
         ethnicity: 'Kinh',

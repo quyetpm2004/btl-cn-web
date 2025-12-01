@@ -1,7 +1,7 @@
-import { getProfileApi, updateProfileApi } from '@/services/api'
+import { getProfileApi, updateProfileApi } from '@/services/user.api.js'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { ModalChangePassword } from './ModalChangePassword'
+import { ModalChangePassword } from './ModalChangePassword.jsx'
 import { useResidentStore } from '@/stores/useResidentStore'
 
 const ProfileSection = () => {

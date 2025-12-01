@@ -21,14 +21,14 @@ const status = z.coerce
   .max(1)
   .describe('0: vacant, 1: occupied')
 const floor = z.coerce.number().int().min(1).max(20)
-const ownerId = z.coerce.number().int().positive().nullable()
+const ownerId = z.union([z.coerce.number().int().positive(), z.null()])
 
 export const createApartmentSchema = z.strictObject({
   apartment_code: apartmentCode,
   building,
   type_id: typeId,
   area,
-  status: status.optional(),
+  status,
   floor,
   owner_id: ownerId.optional()
 })

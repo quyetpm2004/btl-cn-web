@@ -2,7 +2,7 @@ import { Outlet } from 'react-router'
 import Header from './Header'
 import Sidebar from './Sidebar'
 import { useResidentStore } from '@/stores/useResidentStore'
-import { fetchResidentInfoApi } from '@/services/api'
+import { fetchResidentInfoApi } from '@/services/user.api.js'
 import { useEffect } from 'react'
 
 export const UserLayout = () => {

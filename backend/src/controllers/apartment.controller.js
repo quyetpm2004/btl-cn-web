@@ -54,8 +54,8 @@ async function updateApartment(req, res) {
 async function filterApartments(req, res) {
   try {
     const filters = req.query
-    const apartments = await apartmentService.filterApartmentsService(filters)
-    return res.status(StatusCodes.OK).json({ apartments })
+    const result = await apartmentService.filterApartmentsService(filters)
+    return res.status(StatusCodes.OK).json(result)
   } catch (err) {
     const http = toHttpError(err)
     return res.status(http.status).json(http.body)
@@ -83,6 +83,26 @@ async function getApartmentCount(req, res) {
   }
 }
 
+async function getBuildingsApartment(req, res) {
+  try {
+    const buildings = await apartmentService.getBuildingsApartmentService()
+    return res.status(StatusCodes.OK).json({ buildings })
+  } catch (err) {
+    const http = toHttpError(err)
+    return res.status(http.status).json(http.body)
+  }
+}
+
+async function getTypesApartment(req, res) {
+  try {
+    const types = await apartmentService.getTypesApartmentService()
+    return res.status(StatusCodes.OK).json({ types })
+  } catch (err) {
+    const http = toHttpError(err)
+    return res.status(http.status).json(http.body)
+  }
+}
+
 export const apartmentController = {
   createApartment,
   getApartments,
@@ -90,5 +110,7 @@ export const apartmentController = {
   updateApartment,
   filterApartments,
   deleteApartment,
-  getApartmentCount
+  getApartmentCount,
+  getBuildingsApartment,
+  getTypesApartment
 }

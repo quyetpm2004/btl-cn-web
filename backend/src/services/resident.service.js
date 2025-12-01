@@ -1,9 +1,48 @@
 import { AppError } from '../utils/errors.js'
 import { StatusCodes } from 'http-status-codes'
 import * as residentRepo from '../repositories/resident.repository.js'
+import * as residentApartmentRepo from '../repositories/residentApartment.repository.js'
+import { sequelize } from '../models/index.js'
 
 async function createResidentService(data) {
-  return residentRepo.createResident(data)
+  const t = await sequelize.transaction()
+  try {
+    const resident = await residentRepo.createResident(
+      {
+        full_name: data.full_name,
+        gender: data.gender,
+        phone: data.phone,
+        dob: data.dob,
+        place_of_birth: data.place_of_birth,
+        ethnicity: data.ethnicity,
+        occupation: data.occupation,
+        hometown: data.hometown,
+        id_card: data.id_card,
+        household_no: data.household_no,
+        status: data.status,
+        registered_at: data.registered_at
+      },
+      { transaction: t }
+    )
+
+    // If apartment_id is provided, create association
+    if (data.apartment_id) {
+      await residentApartmentRepo.createResidentApartment(
+        {
+          resident_id: resident.id,
+          apartment_id: data.apartment_id,
+          relationship: data?.relationship || 'relative',
+          start_date: data?.start_date || new Date()
+        },
+        { transaction: t }
+      )
+    }
+    await t.commit()
+    return resident
+  } catch (error) {
+    await t.rollback()
+    throw error
+  }
 }
 
 async function getResidentsService() {
@@ -19,14 +58,58 @@ async function getResidentDetailService(id) {
 }
 
 async function updateResidentService(id, data) {
-  const [updatedRows] = await residentRepo.updateResident(id, data)
-  if (updatedRows === 0) {
-    throw new AppError(
-      StatusCodes.NOT_FOUND,
-      'Resident not found or no changes made'
+  const t = await sequelize.transaction()
+  try {
+    let [updatedRows] = await residentRepo.updateResident(
+      id,
+      {
+        full_name: data.full_name,
+        gender: data.gender,
+        phone: data.phone,
+        dob: data.dob,
+        place_of_birth: data.place_of_birth,
+        ethnicity: data.ethnicity,
+        occupation: data.occupation,
+        hometown: data.hometown,
+        id_card: data.id_card,
+        household_no: data.household_no,
+        status: data.status,
+        registered_at: data.registered_at
+      },
+      { transaction: t }
     )
+    if (data.apartment_id) {
+      // Update or create resident-apartment association
+      ;[updatedRows] =
+        await residentApartmentRepo.updateResidentApartmentByResidentId(
+          id,
+          {
+            end_date: new Date()
+          },
+          { transaction: t }
+        )
+      await residentApartmentRepo.createResidentApartment(
+        {
+          resident_id: id,
+          apartment_id: data.apartment_id,
+          relationship: data?.relationship || 'relative',
+          start_date: data?.start_date || new Date()
+        },
+        { transaction: t }
+      )
+    }
+    if (updatedRows === 0) {
+      throw new AppError(
+        StatusCodes.NOT_FOUND,
+        'Resident not found or no changes made'
+      )
+    }
+    await t.commit()
+    return residentRepo.getResidentById(id)
+  } catch (error) {
+    await t.rollback()
+    throw error
   }
-  return residentRepo.getResidentById(id)
 }
 
 async function filterResidentsService(filters) {

@@ -1,11 +1,21 @@
-import { Resident } from '../models/index.js'
+import { Resident, Apartment, User } from '../models/index.js'
+import { Op } from 'sequelize'
 
 async function createResident(data, options = {}) {
   return Resident.create(data, options)
 }
 
 async function getAllResidents() {
-  return Resident.findAll()
+  return Resident.findAll({
+    include: [
+      {
+        model: Apartment,
+        as: 'apartments',
+        attributes: ['id', 'apartment_code'],
+        through: { attributes: [] }
+      }
+    ]
+  })
 }
 
 async function getResidentById(id) {
@@ -25,7 +35,53 @@ async function getResidentCount() {
 }
 
 async function filterResidents(filters) {
-  return Resident.findAll({ where: filters })
+  // Extract pagination from filters (req.query are strings)
+  const page = Number(filters.page) > 0 ? Number(filters.page) : 1
+  const limit = Number(filters.limit) > 0 ? Number(filters.limit) : 10
+  const offset = (page - 1) * limit
+
+  // Build safe where object: exclude pagination-related keys and empty values
+  const { page: _p, limit: _l, offset: _o, full_name, ...rest } = filters || {}
+  const where = Object.fromEntries(
+    Object.entries(rest).filter(
+      ([, v]) => v !== undefined && v !== null && v !== ''
+    )
+  )
+
+  // Add full_name search with LIKE if provided
+  if (full_name && full_name.trim()) {
+    where.full_name = {
+      [Op.like]: `%${full_name.trim()}%`
+    }
+  }
+
+  const total = await Resident.count({
+    where
+  })
+
+  const items = await Resident.findAll({
+    where,
+    include: [
+      {
+        model: Apartment,
+        as: 'apartments',
+        attributes: ['id', 'apartment_code'],
+        through: {
+          attributes: ['end_date', 'is_living'],
+          where: { end_date: null, is_living: true }
+        }
+      }
+      // {
+      //   model: User,
+      //   as: 'user',
+      //   attributes: ['id', 'username', 'email', 'phone']
+      // }
+    ],
+    limit,
+    offset
+  })
+
+  return { items, total, page, limit }
 }
 
 export {

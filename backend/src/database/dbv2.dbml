@@ -43,12 +43,13 @@ Table residents {
   user_id int [ref: > users.id]                 // Tài khoản liên kết
   full_name varchar                             // Họ tên
   gender tinyint                                // 1:nam, 2:nữ, 3:khác
+  phone varchar                                 // Số điện thoại
   dob date                                      // Ngày sinh
   place_of_birth varchar                        // Nơi sinh
   ethnicity varchar                             // Dân tộc
   occupation varchar                            // Nghề nghiệp
   hometown varchar                              // Quê quán
-  id_card varchar                               // CCCD
+  id_card varchar [unique]                      // CCCD
   household_no varchar                          // Mã hộ dân
   status tinyint [default: 1]                   // 1:'đang ở', 2:'tạm vắng', 3:'chuyển đi'
   registered_at timestamp                       // Ngày đăng ký
@@ -69,16 +70,17 @@ Table apartments {
   area float                                    // Diện tích (m2)
   status tinyint                                // 0:'Trống', 1:'Đang ở'
   floor int                                     // Tầng
-  owner_id int [ref: > residents.id]            // Chủ sở hữu
 }
 
 Table resident_apartment {
   id int [pk, increment]                        // Liên kết cư dân - căn hộ
   resident_id int [ref: > residents.id]
   apartment_id int [ref: > apartments.id]
-  relationship varchar                          // Quan hệ (chủ hộ, người thân,...)
+  relationship varchar                          // Quan hệ (chủ hộ, người thân) 
+  is_living boolean [not null, default: 1]      // Đang ở (1 người có thể chủ nhiều hộ nhưng chỉ ở 1 hộ)
   start_date date                               // Ngày bắt đầu
   end_date date                                 // Ngày kết thúc
+  create_at date                                // Ngày thêm
 }
 
 Table vehicles {
