@@ -6,8 +6,9 @@ async function createMaintenanceRequest(data, option = {}) {
 
 async function findPending(residentId) {
   return MaintenanceRequest.findAll({
-    where: { status: 0, resident_id: residentId },
+    where: { resident_id: residentId },
     order: [["created_at", "DESC"]],
+    include: ["work_type"]
   });
 }
 

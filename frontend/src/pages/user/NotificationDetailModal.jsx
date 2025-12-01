@@ -18,27 +18,6 @@ export const NotificationDetailModal = ({
   handleMarkAsUnRead,
   handleMarkAsRead
 }) => {
-  const getTypeColor = (category) => {
-    const colors = {
-      1: 'destructive',
-      2: 'outline',
-      3: 'success',
-      4: 'default',
-      5: 'secondary'
-    }
-    return colors[category] || 'secondary'
-  }
-
-  const categoryNumberToString = (num) => {
-    const map = {
-      1: 'Hệ thống',
-      2: 'Sự kiện',
-      3: 'Hóa đơn',
-      4: 'Bảo trì',
-      5: 'Khác'
-    }
-    return map[num] || 'unknown'
-  }
   const [isRead, setIsRead] = useState(notificationItem.is_read)
 
   const handleMarkUnread = async () => {
@@ -49,13 +28,6 @@ export const NotificationDetailModal = ({
   const handleMarkRead = async () => {
     await handleMarkAsRead(notificationItem)
     setIsRead(true)
-  }
-
-  const handleOpen = () => {
-    setOpen(true)
-    if (!isRead) {
-      setIsRead(true)
-    }
   }
 
   const { notification } = notificationItem

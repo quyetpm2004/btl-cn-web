@@ -25,13 +25,13 @@ import { useResidentStore } from '@/stores/useResidentStore'
 export default function MaintenanceRequestModal({
   isOpenModal,
   setIsOpenModal,
-  equipments,
+  workType,
   onSubmit
 }) {
   const { resident } = useResidentStore()
 
-  const [equipmentId, setEquipmentId] = useState('')
-  const [priority, setPriority] = useState('2')
+  const [workTypeId, setWorkTypeId] = useState('')
+  const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [images, setImages] = useState([])
   const fileInputRef = useRef(null)
@@ -68,9 +68,9 @@ export default function MaintenanceRequestModal({
 
   const handleSubmit = () => {
     const payload = {
-      equipment_id: Number(equipmentId),
+      work_type_id: Number(workTypeId),
       resident_id: Number(resident?.id),
-      priority: Number(priority),
+      title,
       description,
       images: images.map((img) => img.file)
     }
@@ -81,50 +81,44 @@ export default function MaintenanceRequestModal({
     <Dialog open={isOpenModal} onOpenChange={() => setIsOpenModal(false)}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>Tạo yêu cầu bảo trì thiết bị</DialogTitle>
+          <DialogTitle>Tạo phản ánh</DialogTitle>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">Thiết bị</Label>
-            <Select onValueChange={setEquipmentId}>
+            <Label className="text-right">Tiêu đề</Label>
+            <Input
+              className="col-span-3"
+              placeholder="Nhập tiêu đề phản ánh"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            ></Input>
+          </div>
+
+          <div className="grid grid-cols-4 items-start gap-4">
+            <Label className="pt-2 text-right">Nội dung</Label>
+            <Textarea
+              className="col-span-3"
+              placeholder="Nhập mô tả chi tiết về phản ánh"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
+
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-right">Loại công việc</Label>
+            <Select onValueChange={setWorkTypeId}>
               <SelectTrigger className="col-span-3">
-                <SelectValue placeholder="Chọn thiết bị" />
+                <SelectValue placeholder="Chọn công việc" />
               </SelectTrigger>
               <SelectContent>
-                {equipments.map((e) => (
+                {workType.map((e) => (
                   <SelectItem key={e.id} value={String(e.id)}>
                     {e.name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-          </div>
-
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">Mức ưu tiên</Label>
-            <Select onValueChange={setPriority}>
-              <SelectTrigger className="col-span-3">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem>Chọn mức độ ưu tiên</SelectItem>
-                <SelectItem value="1">Thấp</SelectItem>
-                <SelectItem value="2">Trung bình</SelectItem>
-                <SelectItem value="3">Cao</SelectItem>
-                <SelectItem value="4">Khẩn cấp</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="grid grid-cols-4 items-start gap-4">
-            <Label className="pt-2 text-right">Mô tả</Label>
-            <Textarea
-              className="col-span-3"
-              placeholder="Nhập mô tả chi tiết về lỗi hoặc yêu cầu bảo trì"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
           </div>
 
           {/* Image Upload Section */}

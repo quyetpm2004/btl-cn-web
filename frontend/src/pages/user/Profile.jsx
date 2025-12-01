@@ -115,7 +115,7 @@ const ProfileSection = () => {
           {/* LEFT SIDE */}
           <div className="lg:col-span-2">
             <div className="rounded-xl bg-white p-6 shadow-sm">
-              <div className="mb-6 flex items-center space-x-4">
+              <div className="mb-6 flex flex-col items-center space-y-4 md:flex-row md:items-start md:space-y-0 md:space-x-4">
                 {/* Avatar: image with upload in edit mode */}
                 <div className="relative">
                   {avatarPreview || residentInfo?.avatar_url ? (
@@ -159,7 +159,9 @@ const ProfileSection = () => {
                     </>
                   )}
                 </div>
-                <div>
+
+                {/* Thông tin văn bản - Căn giữa trên di động */}
+                <div className="text-center md:text-left">
                   <h3 className="text-xl font-semibold">{fullName}</h3>
                   <p className="text-gray-600">
                     {relationship} - Căn hộ {apartmentCode}
@@ -168,7 +170,12 @@ const ProfileSection = () => {
                     Thành viên từ: {startDate}
                   </p>
                 </div>
-                <Button className="ml-auto" variant="blue" onClick={handleEdit}>
+
+                {/* Nút "Chỉnh sửa" - Tách biệt và căn chỉnh trên di động */}
+                <Button
+                  className="mt-4 md:mt-0 md:ml-auto"
+                  variant="blue"
+                  onClick={handleEdit}>
                   <PenLine /> Chỉnh sửa
                 </Button>
               </div>

@@ -28,6 +28,7 @@ import {
   getAllEquipments,
   getEquipmentById,
 } from "../controllers/user/equipment.controller.js";
+import { getAllWorkType } from "../controllers/user/worktype.controller.js";
 const uploadAvatar = uploadFile("avatar");
 const uploadRequestImages = uploadFile("request");
 
@@ -55,10 +56,7 @@ userRoute.post(
   uploadRequestImages.array("images", 5),
   createMaintenanceRequest
 );
-userRoute.get(
-  "/user/maintenance-request/:residentId/pending",
-  getPendingRequests
-);
+userRoute.get("/user/maintenance-request/:residentId", getPendingRequests);
 userRoute.get("/user/maintenance-request/:id", getMaintenanceRequestDetail);
 userRoute.put(
   "/user/maintenance-request/:id",
@@ -77,5 +75,8 @@ userRoute.get("/user/maintenance-schedule/:id", getMaintenanceScheduleDetail);
 // Equipment
 userRoute.get("/user/equipment", getAllEquipments);
 userRoute.get("/user/equipment/:id", getEquipmentById);
+
+// Work Type
+userRoute.get("/user/work-type", getAllWorkType);
 
 export default userRoute;

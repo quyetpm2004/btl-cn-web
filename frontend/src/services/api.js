@@ -64,13 +64,13 @@ const markNotification = async (notificationReceiverId, isRead) => {
 
 const getMaintenanceRequestsApi = async (residentId) => {
   const response = await instance.get(
-    `/api-v1/user/maintenance-request/${residentId}/pending`
+    `/api-v1/user/maintenance-request/${residentId}`
   )
   return response
 }
 
-const getAllEquipmentApi = async () => {
-  const response = await instance.get('/api-v1/user/equipment')
+const getAllWorkType = async () => {
+  const response = await instance.get('/api-v1/user/work-type')
   return response
 }
 
@@ -81,11 +81,11 @@ const getEquipmentByIdApi = async (id) => {
 
 const createMaintenanceRequestApi = async (data) => {
   const formData = new FormData()
-  formData.append('equipment_id', data.equipment_id)
+  formData.append('work_type_id', data.work_type_id)
   formData.append('resident_id', data.resident_id)
-  formData.append('priority', data.priority)
+  formData.append('title', data.title)
   formData.append('description', data.description)
-  data.images.forEach((image, index) => {
+  data.images.forEach((image) => {
     formData.append(`images`, image)
   })
   const response = await instance.post(
@@ -107,7 +107,7 @@ const updateMaintenanceRequestApi = async (id, data) => {
   formData.append('priority', data.priority)
   formData.append('description', data.description)
   formData.append('removed_images', JSON.stringify(data.removed_images))
-  data.images.forEach((image, index) => {
+  data.images.forEach((image) => {
     formData.append(`images`, image)
   })
   const response = await instance.put(
@@ -146,7 +146,7 @@ export {
   getNotification,
   markNotification,
   getMaintenanceRequestsApi,
-  getAllEquipmentApi,
+  getAllWorkType,
   getEquipmentByIdApi,
   createMaintenanceRequestApi,
   updateMaintenanceRequestApi,

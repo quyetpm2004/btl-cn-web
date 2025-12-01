@@ -28,7 +28,7 @@ const Apartment = () => {
 
       <div className="rounded-xl bg-white p-6 shadow-sm">
         {/* Header */}
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex flex-col items-start gap-2 md:flex-row md:items-center md:justify-between">
           <div>
             <h3 className="text-xl font-semibold">Căn hộ {apartmentCode}</h3>
             <p className="text-gray-600">

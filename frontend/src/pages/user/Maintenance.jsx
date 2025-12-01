@@ -1,70 +1,41 @@
 import React, { useEffect, useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-  SheetFooter
-} from '@/components/ui/sheet'
 import MaintenanceRequestModal from './MaintenanceRequestModal'
 import {
   createMaintenanceRequestApi,
-  deleteMaintenanceRequestApi,
-  getAllEquipmentApi,
-  getMaintenanceRequestsApi,
-  getMaintenanceSchedule,
-  updateMaintenanceRequestApi
+  getAllWorkType,
+  getMaintenanceRequestsApi
 } from '@/services/api'
 import { useResidentStore } from '@/stores/useResidentStore'
 import { toast } from 'sonner'
-import { Eye, PencilLine, Trash2 } from 'lucide-react'
-import EditMaintenanceRequestModal from './EditMaintenanceRequestModal'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger
-} from '@/components/ui/alert-dialog'
 import LightboxModal from './LightboxModal'
+import ModalDetailRequest from './ModalDetailRequest'
 
 export default function Maintenance() {
   // Convert priority number → label
-  const priorityMap = {
-    1: {
-      label: 'Thấp',
-      class: 'border border-green-400 text-green-600 bg-green-50'
+  const statusColorLabel = {
+    0: {
+      label: 'Đang chờ xử lý', // Pending
+      class: 'border border-blue-400 text-blue-600 bg-blue-50'
     },
-    2: {
-      label: 'Trung bình',
+    1: {
+      label: 'Đang xử lý', // In Progress
       class: 'border border-yellow-400 text-yellow-600 bg-yellow-50'
     },
-    3: {
-      label: 'Cao',
-      class: 'border border-red-400 text-red-600 bg-red-50'
+    2: {
+      label: 'Đã hoàn thành', // Completed/Success
+      class: 'border border-green-400 text-green-600 bg-green-50'
     },
-    4: {
-      label: 'Khẩn cấp',
+    3: {
+      label: 'Đã hủy', // Cancelled/Failed
       class: 'border border-red-600 bg-red-600 text-white'
+    },
+
+    default: {
+      label: 'Không xác định', // Undefined
+      class: 'border border-gray-400 text-gray-600 bg-gray-50'
     }
   }
-
   // Convert status number → label
   const requestStatusMap = {
     0: 'Đang chờ xử lý',
@@ -73,16 +44,10 @@ export default function Maintenance() {
     3: 'Đã hủy'
   }
 
-  const scheduleStatusMap = {
-    0: 'Đã lên lịch',
-    1: 'Đã hoàn thành'
-  }
-
   const { resident } = useResidentStore()
 
   const [maintenanceRequests, setMaintenanceRequests] = useState([])
-  const [maintenanceSchedules, setMaintenanceSchedules] = useState([])
-  const [equipments, setEquipments] = useState([])
+  const [workType, setWorkType] = useState([])
   const [sheetOpen, setSheetOpen] = useState(false)
   const [selectedRequest, setSelectedRequest] = useState(null)
 
@@ -101,28 +66,17 @@ export default function Maintenance() {
     }
   }
 
-  const fetchSchedules = async () => {
-    try {
-      const residentId = resident?.id
-      const res = await getMaintenanceSchedule(residentId)
-      setMaintenanceSchedules(res.data.schedules)
-    } catch (error) {
-      console.error('Error fetching maintenance schedules:', error)
-    }
-  }
-
   useEffect(() => {
     fetchData()
-    fetchEquipmentData()
-    fetchSchedules()
+    fetchWorkTypeData()
   }, [])
 
   const [isOpenModal, setIsOpenModal] = useState(false)
 
-  const fetchEquipmentData = async () => {
+  const fetchWorkTypeData = async () => {
     try {
-      const res = await getAllEquipmentApi()
-      setEquipments(res.data.equipments)
+      const res = await getAllWorkType()
+      setWorkType(res.data.workType)
     } catch (error) {
       console.error('Error fetching maintenance data:', error)
     }
@@ -138,37 +92,6 @@ export default function Maintenance() {
     }
   }
 
-  const updateRequest = async (data) => {
-    const res = await updateMaintenanceRequestApi(data.id, data)
-    if (res.data) {
-      fetchData()
-      toast.success('Cập nhật yêu cầu bảo trì thành công')
-    } else {
-      toast.error('Cập nhật yêu cầu bảo trì thất bại')
-    }
-  }
-
-  const handleDeleteRequest = async () => {
-    try {
-      const res = await deleteMaintenanceRequestApi(selectedRequest.id)
-      if (res.data) {
-        fetchData()
-        toast.success('Hủy yêu cầu bảo trì thành công')
-        setSheetOpen(false)
-      } else {
-        toast.error('Hủy yêu cầu bảo trì thất bại')
-      }
-    } catch (error) {
-      console.error('Error deleting maintenance request:', error)
-      toast.error('Hủy yêu cầu bảo trì thất bại')
-    }
-  }
-
-  const baseURL =
-    import.meta.env.VITE_BASE_URL_BACKEND || 'http://localhost:8000'
-
-  const [isOpenEditModal, setIsOpenEditModal] = useState(false)
-  const [editInitialData, setEditInitialData] = useState(null)
   const [lightboxImage, setLightboxImage] = useState(null) // for fullscreen preview
 
   return (
@@ -176,306 +99,77 @@ export default function Maintenance() {
       {/* Header Section */}
       <div className="mb-6">
         <h2 className="mb-2 text-2xl font-bold text-gray-800">
-          Bảo trì thiết bị
+          Phản ánh
         </h2>
         <p className="text-gray-600">
           Nơi giúp bạn giải quyết được những vấn đề khó khăn gặp phải
         </p>
       </div>
-      <Card className="border shadow-none">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-lg font-semibold">
-            Yêu cầu bảo trì thiết bị
-          </CardTitle>
-          <Button onClick={() => setIsOpenModal(true)}>Tạo yêu cầu</Button>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Thiết bị</TableHead>
-                <TableHead>Mô tả</TableHead>
-                <TableHead>Ưu tiên</TableHead>
-                <TableHead>Trạng thái</TableHead>
-                <TableHead>Ngày gửi</TableHead>
-                <TableHead>Thao tác</TableHead>
-              </TableRow>
-            </TableHeader>
+      <Button onClick={() => setIsOpenModal(true)}>Tạo phản ánh</Button>
 
-            <TableBody>
-              {maintenanceRequests.length === 0 && (
-                <TableRow>
-                  <TableCell
-                    colSpan={9}
-                    className="py-4 text-center text-gray-500">
-                    Chưa có yêu cầu nào
-                  </TableCell>
-                </TableRow>
-              )}
-
-              {maintenanceRequests.map((req) => (
-                <TableRow
-                  key={req.id}
-                  className="cursor-pointer hover:bg-gray-50">
-                  <TableCell
-                    onClick={() => openRequest(req)}
-                    className="font-medium">
-                    {equipments.find(
-                      (equipment) => equipment.id === req.equipment_id
-                    )?.name || '—'}
-                  </TableCell>
-                  <TableCell className="max-w-[200px] truncate">
-                    {req.description}
-                  </TableCell>
-
-                  <TableCell>
-                    <Badge
-                      variant="outline"
-                      className={priorityMap[req.priority].class}>
-                      {priorityMap[req.priority].label}
-                    </Badge>
-                  </TableCell>
-
-                  <TableCell>{requestStatusMap[req.status]}</TableCell>
-                  <TableCell>
-                    {new Date(req.createdAt).toLocaleString('vi-VN', {
-                      day: '2-digit',
-                      month: '2-digit',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      second: '2-digit'
-                    })}
-                  </TableCell>
-                  <TableCell className="flex items-center gap-2">
-                    <PencilLine
-                      size={20}
-                      onClick={() => {
-                        setEditInitialData(req)
-                        setIsOpenEditModal(true)
-                      }}
-                    />{' '}
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Trash2
-                          size={20}
-                          onClick={() => setSelectedRequest(req)}
-                        />
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Bạn có chắc chắn muốn xóa yêu cầu này?
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Hành động này không thể hoàn tác.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Hủy</AlertDialogCancel>
-                          <AlertDialogAction onClick={handleDeleteRequest}>
-                            Xóa
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      <Card className="border shadow-none">
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold">
-            Danh sách hoàn thành
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Thiết bị</TableHead>
-                <TableHead>Bắt đầu</TableHead>
-                <TableHead>Kết thúc</TableHead>
-                <TableHead>Nhân viên</TableHead>
-                <TableHead>Ghi chú</TableHead>
-                <TableHead>Trạng thái</TableHead>
-              </TableRow>
-            </TableHeader>
-
-            <TableBody>
-              {maintenanceSchedules.length === 0 && (
-                <TableRow>
-                  <TableCell
-                    colSpan={7}
-                    className="py-4 text-center text-gray-500">
-                    Chưa có lịch bảo trì
-                  </TableCell>
-                </TableRow>
-              )}
-
-              {maintenanceSchedules.map((sch) => (
-                <TableRow key={sch.id}>
-                  <TableCell>
-                    {equipments.find(
-                      (equipment) => equipment.id === sch.equipment_id
-                    )?.name || '—'}
-                  </TableCell>
-                  <TableCell>
-                    {new Date(sch.start_at).toLocaleString('vi-VN', {
-                      day: '2-digit',
-                      month: '2-digit',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      second: '2-digit'
-                    })}
-                  </TableCell>
-                  <TableCell>
-                    {new Date(sch.end_at).toLocaleString('vi-VN', {
-                      day: '2-digit',
-                      month: '2-digit',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      second: '2-digit'
-                    })}
-                  </TableCell>
-                  <TableCell>{sch.assignee.full_name}</TableCell>
-                  <TableCell className="max-w-[200px] truncate">
-                    {sch.description}
-                  </TableCell>
-
-                  <TableCell>
-                    <Badge variant="success">
-                      {scheduleStatusMap[sch.status]}
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
+      {/* Modal Create */}
       <MaintenanceRequestModal
         isOpenModal={isOpenModal}
         setIsOpenModal={setIsOpenModal}
-        equipments={equipments}
+        workType={workType}
         onSubmit={handleCreateNewRequest}
       />
 
-      {/* Request Details Sheet */}
-      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-        <SheetContent side="right">
-          <SheetHeader>
-            <SheetTitle>Yêu cầu bảo trì</SheetTitle>
-            <SheetDescription>
-              {selectedRequest
-                ? equipments.find((e) => e.id === selectedRequest.equipment_id)
-                    ?.name
-                : ''}
-            </SheetDescription>
-          </SheetHeader>
-
-          <div className="space-y-4 p-4">
-            <div>
-              <p className="text-sm text-gray-600">Mô tả</p>
-              <p className="font-medium">{selectedRequest?.description}</p>
-            </div>
-
-            <div>
-              <p className="text-sm text-gray-600">Ưu tiên</p>
-              <p className="font-medium">
-                {selectedRequest
-                  ? priorityMap[selectedRequest.priority]?.label
-                  : '—'}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-sm text-gray-600">Trạng thái</p>
-              <p className="font-medium">
-                {selectedRequest
-                  ? requestStatusMap[selectedRequest.status]
-                  : '—'}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-sm text-gray-600">Hình ảnh</p>
-              <div className="mt-2">
-                {(() => {
-                  let imgs = []
-
-                  if (typeof selectedRequest?.images === 'string') {
-                    imgs = JSON.parse(selectedRequest.images)
-                  } else if (Array.isArray(selectedRequest?.images)) {
-                    imgs = selectedRequest.images
-                  }
-
-                  if (!imgs || imgs.length === 0) {
-                    return (
-                      <p className="text-sm text-gray-500">Không có hình ảnh</p>
-                    )
-                  }
-
-                  return (
-                    <div className="grid grid-cols-2 gap-2">
-                      {imgs.map((img, idx) => {
-                        const src = `${baseURL}/images/request/${img}`
-                        return (
-                          <div
-                            key={idx}
-                            className="group relative overflow-hidden rounded bg-gray-100">
-                            <img
-                              src={src}
-                              alt={`img-${idx}`}
-                              className="h-40 w-full object-cover"
-                            />
-                            <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                              <button
-                                type="button"
-                                onClick={() => setLightboxImage(img)}
-                                className="rounded-full bg-white/20 p-1.5 hover:bg-white/40">
-                                <Eye size={18} className="text-white" />
-                              </button>
-                            </div>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  )
-                })()}
-              </div>
-            </div>
-          </div>
-
-          <SheetFooter>
-            <div className="flex justify-end">
-              <Button variant="outline" onClick={() => setSheetOpen(false)}>
-                Đóng
-              </Button>
-            </div>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
-
-      <EditMaintenanceRequestModal
-        isOpenModal={isOpenEditModal}
-        initialData={editInitialData}
-        setIsOpenModal={setIsOpenEditModal}
-        equipments={equipments}
-        onSubmit={updateRequest}
+      {/* Modal Detail */}
+      <ModalDetailRequest
+        sheetOpen={sheetOpen}
+        setSheetOpen={setSheetOpen}
+        selectedRequest={selectedRequest}
+        setLightboxImage={setLightboxImage}
       />
 
+      {/* Modal View Scale Image */}
       <LightboxModal
         imageSrc={lightboxImage}
         onClose={() => setLightboxImage(null)}
       />
+
+      {/* Main Content */}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {maintenanceRequests.map((item) => (
+          <div className="bg-card border-border col-span-1 cursor-pointer overflow-hidden rounded-lg border shadow-sm transition-all hover:shadow-lg">
+            <div
+              className="p-4"
+              onClick={() => {
+                openRequest(item)
+              }}>
+              <div className="border-border flex items-center justify-between border-b pb-3">
+                <span
+                  className={` ${statusColorLabel[item.status].class} status-pending rounded-full border px-3 py-1 text-xs font-semibold`}>
+                  {statusColorLabel[item.status].label ||
+                    requestStatusMap[item.status]}
+                </span>
+                <span className="text-muted-foreground text-xs">
+                  {new Date(item.createdAt).toLocaleString('vi-VN', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                  })}
+                </span>
+              </div>
+              <div className="mt-3 flex items-start justify-between">
+                <div className="space-y-1">
+                  <h3 className="text-card-foreground mb-1 font-bold">
+                    {item.title}
+                  </h3>
+                </div>
+              </div>
+
+              <p className="text-muted-foreground line-clamp-3 text-sm">
+                {item.description}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

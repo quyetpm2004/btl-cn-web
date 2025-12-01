@@ -8,16 +8,15 @@ import {
 
 const createMaintenanceRequest = async (req, res) => {
   try {
-    const { equipment_id, resident_id, description, priority } = req.body;
-    console.log("equipment_id", equipment_id);
+    const { work_type_id, resident_id, description, title } = req.body;
 
     const images = req.files?.map((file) => file.filename) || [];
 
     const request = await handleCreateMaintenanceRequest(
-      equipment_id,
+      work_type_id,
       resident_id,
       description,
-      priority,
+      title,
       images
     );
 

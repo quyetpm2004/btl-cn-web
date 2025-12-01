@@ -8,17 +8,17 @@ import {
 import path from "path";
 import fs from "fs";
 const handleCreateMaintenanceRequest = async (
-  equipment_id,
+  work_type_id,
   resident_id,
   description,
-  priority,
+  title,
   images
 ) => {
   const request = await createMaintenanceRequest({
-    equipment_id,
+    work_type_id,
     resident_id,
     description,
-    priority,
+    title,
     images,
   });
 
@@ -74,7 +74,7 @@ const handleUpdateRequest = async (id, data, files) => {
   const finalFilenames = [...updatedImagesAfterRemoval, ...newImageUrls];
 
   const updateData = {
-    equipment_id,
+    // equipment_id,
     resident_id,
     description,
     priority,

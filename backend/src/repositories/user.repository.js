@@ -51,10 +51,14 @@ async function updateUserWithResident(userId, data) {
     avatar,
   } = data;
 
-  await User.update(
-    { email, phone, avatar_url: avatar },
-    { where: { id: userId } }
-  );
+  if (avatar !== null) {
+    await User.update(
+      { email, phone, avatar_url: avatar },
+      { where: { id: userId } }
+    );
+  } else {
+    await User.update({ email, phone }, { where: { id: userId } });
+  }
 
   await Resident.update(
     {

@@ -32,7 +32,6 @@ const AppSidebar = () => {
 
   const isActive = (path) => location.pathname === path
 
-  // ✅ Gắn icon tương ứng với từng item
   const menuData = [
     {
       title: 'Tổng quan',
@@ -78,7 +77,7 @@ const AppSidebar = () => {
           isActive: isActive('/user/notification')
         },
         {
-          title: 'Bảo trì thiết bị',
+          title: 'Phản ánh',
           url: '/user/maintenance',
           icon: <ToolCase className="h-4 w-4" />,
           isActive: isActive('/user/maintenance')

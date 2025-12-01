@@ -4,22 +4,19 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class MaintenanceRequest extends Model {
     static associate(models) {
-      // MaintenanceRequest belongs to Equipment
-      MaintenanceRequest.belongsTo(models.Equipment, {
-        foreignKey: "equipment_id",
-        as: "equipment",
-      });
-
-      // MaintenanceRequest belongs to Resident
       MaintenanceRequest.belongsTo(models.Resident, {
         foreignKey: "resident_id",
         as: "resident",
       });
 
-      // MaintenanceRequest assigned to Staff
       MaintenanceRequest.belongsTo(models.Staff, {
         foreignKey: "assigned_to",
         as: "assignee",
+      });
+
+      MaintenanceRequest.belongsTo(models.WorkType, {
+        foreignKey: "work_type_id",
+        as: "work_type",
       });
     }
   }
@@ -31,14 +28,27 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      equipment_id: {
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      result: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      work_type_id: {
         type: DataTypes.INTEGER,
+        allowNull: false,
       },
       resident_id: {
         type: DataTypes.INTEGER,
       },
       description: {
         type: DataTypes.TEXT,
+      },
+      result: {
+        type: DataTypes.TEXT,
+        allowNull: true,
       },
       images: {
         type: DataTypes.JSON,

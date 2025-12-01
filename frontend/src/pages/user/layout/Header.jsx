@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Building2 } from 'lucide-react'
+import { useSidebar } from '@/components/ui/sidebar'
 
 const Header = () => {
   const navigate = useNavigate()
@@ -25,15 +26,20 @@ const Header = () => {
     navigate('/auth/login')
   }
 
+  const { setOpenMobile } = useSidebar()
+
   const baseURL =
     import.meta.env.VITE_BASE_URL_BACKEND || 'http://localhost:8000'
 
   return (
-    <header className="z-index-10000 fixed top-0 w-full bg-white text-black shadow-sm">
+    <header className="fixed top-0 z-[20] w-full bg-white text-black shadow-sm">
       <div className="container mx-auto flex items-center justify-between px-6 py-4">
         {/* Left */}
         <div className="flex items-center space-x-4">
-          <button id="menuToggle" className="md:hidden">
+          <button
+            id="menuToggle"
+            className="md:hidden"
+            onClick={() => setOpenMobile(true)}>
             <i className="fas fa-bars text-xl"></i>
           </button>
 
@@ -47,34 +53,34 @@ const Header = () => {
         </div>
 
         {/* Right */}
-        <div className="flex items-center space-x-4">
-          <div className="hidden items-center space-x-2 md:flex">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Avatar className="h-8 w-8">
-                  <AvatarImage
-                    src={`${baseURL}/images/avatar/${resident?.avatar_url}`}
-                    alt="Avatar"
-                  />
-                  <AvatarFallback>
-                    <i className="fas fa-user text-black"></i>
-                  </AvatarFallback>
-                </Avatar>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                sideOffset={10}
-                align="start"
-                className="w-40">
-                <DropdownMenuItem onClick={handleLogout}>
-                  Đăng xuất
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+        <div className="flex items-center gap-2">
+          {/* 1. Avatar và Dropdown Menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Avatar className="h-8 w-8 cursor-pointer">
+                <AvatarImage
+                  src={`${baseURL}/images/avatar/${resident?.avatar_url}`}
+                  alt="Avatar"
+                />
+                <AvatarFallback>
+                  {/* Sử dụng Tailwind class cho fallback (nếu có) hoặc giữ nguyên biểu tượng */}
+                  <i className="fas fa-user text-black"></i>
+                </AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent sideOffset={10} align="end" className="w-40">
+              <DropdownMenuItem onClick={handleLogout}>
+                Đăng xuất
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-            <div>
-              <p className="text-sm font-medium">{fullName}</p>
-              <p className="text-xs opacity-75">Căn hộ {apartmentCode}</p>
-            </div>
+          {/* 2. Thông tin người dùng (Ẩn trên Mobile, Hiện trên Desktop) */}
+          <div className="hidden flex-col md:flex">
+            <p className="text-sm leading-none font-medium">{fullName}</p>
+            <p className="text-xs leading-none opacity-75 mt-2">
+              Căn hộ {apartmentCode}
+            </p>
           </div>
         </div>
       </div>

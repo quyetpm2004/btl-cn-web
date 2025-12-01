@@ -39,7 +39,7 @@ const UserLayoutContent = () => {
         <AppSidebar />
         <main
           className={`flex-10 p-6 transition-all duration-300 md:ml-0 ${
-            state === 'collapsed' ? 'ml-16' : 'ml-64'
+            state === 'collapsed' ? 'ml-16' : 'ml-0'
           }`}>
           <Outlet />
         </main>
