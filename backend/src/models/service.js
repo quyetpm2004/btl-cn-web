@@ -9,6 +9,12 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'service_id',
         as: 'registrations'
       })
+
+      // Service has many InvoiceItems
+      Service.hasMany(models.InvoiceItem, {
+        foreignKey: "service_id",
+        as: "items",
+      });
     }
   }
 

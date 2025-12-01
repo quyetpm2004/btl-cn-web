@@ -10,6 +10,11 @@ module.exports = (sequelize, DataTypes) => {
         as: 'apartment'
       })
 
+      Invoice.hasMany(models.InvoiceItem, {
+        foreignKey: "invoice_id",
+        as: "items",
+      });
+
       // Invoice belongs to Collection Period
       Invoice.belongsTo(models.CollectionPeriod, {
         foreignKey: 'period_id',
