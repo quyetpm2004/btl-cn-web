@@ -10,6 +10,11 @@ module.exports = (sequelize, DataTypes) => {
         as: 'user'
       })
 
+      Resident.hasMany(models.ResidentApartment, {
+        foreignKey: 'resident_id',
+        as: 'residentApartment'
+      })
+
       // Resident and Apartments many-to-many through ResidentApartment
       Resident.belongsToMany(models.Apartment, {
         through: {

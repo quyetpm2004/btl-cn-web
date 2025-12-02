@@ -2,6 +2,7 @@ import { AppError } from '../utils/errors.js'
 import { StatusCodes } from 'http-status-codes'
 import * as invoiceRepo from '../repositories/invoice.repository.js'
 import db from '../models/index.js'
+import { getApartmentByUserId } from '../repositories/apartment.repository.js'
 
 async function createInvoiceService(data) {
   return invoiceRepo.createInvoice(data)
@@ -121,9 +122,32 @@ async function checkOverdueInvoicesService() {
   }
 }
 
+/**
+ * Get unpaid invoices for the apartment owned by the given user
+ * @param {number} userId
+ */
+async function getUnpaidInvoicesForUser(userId) {
+  const apartment = await getApartmentByUserId(userId)
+  if (!apartment) return []
+  return invoiceRepo.getInvoicesByApartmentAndStatus(apartment.id, 0)
+}
+
+/**
+ * Get paid invoices for the apartment owned by the given user
+ * @param {number} userId
+ */
+async function getPaidInvoicesForUser(userId) {
+  const apartment = await getApartmentByUserId(userId)
+  if (!apartment) return []
+  return invoiceRepo.getInvoicesByApartmentAndStatus(apartment.id, 1)
+}
+
 export const invoiceService = {
   createInvoiceService,
   getTotalRevenueCurrentMonthService,
   createPaymentService,
-  checkOverdueInvoicesService
+  checkOverdueInvoicesService,
+  getUnpaidInvoicesForUser,
+  getPaidInvoicesForUser
 }
+

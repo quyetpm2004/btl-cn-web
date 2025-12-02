@@ -5,6 +5,14 @@ module.exports = (sequelize, DataTypes) => {
   class ResidentApartment extends Model {
     static associate(models) {
       // Association defined in Resident and Apartment models
+      ResidentApartment.belongsTo(models.Resident, {
+        foreignKey: 'resident_id',
+        as: 'resident'
+      })
+      ResidentApartment.belongsTo(models.Apartment, {
+        foreignKey: 'apartment_id',
+        as: 'apartment'
+      })
     }
   }
 

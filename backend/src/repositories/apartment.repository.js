@@ -1,4 +1,4 @@
-import { Apartment, Resident, User, ApartmentType } from '../models/index.js'
+import { Apartment, Resident, User, ApartmentType, ResidentApartment } from '../models/index.js'
 import { Op } from 'sequelize'
 
 async function createApartment(data, options = {}) {
@@ -104,29 +104,20 @@ async function filterApartments(filters) {
 }
 
 async function getApartmentByUserId(userId) {
-  return Apartment.findOne({
+  const resident = await Resident.findOne({
+    where: { user_id: userId },
     include: [
       {
-        model: Resident,
-        as: 'owner',
-        required: true,
-        include: [
-          {
-            model: User,
-            as: 'user',
-            required: true,
-            where: { id: userId },
-            attributes: { exclude: ['password', 'createdAt', 'updatedAt'] }
-          }
-        ]
-      },
-      {
-        model: ApartmentType,
-        as: 'type',
-        attributes: { exclude: ['createdAt', 'updatedAt'] }
+        model: ResidentApartment,
+        as: 'residentApartment',
+        include: [{ model: Apartment, as: 'apartment' }]
       }
     ]
-  })
+  });
+
+
+  const apartment = resident.residentApartment[0].apartment;
+  return apartment;
 }
 
 async function getBuildingsApartment() {

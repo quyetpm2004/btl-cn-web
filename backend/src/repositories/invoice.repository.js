@@ -193,3 +193,41 @@ export {
   updateAccountBalance,
   markOverdueByPeriod
 }
+
+/**
+ * Get invoices for an apartment filtered by status.
+ * @param {number} apartmentId
+ * @param {number|Array<number>} status - invoice status or array of statuses
+ * @returns {Promise<Array<Invoice>>}
+ */
+async function getInvoicesByApartmentAndStatus(apartmentId, status) {
+  const where = { apartment_id: apartmentId }
+  if (Array.isArray(status)) {
+    where.status = { [Op.in]: status }
+  } else if (status !== undefined && status !== null) {
+    where.status = status
+  }
+
+  return Invoice.findAll({
+    where,
+    include: [
+      { model: db.sequelize.models.InvoiceItem, as: 'items' },
+      { model: db.sequelize.models.Payment, as: 'payments' },
+      { model: db.sequelize.models.CollectionPeriod, as: 'period' }
+    ],
+    order: [['id', 'DESC']]
+  })
+}
+
+/**
+ * Get all invoices for an apartment (optional pagination/filtering could be added later)
+ */
+async function getInvoicesByApartment(apartmentId) {
+  return getInvoicesByApartmentAndStatus(apartmentId)
+}
+
+// Export the new helpers
+export {
+  getInvoicesByApartmentAndStatus,
+  getInvoicesByApartment
+}

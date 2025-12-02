@@ -29,6 +29,7 @@ import {
   getEquipmentById
 } from '../controllers/user/equipment.controller.js'
 import { getAllWorkType } from '../controllers/user/worktype.controller.js'
+import { getPaymentUnpaid, getPaymentPaid, createPayment, vnpayReturn } from '../controllers/user/payment.controller.js'
 const uploadAvatar = uploadFile('avatar')
 const uploadRequestImages = uploadFile('request')
 
@@ -40,7 +41,6 @@ userRoute.put('/profile', uploadAvatar.single('avatar'), updateProfile)
 userRoute.put('/password', updatePassword)
 
 // apartment
-userRoute.get('/apartment', getApartment)
 userRoute.get('/fetch-resident', fetchResident)
 
 // notification
@@ -78,5 +78,12 @@ userRoute.get('/equipment/:id', getEquipmentById)
 
 // Work Type
 userRoute.get('/work-type', getAllWorkType)
+
+// Fee
+userRoute.get('/payment/unpaid', getPaymentUnpaid)
+userRoute.get('/payment/paid', getPaymentPaid)
+userRoute.post("/payment/create-qr", createPayment);
+userRoute.get("/payment/vnpay_return", vnpayReturn);
+
 
 export default userRoute
