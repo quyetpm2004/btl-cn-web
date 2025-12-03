@@ -36,7 +36,6 @@ const UserDashboard = ({ onNavigate }) => {
                 Hóa đơn chưa thanh toán
               </p>
               <p className="text-2xl font-bold text-red-600">1</p>
-              <p className="text-xs text-red-500">Quá hạn 5 ngày</p>
             </div>
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100">
               <i className="fas fa-exclamation-triangle text-red-600"></i>
@@ -44,15 +43,14 @@ const UserDashboard = ({ onNavigate }) => {
           </div>
         </div>
 
-        {/* Dịch vụ đang dùng */}
+        {/* Căn hộ đang sở hữu */}
         <div className="card-hover rounded-xl bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">
-                Dịch vụ đang dùng
+                Căn hộ đang sở hữu
               </p>
               <p className="text-2xl font-bold text-green-600">3</p>
-              <p className="text-xs text-green-500">Xe máy, Internet, Gym</p>
             </div>
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
               <i className="fas fa-check-circle text-green-600"></i>
@@ -68,7 +66,6 @@ const UserDashboard = ({ onNavigate }) => {
                 Phản ánh đang xử lý
               </p>
               <p className="text-2xl font-bold text-yellow-600">2</p>
-              <p className="text-xs text-yellow-500">Dự kiến hoàn thành sớm</p>
             </div>
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-yellow-100">
               <i className="fas fa-clock text-yellow-600"></i>
@@ -82,7 +79,6 @@ const UserDashboard = ({ onNavigate }) => {
             <div>
               <p className="text-sm font-medium text-gray-600">Thông báo mới</p>
               <p className="text-2xl font-bold text-blue-600">3</p>
-              <p className="text-xs text-blue-500">Cần xem ngay</p>
             </div>
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
               <i className="fas fa-bell text-blue-600"></i>
@@ -124,9 +120,9 @@ const UserDashboard = ({ onNavigate }) => {
           onClick={() => onNavigate?.('services')}>
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="mb-2 text-lg font-semibold">Đăng ký dịch vụ</h3>
+              <h3 className="mb-2 text-lg font-semibold">Phản ánh chung cư</h3>
               <p className="text-sm opacity-90">
-                Xe máy, ô tô, internet, gym...
+                Gửi yêu cầu bảo trì và phản ánh sự cố
               </p>
             </div>
             <i className="fas fa-concierge-bell text-3xl opacity-80"></i>

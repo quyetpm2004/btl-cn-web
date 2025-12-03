@@ -128,6 +128,28 @@ const getMaintenanceSchedule = async (residentId) => {
   return response
 }
 
+const getUnpaidApi = async () => {
+  const response = await instance.get('/user/payment/unpaid')
+  return response
+}
+
+const getPaymentHistoryApi = async () => {
+  const response = await instance.get('/user/payment/paid')
+  return response
+}
+
+const createQrApi = async (invoiceId) => {
+  const response = await instance.post('/user/payment/create-qr', {
+    invoiceId
+  })
+  return response
+}
+
+const paymentResultApi = async (query) => {
+  const response = await instance.get(`/user/payment/vnpay_return${query}`)
+  return response
+}
+
 export {
   loginApi,
   registerApi,
@@ -143,5 +165,9 @@ export {
   createMaintenanceRequestApi,
   updateMaintenanceRequestApi,
   deleteMaintenanceRequestApi,
-  getMaintenanceSchedule
+  getMaintenanceSchedule,
+  getUnpaidApi,
+  getPaymentHistoryApi,
+  createQrApi,
+  paymentResultApi
 }

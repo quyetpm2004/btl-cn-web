@@ -84,11 +84,10 @@ async function getTotalPaidForInvoice(invoiceId, transaction) {
  * Update invoice status.
  * @param {number} invoiceId
  * @param {number} status - 0: unpaid, 1: paid, 2: overdue, 3: cancelled
- * @param {Object} transaction - optional Sequelize transaction
  * @returns {Promise<void>}
  */
-async function updateInvoiceStatus(invoiceId, status, transaction) {
-  await Invoice.update({ status }, { where: { id: invoiceId }, transaction })
+async function updateInvoice(invoiceId, data) {
+  await Invoice.update( data , { where: { id: invoiceId } })
 }
 
 /**
@@ -187,7 +186,7 @@ export {
   createPayment,
   getInvoiceById,
   getTotalPaidForInvoice,
-  updateInvoiceStatus,
+  updateInvoice,
   calculateApartmentBalance,
   getOrCreateAccountBalance,
   updateAccountBalance,
@@ -201,23 +200,40 @@ export {
  * @returns {Promise<Array<Invoice>>}
  */
 async function getInvoicesByApartmentAndStatus(apartmentId, status) {
-  const where = { apartment_id: apartmentId }
+  const where = { apartment_id: apartmentId };
+
   if (Array.isArray(status)) {
-    where.status = { [Op.in]: status }
+    where.status = { [Op.in]: status };
   } else if (status !== undefined && status !== null) {
-    where.status = status
+    where.status = status;
   }
 
-  return Invoice.findAll({
+  const invoices = await Invoice.findAll({
     where,
     include: [
-      { model: db.sequelize.models.InvoiceItem, as: 'items' },
-      { model: db.sequelize.models.Payment, as: 'payments' },
+      { model: db.sequelize.models.InvoiceItem, as: 'items',
+        include: [
+          { model: db.sequelize.models.Service, as: 'service' }
+        ]
+       },
       { model: db.sequelize.models.CollectionPeriod, as: 'period' }
     ],
-    order: [['id', 'DESC']]
-  })
+    order: [['id']]
+  });
+
+  return invoices.map(invoice => ({
+    id: invoice.id,
+    apartment_id: invoice.apartment_id,
+    total_amount: invoice.total_amount,
+    status: invoice.status,
+    end_date: invoice.end_date,
+    paid_at: invoice.paid_at,
+    created_at: invoice.created_at,
+    items: invoice.items,
+    name: invoice.period?.name
+  }));
 }
+
 
 /**
  * Get all invoices for an apartment (optional pagination/filtering could be added later)

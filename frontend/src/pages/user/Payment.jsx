@@ -1,25 +1,51 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem
-} from '@/components/ui/select'
 import { Clock, Mail, Phone } from 'lucide-react'
+import { createQrApi, getUnpaidApi } from '@/services/api'
+import { getPaymentHistoryApi } from '@/services/api'
+import BillDetailDrawer from '@/components/bill-detail-drawer'
 
 const Payment = () => {
-  const viewBillDetail = (id) => alert(`Xem chi tiết hóa đơn: ${id}`)
-  const openPaymentModal = (amount, name) =>
-    alert(`Thanh toán ${name} (${amount} VNĐ)`)
-  const downloadBill = (id) => alert(`Tải hóa đơn ${id}`)
-  const filterPaymentHistory = (value) => alert(`Lọc lịch sử: ${value}`)
-  const exportPaymentHistory = () => alert('Xuất lịch sử thanh toán ra Excel')
-  const viewReceipt = (id) => alert(`Xem biên lai: ${id}`)
-  const downloadReceipt = (id) => alert(`Tải biên lai: ${id}`)
+  const [selectedBill, setSelectedBill] = useState(null)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+
+  const viewBillDetail = (billData) => {
+    setSelectedBill(billData)
+    setIsDrawerOpen(true)
+  }
+
+  const [bill, setBill] = useState([])
+  const [history, setHistory] = useState([])
+
+
+  const fetchDataUnpaid = async () => {
+    const res = await getUnpaidApi()
+    if(res && res.data) {
+      setBill(res.data.data)
+    }
+  }
+
+  const handlePaid = async (invoiceId) => {
+    const res = await createQrApi(invoiceId)
+    if (res?.data?.data) {
+    window.location.href = res.data.data;
+  }
+  }
+
+  useEffect(() => {
+    fetchDataUnpaid()
+    fetchDataHistory()
+  }, [])
+
+  const fetchDataHistory = async () => {
+    try {
+      const res = await getPaymentHistoryApi()
+      if (res && res.data) setHistory(res.data.data || [])
+    } catch (error) {
+      console.error('Error fetching payment history:', error)
+    }
+  }
 
   return (
     <div className="space-y-6 text-black">
@@ -30,6 +56,13 @@ const Payment = () => {
         </h2>
         <p className="text-gray-600">Thanh toán nhanh chóng và tiện lợi</p>
       </div>
+
+      <BillDetailDrawer 
+        isOpen={isDrawerOpen} 
+        onClose={() => setIsDrawerOpen(false)} 
+        billData={selectedBill} 
+        handlePaid={handlePaid}
+      />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Left Column */}
@@ -43,43 +76,44 @@ const Payment = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Bill 1 */}
-              <Card className="border border-red-300 bg-red-50">
+              {
+                bill?.length > 0 ? bill?.map((item, index) => ( 
+                   <Card className="border border-red-300 bg-red-50" key={index}>
                 <CardContent className="space-y-3 p-4">
                   <div className="flex justify-between">
                     <div>
                       <p className="font-semibold text-red-700">
-                        Hóa đơn tháng 12/2024
+                        {item?.name}
                       </p>
-                      <p className="text-sm text-red-600">Hạn: 15/12/2024</p>
+                      <p className="text-sm text-red-600">
+                        Hạn: {new Date(item.end_date).toLocaleDateString("vi-VN")}
+                      </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline">Chưa hết hạn</Badge>
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => viewBillDetail('202412')}>
+                        onClick={() => viewBillDetail(item)}>
                         Chi tiết
                       </Button>
                     </div>
                   </div>
 
                   <div className="space-y-1 text-sm">
-                    <div className="flex justify-between">
-                      <span>Phí quản lý</span>
-                      <span>1,125,000 VNĐ</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Phí gửi xe</span>
-                      <span>100,000 VNĐ</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Internet</span>
-                      <span>200,000 VNĐ</span>
-                    </div>
+                    {item?.items?.map((billItem, idx) => (
+                      <div
+                        key={idx}
+                        className="flex justify-between">
+                        <span>{billItem?.service?.name}</span>
+                        <span>
+                          {billItem?.amount?.toLocaleString('vi', {style : 'currency', currency : 'VND'})} 
+                        </span>
+                      </div>
+                    ))}
                     <hr className="border-red-200" />
                     <div className="flex justify-between font-semibold text-red-700">
                       <span>Tổng</span>
-                      <span>1,496,250 VNĐ</span>
+                      <span>{item.total_amount.toLocaleString('vi', {style : 'currency', currency : 'VND'})}</span>
                     </div>
                   </div>
 
@@ -87,21 +121,50 @@ const Payment = () => {
                     <Button
                       className="flex-1 bg-red-600 text-white hover:bg-red-700"
                       onClick={() =>
-                        openPaymentModal('1496250', 'Hóa đơn tháng 12/2024')
+                        handlePaid(item.id)
                       }>
                       Thanh toán
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      onClick={() => downloadBill('202412')}>
-                      Tải
                     </Button>
                   </div>
                 </CardContent>
               </Card>
+                )) : <p>Không có hóa đơn chưa thanh toán!</p>
+              }
             </CardContent>
           </Card>
-
+          {/* Lịch sử thanh toán */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">Lịch sử thanh toán</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {history.length === 0 ? (
+                <p className="text-sm text-gray-500">Chưa có lịch sử thanh toán</p>
+              ) : (
+                <div className="space-y-3">
+                  {history.map((h) => (
+                    <div
+                      key={h.id}
+                      className="cursor-pointer rounded-lg border p-3 hover:bg-gray-50"
+                      onClick={() => viewBillDetail(h)}>
+                      <div className="flex justify-between">
+                        <div>
+                          <p className="font-medium">{h.name}</p>
+                          <p className="text-sm text-gray-600">Hóa đơn #{h.id}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-semibold">{h.total_amount?.toLocaleString('vi', {style : 'currency', currency : 'VND'})}</p>
+                          <p className="text-sm text-gray-500">
+                            {h.paid_at ? new Date(h.paid_at).toLocaleString('vi-VN', { hour12: false }) : "-"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
           
         </div>
 
@@ -116,17 +179,16 @@ const Payment = () => {
                 toán, vui lòng liên hệ đội ngũ hỗ trợ của chúng tôi ở thông tin
                 bên dưới. Chúng tôi luôn sẵn sàng đồng hành và hỗ trợ bạn.
               </p>
-              <SupportItem icon={Phone} title="Hotline" content="1900-xxxx" />
-              <SupportItem
-                icon={Mail}
-                title="Email"
-                content="support@chungcu.vn"
-              />
+              <SupportItem icon={Phone} title="Hotline" content="1900-1000" />
+              
               <SupportItem
                 icon={Clock}
                 title="Giờ làm việc"
                 content="8:00 - 17:00 (T2-T6)"
               />
+              <p className="text-sm leading-relaxed text-gray-600">
+                Nếu bạn muốn thanh toán tiền mặt, vui lòng đến văn phòng của chúng tôi tại phòng 1011, Tòa nhà Luxury Residence, 219 Trung Kính, Cầu Giấy, Hà Nội.
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -135,6 +197,7 @@ const Payment = () => {
   )
 }
 
+// eslint-disable-next-line no-unused-vars
 const SupportItem = ({ icon: Icon, title, content }) => (
   <div className="my-3 flex cursor-pointer items-center space-x-4 rounded-lg border border-gray-100 bg-gray-50 p-4 transition-colors hover:bg-gray-100">
     <div className="rounded-full border border-gray-200 bg-white p-3 shadow-sm">

@@ -25,6 +25,7 @@ import Apartment from './pages/user/Apartment'
 import Payment from './pages/user/Payment'
 import Notification from './pages/user/Notification'
 import Maintenance from './pages/user/Maintenance'
+import PaymentResult from './pages/user/PaymentResult'
 
 const queryClient = new QueryClient()
 
@@ -58,6 +59,7 @@ const router = createBrowserRouter([
           { path: 'profile', Component: ProfileSection },
           { path: 'apartment', Component: Apartment },
           { path: 'payment', Component: Payment },
+          { path: 'payment/result', Component: PaymentResult },
           { path: 'notification', Component: Notification },
           { path: 'maintenance', Component: Maintenance }
         ]

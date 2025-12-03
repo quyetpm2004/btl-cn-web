@@ -9,7 +9,7 @@ import vnpay from '../../config/vnpay.config.js'
     const orderId = `${moment().format("YYYYMMDDHHmmss")}_${invoiceId}`;
 
     const paymentUrl = vnpay.buildPaymentUrl({
-      vnp_Amount: invoice.total_amount * 100,
+      vnp_Amount: invoice.total_amount,
       vnp_IpAddr: ipAddress,
       vnp_TxnRef: orderId,
       vnp_OrderInfo: `Thanh toán hóa đơn #${invoiceId}`,

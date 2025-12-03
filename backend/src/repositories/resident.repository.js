@@ -1,5 +1,5 @@
 import { Resident, Apartment, User } from '../models/index.js'
-import { Op } from 'sequelize'
+import { Op, where } from 'sequelize'
 
 async function createResident(data, options = {}) {
   return Resident.create(data, options)
@@ -84,6 +84,10 @@ async function filterResidents(filters) {
   return { items, total, page, limit }
 }
 
+const getResidentByUserId = async (userId) => {
+  return Resident.findOne({ where: { user_id: userId } });
+}
+
 export {
   createResident,
   getAllResidents,
@@ -91,5 +95,6 @@ export {
   updateResident,
   deleteResident,
   getResidentCount,
-  filterResidents
+  filterResidents,
+  getResidentByUserId
 }

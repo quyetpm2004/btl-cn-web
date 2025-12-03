@@ -60,6 +60,12 @@ module.exports = (sequelize, DataTypes) => {
       },
       note: {
         type: DataTypes.TEXT
+      },
+      end_date: {
+        type: DataTypes.DATE
+      },
+      paid_at: {
+        type: DataTypes.DATE
       }
     },
     {
