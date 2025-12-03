@@ -9,7 +9,7 @@ import { Dashboard } from './pages/admin/Dashboard.jsx'
 import { Residents } from './pages/admin/Residents.jsx'
 import { Apartments } from './pages/admin/Apartments.jsx'
 import { Fees } from './pages/admin/Fees.jsx'
-import { Facilities } from './pages/admin/Facilities.jsx'
+import { AdminMaintenance } from './pages/admin/Maintenance.jsx'
 import { Staffs } from './pages/admin/Staffs.jsx'
 import { Notifications } from './pages/admin/Notifications.jsx'
 import { LandingPage } from './pages/landing-page/layout/LandingPage.jsx'
@@ -30,7 +30,11 @@ const queryClient = new QueryClient()
 
 const router = createBrowserRouter([
   {
-    element: <ProtectedRoute />, // chỉ bọc route cần bảo vệ
+    element: (
+      <ProtectedRoute
+        allowedRoles={['Admin', 'Manager', 'Accountant', 'Technician']}
+      />
+    ),
     children: [
       {
         path: '/admin',
@@ -40,7 +44,7 @@ const router = createBrowserRouter([
           { path: 'residents', Component: Residents },
           { path: 'apartments', Component: Apartments },
           { path: 'fees', Component: Fees },
-          { path: 'facilities', Component: Facilities },
+          { path: 'maintenance', Component: AdminMaintenance },
           { path: 'staffs', Component: Staffs },
           { path: 'notifications', Component: Notifications }
         ]
@@ -48,7 +52,7 @@ const router = createBrowserRouter([
     ]
   },
   {
-    element: <ProtectedRoute />, // chỉ bọc route cần bảo vệ
+    element: <ProtectedRoute allowedRoles={['Resident']} />,
     children: [
       {
         path: '/user',

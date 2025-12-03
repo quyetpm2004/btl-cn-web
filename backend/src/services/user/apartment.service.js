@@ -2,6 +2,7 @@ import { getApartmentByUserId } from "../../repositories/apartment.repository";
 import { getResidentApartmentByResidentId } from "../../repositories/residentApartment.repository";
 import { AppError } from "../../utils/errors";
 import { User, Apartment, Resident } from "../../models";
+import { StatusCodes } from "http-status-codes";
 
 const handleGetApartment = async (userId) => {
   const apartment = await getApartmentByUserId(userId);

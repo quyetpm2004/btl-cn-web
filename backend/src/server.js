@@ -22,15 +22,22 @@ app.use(cookieParser())
 
 connectDB()
 
-app.use('/api-v1', router)
-
 const socketServer = createServer(app)
 const io = new Server(socketServer, {
   cors: {
-    origin: 'http://localhost:5173',
-    methods: ['GET', 'POST']
+    origin: process.env.BASE_URL_FRONTEND || 'http://localhost:3000',
+    methods: ['GET', 'POST'],
+    credentials: true
   }
 })
+
+// Make io available in routes
+app.use((req, res, next) => {
+  req.io = io
+  next()
+})
+
+app.use('/api-v1', router)
 
 io.on('connection', (socket) => {
   console.log('Client connected:', socket.id)
@@ -40,6 +47,6 @@ io.on('connection', (socket) => {
   })
 })
 
-app.listen(port, () => {
+socketServer.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}`)
 })

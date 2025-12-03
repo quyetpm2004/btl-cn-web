@@ -10,11 +10,10 @@ import { Eye } from 'lucide-react'
 
 const ModalDetailRequest = ({
   sheetOpen,
-  setSheetOpen, 
+  setSheetOpen,
   selectedRequest,
-  setLightboxImage,
+  setLightboxImage
 }) => {
-  console.log("request detail modal", selectedRequest);
   const baseURL =
     import.meta.env.VITE_BASE_URL_BACKEND || 'http://localhost:8000'
   const statusColorLabel = {
@@ -64,18 +63,15 @@ const ModalDetailRequest = ({
           <div>
             <p className="text-sm text-gray-500">Thời gian</p>
             <p className="font-medium">
-              {
-                      new Date(selectedRequest?.createdAt)
-                        .toLocaleString('vi-VN', {
-                          year: 'numeric',
-                          month: '2-digit',
-                          day: '2-digit',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          second: '2-digit',
-                          timeZone: 'Asia/Ho_Chi_Minh',
-                        })
-                    }
+              {new Date(selectedRequest?.createdAt).toLocaleString('vi-VN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                timeZone: 'Asia/Ho_Chi_Minh'
+              })}
             </p>
           </div>
           <div>
@@ -92,48 +88,41 @@ const ModalDetailRequest = ({
 
           <div>
             <p className="text-sm text-gray-500">Trạng thái</p>
-            <p className="font-medium mt-2">
+            <p className="mt-2 font-medium">
               <span
-                  className={` ${statusColorLabel[selectedRequest?.status]?.class} status-pending rounded-full border px-3 py-1 text-xs font-semibold`}>
-                  {statusColorLabel[selectedRequest?.status]?.label ||
-                    requestStatusMap[selectedRequest?.status]}
-                </span>
+                className={` ${statusColorLabel[selectedRequest?.status]?.class} status-pending rounded-full border px-3 py-1 text-xs font-semibold`}>
+                {statusColorLabel[selectedRequest?.status]?.label ||
+                  requestStatusMap[selectedRequest?.status]}
+              </span>
             </p>
           </div>
 
-          {
-            selectedRequest?.result ? (
-              <>
-                <div>
-                  <p className="text-sm text-gray-500">Kết quả xử lý</p>
-                  <p className="font-medium">
-                    {selectedRequest?.result || '—'}
-                  </p>
-                </div>
+          {selectedRequest?.result ? (
+            <>
+              <div>
+                <p className="text-sm text-gray-500">Kết quả xử lý</p>
+                <p className="font-medium">{selectedRequest?.result || '—'}</p>
+              </div>
 
-                <div>
-                  <p className="text-sm text-gray-500">Hoàn thành lúc</p>
-                  <p className="font-medium">
+              <div>
+                <p className="text-sm text-gray-500">Hoàn thành lúc</p>
+                <p className="font-medium">
+                  {new Date(selectedRequest?.resolved_at).toLocaleString(
+                    'vi-VN',
                     {
-                      new Date(selectedRequest?.resolved_at)
-                        .toLocaleString('vi-VN', {
-                          year: 'numeric',
-                          month: '2-digit',
-                          day: '2-digit',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          second: '2-digit',
-                          timeZone: 'Asia/Ho_Chi_Minh',
-                        })
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit',
+                      timeZone: 'Asia/Ho_Chi_Minh'
                     }
-                  </p>
-               </div>
-              </>
-
-            ) : null
-          }
-
-          
+                  )}
+                </p>
+              </div>
+            </>
+          ) : null}
 
           <div>
             <p className="text-sm text-gray-500">Hình ảnh</p>

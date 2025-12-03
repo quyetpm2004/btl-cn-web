@@ -32,7 +32,7 @@ const Header = () => {
     import.meta.env.VITE_BASE_URL_BACKEND || 'http://localhost:8000'
 
   return (
-    <header className="fixed top-0 z-[20] w-full bg-white text-black shadow-sm">
+    <header className="fixed top-0 z-20 w-full bg-white text-black shadow-sm">
       <div className="container mx-auto flex items-center justify-between px-6 py-4">
         {/* Left */}
         <div className="flex items-center space-x-4">
@@ -68,7 +68,7 @@ const Header = () => {
                 </AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
-            <DropdownMenuContent sideOffset={10} align="end" className="w-40">
+            <DropdownMenuContent sideOffset={10} align="center">
               <DropdownMenuItem onClick={handleLogout}>
                 Đăng xuất
               </DropdownMenuItem>
@@ -78,7 +78,7 @@ const Header = () => {
           {/* 2. Thông tin người dùng (Ẩn trên Mobile, Hiện trên Desktop) */}
           <div className="hidden flex-col md:flex">
             <p className="text-sm leading-none font-medium">{fullName}</p>
-            <p className="text-xs leading-none opacity-75 mt-2">
+            <p className="mt-2 text-xs leading-none opacity-75">
               Căn hộ {apartmentCode}
             </p>
           </div>

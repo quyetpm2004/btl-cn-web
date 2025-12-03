@@ -12,7 +12,12 @@ const gender = z.coerce
   .max(3)
   .describe('1: male, 2: female, 3: other')
 const phone = z.string().min(1, 'phone is required')
-const dob = z.coerce.date().max(new Date(), 'Ngày sinh không được ở tương lai')
+const dob = z.coerce
+  .date()
+  .max(
+    new Date(Date.now() + 24 * 60 * 60 * 1000),
+    'Ngày sinh không được ở tương lai'
+  )
 const place_of_birth = z.string().min(1, 'place_of_birth is required')
 const ethnicity = z.string().min(1, 'ethnicity is required')
 const occupation = z.string().min(1, 'occupation is required')

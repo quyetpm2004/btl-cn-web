@@ -1,15 +1,31 @@
 import { Outlet } from 'react-router'
 import { Header } from './Header'
 import { Sidebar } from './Sidebar'
+import { SidebarProvider, useSidebar } from '@/components/ui/sidebar'
 
 export const Layout = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <SidebarProvider>
+      <AdminLayoutContent />
+    </SidebarProvider>
+  )
+}
+
+const AdminLayoutContent = () => {
+  const { state } = useSidebar()
+
+  return (
+    <div className="min-h-screen w-full bg-gray-50">
       <Header />
-      <Sidebar />
-      <main className="ml-64 overflow-y-auto p-6">
-        <Outlet />
-      </main>
+      <div className="mt-20 flex transition-all duration-300">
+        <Sidebar />
+        <main
+          className={`flex-10 overflow-hidden p-6 transition-all duration-300 ${
+            state === 'collapsed' ? 'ml-16' : 'ml-0'
+          }`}>
+          <Outlet />
+        </main>
+      </div>
     </div>
   )
 }

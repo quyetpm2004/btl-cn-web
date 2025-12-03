@@ -11,13 +11,13 @@ import {
   Wrench
 } from 'lucide-react'
 import { getNotification, markNotification } from '@/services/api'
-import { useResidentStore } from '@/stores/useResidentStore'
 import { NotificationDetailModal } from './NotificationDetailModal'
+import { useAuthStore } from '../../stores/useAuthStore'
 
 const Notification = () => {
   const [activeTab, setActiveTab] = useState('all')
   const [notifications, setNotifications] = useState([])
-  const { resident } = useResidentStore()
+  const { user } = useAuthStore()
 
   // lấy filter từ URL (ví dụ: ?filter=payment)
   const getFilterFromUrl = () => {
@@ -32,7 +32,7 @@ const Notification = () => {
   // gọi backend để lấy notifications theo filter
   const fetchNotifications = async (filter) => {
     try {
-      const res = await getNotification(resident.id, filter)
+      const res = await getNotification(user.id, filter)
       setNotifications(res.data.notification)
     } catch (err) {
       console.log('Fetch error', err)

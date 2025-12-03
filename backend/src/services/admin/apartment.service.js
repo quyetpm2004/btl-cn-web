@@ -1,8 +1,8 @@
-import { AppError } from '../utils/errors.js'
+import { AppError } from '../../utils/errors.js'
 import { StatusCodes } from 'http-status-codes'
-import * as apartmentRepo from '../repositories/apartment.repository.js'
+import * as apartmentRepo from '../../repositories/apartment.repository.js'
 import { residentApartmentService } from './residentApartment.service.js'
-import { sequelize } from '../models/index.js'
+import { sequelize } from '../../models/index.js'
 
 async function createApartmentService(data) {
   const t = await sequelize.transaction()
@@ -24,6 +24,7 @@ async function createApartmentService(data) {
     await residentApartmentService.assignOwnerToApartment(
       data.owner_id,
       apartment.id,
+      data.is_living,
       t
     )
 
@@ -69,7 +70,7 @@ async function updateApartmentService(id, data) {
       currentOwnerId &&
       String(data.owner_id) !== String(currentOwnerId)
     ) {
-      await residentApartmentService.endResidency(currentOwnerId, id, t)
+      await residentApartmentService.changeOwnerToMember(currentOwnerId, id, t)
     }
 
     const [updatedRows] = await apartmentRepo.updateApartment(
@@ -85,18 +86,20 @@ async function updateApartmentService(id, data) {
       { transaction: t }
     )
 
+    console.log('data.is_living', data.is_living)
     const result = await residentApartmentService.assignOwnerToApartment(
       data.owner_id,
       id,
+      data.is_living,
       t
     )
 
-    // if (updatedRows === 0 || !result) {
-    //   throw new AppError(
-    //     StatusCodes.INTERNAL_SERVER_ERROR,
-    //     'Failed to update apartment'
-    //   )
-    // }
+    if (updatedRows === 0 && !result) {
+      throw new AppError(
+        StatusCodes.INTERNAL_SERVER_ERROR,
+        'Failed to update apartment'
+      )
+    }
 
     await t.commit()
     return apartmentRepo.getApartmentById(id)

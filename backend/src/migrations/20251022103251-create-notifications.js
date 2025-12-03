@@ -16,6 +16,10 @@ module.exports = {
       content: {
         type: Sequelize.TEXT
       },
+      category: {
+        type: Sequelize.TINYINT,
+        comment: '1: system | 2: event | 3: fee | 4: maintenance | 5: other'
+      },
       created_at: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
@@ -28,10 +32,6 @@ module.exports = {
         },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
-      },
-      category: {
-        type: Sequelize.TINYINT,
-        comment: '1: system | 2: event | 3: fee | 4: maintenance | 5: other'
       }
     })
   },

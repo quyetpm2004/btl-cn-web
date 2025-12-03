@@ -2,13 +2,13 @@
 // 🔹 BẢNG QUẢN LÝ NGƯỜI DÙNG & PHÂN QUYỀN
 //////////////////////////////////////////////////////////////
 Table roles {
-  id int [pk, increment]                        // Mã vai trò
+  id int [pk, increment]                        
   name varchar                                  // Tên vai trò (Admin, Cư dân, Thu ngân,...)
   description text                              // Mô tả chức năng / quyền hạn
 }
 
 Table users {
-  id int [pk, increment]                        // Mã người dùng
+  id int [pk, increment]                        
   username varchar [not null, unique]           // Tên đăng nhập
   password varchar [not null]                   // Mật khẩu (đã mã hóa)
   role_id int [ref: > roles.id]                 // Vai trò
@@ -21,7 +21,7 @@ Table users {
 }
 
 Table staffs {
-  id int [pk, increment]                        // Mã nhân viên
+  id int [pk, increment]                        
   user_id int [ref: > users.id]                 // Tài khoản liên kết
   full_name varchar                             // Họ tên
   dob date                                      // Ngày sinh
@@ -39,7 +39,7 @@ Table staffs {
 // 🔹 CƯ DÂN & CĂN HỘ
 //////////////////////////////////////////////////////////////
 Table residents {
-  id int [pk, increment]                        // Mã cư dân
+  id int [pk, increment]                        
   user_id int [ref: > users.id]                 // Tài khoản liên kết
   full_name varchar                             // Họ tên
   gender tinyint                                // 1:nam, 2:nữ, 3:khác
@@ -80,7 +80,8 @@ Table resident_apartment {
   is_living boolean [not null, default: 1]      // Đang ở (1 người có thể chủ nhiều hộ nhưng chỉ ở 1 hộ)
   start_date date                               // Ngày bắt đầu
   end_date date                                 // Ngày kết thúc
-  create_at date                                // Ngày thêm
+  created_at date                               // Ngày thêm
+  updated_at date
 }
 
 Table vehicles {
@@ -105,7 +106,7 @@ Table collection_periods {
   description text
   created_at timestamp
   created_by int [ref: > users.id]
-  status tinyint [default: 1]                   // 0:'closed', 1:'active'
+  status tinyint [default: 1]                   // 0:'closed', 1:'open'
 }
 
 //////////////////////////////////////////////////////////////
@@ -142,6 +143,18 @@ Table invoices {
   note text
 }
 
+Table invoice_items {
+  id int [pk, increment]                        // Mã chi tiết hóa đơn
+  invoice_id int [ref: > invoices.id]           // Mã hóa đơn
+  service_id int [ref: > services.id]           // Mã dịch vụ
+  quantity int                                  // Số lượng
+  unit_price int                                // Đơn giá
+  amount int                                    // Thành tiền (quantity * unit_price)
+  note text                                     // Ghi chú
+  created_at timestamp                          // Ngày tạo
+  updated_at timestamp                          // Ngày cập nhật
+}
+
 Table payments {
   id int [pk, increment]
   invoice_id int [ref: > invoices.id]
@@ -162,34 +175,40 @@ Table account_balances {
 //////////////////////////////////////////////////////////////
 // 🔹 THIẾT BỊ & BẢO TRÌ
 //////////////////////////////////////////////////////////////
-Table equipments {
-  id int [pk, increment]
-  name varchar
-  location varchar
-  status tinyint [default: 1]                   // 0:'inactive', 1:'active', 2:'maintenance', 3:'broken'
-  last_maintenance timestamp
+Table work_types {
+  id int [pk, increment]                        // Mã loại công việc
+  name varchar                                  // Điện, Nước, Xây dựng, Cảnh quan, Thang máy...
+  description text                              // Mô tả
 }
 
 Table maintenance_requests {
-  id int [pk, increment]
-  equipment_id int [ref: > equipments.id]
-  resident_id int [ref: > residents.id]
-  description text
-  priority tinyint                              // 1:'low', 2:'medium', 3:'high', 4:'urgent'
-  status tinyint [default: 0]                   // 0:'pending', 1:'in_progress', 2:'done', 3:'cancelled'
-  created_at timestamp
-  assigned_to int [ref: > staffs.id]
-  resolved_at timestamp
+  id int [pk, increment]                       
+  resident_id int [ref: > residents.id]         // Cư dân yêu cầu
+  apartment_id int [ref: > apartments.id, null] // Null nếu là sự cố công cộng
+  location varchar                              // Mô tả vị trí nếu không ở trong căn hộ (vd: "Hành lang tầng 5", "Sảnh A")
+  title varchar                                 // Tiêu đề yêu cầu
+  description text                              // Mô tả chi tiết
+  images json                                   // Danh sách ảnh (URL/path)
+  status tinyint [default: 0]                   // 0:'pending', 1:'done', 2:'cancelled', 3:'In Progress'
+  result text                                   // Kết quả xử lý
+  work_type_id int [ref: > work_types.id]       // Mã loại công việc
+  assigned_to int [ref: > staffs.id]            // Nhân viên được phân công
+  created_at timestamp                          // Ngày tạo
+  resolved_at timestamp                         // Ngày hoàn thành
 }
 
 Table maintenance_schedules {
-  id int [pk, increment]
-  equipment_id int [ref: > equipments.id]
-  start_at timestamp
-  end_at timestamp
-  assigned_to int [ref: > staffs.id]
-  description text
+  id int [pk, increment]                       
+  title varchar                         // Tên đợt bảo trì (Hiển thị lên thông báo)
+  description text                      // Chi tiết công việc (vd: "Tra dầu, kiểm tra cáp...")
+  maintenance_object varchar            // Đối tượng cần bảo trì (vd: "Thang máy", "Hồ bơi", "Máy phát điện")
+  location varchar                      // Vị trí (vd: "Tòa A", "Toàn khu", "Tầng hầm")
+  start_at timestamp                            // Thời gian bắt đầu
+  end_at timestamp                              // Thời gian kết thúc
+  assigned_to int [ref: > staffs.id]            // Nhân viên thực hiện
   status tinyint [default: 0]                   // 0:'scheduled', 1:'completed'
+  created_at timestamp
+  created_by int [ref: > users.id]
 }
 
 //////////////////////////////////////////////////////////////
@@ -199,15 +218,15 @@ Table notifications {
   id int [pk, increment]
   title varchar
   content text
+  category tinyint                              // 1:'system', 2:'event', 3:'fee', 4:'maintenance', 5:'other'
   created_at timestamp
   created_by int [ref: > users.id]
-  category tinyint                              // 1:'system', 2:'event', 3:'fee', 4:'maintenance', 5:'other'
 }
 
 Table notification_receivers {
   id int [pk, increment]
   notification_id int [ref: > notifications.id]
-  resident_id int [ref: > residents.id]
+  user_id int [ref: > users.id]
   is_read boolean
   read_at timestamp
 }

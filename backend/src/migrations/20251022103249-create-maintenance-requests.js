@@ -9,15 +9,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      equipment_id: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'equipments',
-          key: 'id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
-      },
       resident_id: {
         type: Sequelize.INTEGER,
         references: {
@@ -27,17 +18,46 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
       },
+      apartment_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'apartments',
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
+      },
+      location: {
+        type: Sequelize.STRING
+      },
+      title: {
+        type: Sequelize.STRING
+      },
       description: {
         type: Sequelize.TEXT
       },
-      priority: {
-        type: Sequelize.TINYINT,
-        comment: '1:low | 2:medium | 3:high | 4:urgent'
+      images: {
+        type: Sequelize.JSON,
+        allowNull: true,
+        comment: 'Array of image URLs or paths'
       },
       status: {
         type: Sequelize.TINYINT,
         defaultValue: 0,
-        comment: '0:pending | 1:in_progress | 2:done | 3:cancelled'
+        comment: '0:pending | 1:done | 2:cancelled'
+      },
+      result: {
+        type: Sequelize.TEXT,
+        allowNull: true
+      },
+      work_type_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'work_types',
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
       },
       created_at: {
         type: Sequelize.DATE,

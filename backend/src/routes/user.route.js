@@ -1,34 +1,34 @@
 import express from 'express'
-import uploadFile from '../middlewares/multer.js'
+import uploadFile from '@/middlewares/multer.js'
 import {
   getProfile,
   updatePassword,
   updateProfile
-} from '../controllers/user/profile.controller.js'
+} from '@/controllers/user/profile.controller.js'
 import {
   fetchResident,
   getApartment
-} from '../controllers/user/apartment.controller.js'
+} from '@/controllers/user/apartment.controller.js'
 import {
   getNotification,
   markNotificationRead
-} from '../controllers/user/notification.controller.js'
+} from '@/controllers/user/notification.controller.js'
 import {
   createMaintenanceRequest,
   deleteMaintenanceRequest,
   getMaintenanceRequestDetail,
   getPendingRequests,
   updateMaintenanceRequest
-} from '../controllers/user/maintenance.req.controller.js'
+} from '@/controllers/user/maintenance.req.controller.js'
 import {
   getMaintenanceScheduleDetail,
   getResidentSchedules
-} from '../controllers/user/maintenance.sche.controller.js'
+} from '@/controllers/user/maintenance.sche.controller.js'
 import {
   getAllEquipments,
   getEquipmentById
-} from '../controllers/user/equipment.controller.js'
-import { getAllWorkType } from '../controllers/user/worktype.controller.js'
+} from '@/controllers/user/equipment.controller.js'
+import { getAllWorkType } from '@/controllers/user/worktype.controller.js'
 const uploadAvatar = uploadFile('avatar')
 const uploadRequestImages = uploadFile('request')
 
@@ -44,7 +44,7 @@ userRoute.get('/apartment', getApartment)
 userRoute.get('/fetch-resident', fetchResident)
 
 // notification
-userRoute.get('/notification/:residentId', getNotification)
+userRoute.get('/notification/:userId', getNotification)
 userRoute.put(
   '/notification/:notificationReceiverId/:isRead',
   markNotificationRead

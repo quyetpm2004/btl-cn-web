@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useAuthStore } from '../../stores/useAuthStore'
 import { useNavigate } from 'react-router'
+import { toast } from 'sonner'
 
 export const Register = () => {
   const navigate = useNavigate()
@@ -43,7 +44,7 @@ export const Register = () => {
 
       <div>
         <label className="mb-2 block text-sm font-medium text-white">
-          Username
+          Tên đăng nhập
         </label>
         <input
           type="text"

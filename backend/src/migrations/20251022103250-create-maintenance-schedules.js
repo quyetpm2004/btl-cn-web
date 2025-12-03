@@ -9,14 +9,18 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      equipment_id: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'equipments',
-          key: 'id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+      title: {
+        type: Sequelize.STRING
+      },
+      description: {
+        type: Sequelize.TEXT
+      },
+      maintenance_object: {
+        type: Sequelize.STRING,
+        comment: 'Elevator, Swimming Pool, Gym, etc.'
+      },
+      location: {
+        type: Sequelize.STRING
       },
       start_at: {
         type: Sequelize.DATE
@@ -33,13 +37,24 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
       },
-      description: {
-        type: Sequelize.TEXT
-      },
       status: {
         type: Sequelize.TINYINT,
         defaultValue: 0,
         comment: '0: scheduled | 1: completed'
+      },
+      created_at: {
+        allowNull: false,
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      },
+      created_by: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'users',
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
       }
     })
   },

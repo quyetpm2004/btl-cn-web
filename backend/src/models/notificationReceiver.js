@@ -1,20 +1,20 @@
-"use strict";
-const { Model } = require("sequelize");
+'use strict'
+const { Model } = require('sequelize')
 
 module.exports = (sequelize, DataTypes) => {
   class NotificationReceiver extends Model {
     static associate(models) {
       // Association defined in Notification and Resident models
       NotificationReceiver.belongsTo(models.Notification, {
-        foreignKey: "notification_id",
-        as: "notification",
-      });
+        foreignKey: 'notification_id',
+        as: 'notification'
+      })
 
-      // Và cũng thuộc về 1 Resident (nếu bạn muốn include cả Resident)
-      NotificationReceiver.belongsTo(models.Resident, {
-        foreignKey: "resident_id",
-        as: "resident",
-      });
+      // Và cũng thuộc về 1 User (nếu bạn muốn include cả User)
+      NotificationReceiver.belongsTo(models.User, {
+        foreignKey: 'user_id',
+        as: 'user'
+      })
     }
   }
 
@@ -23,30 +23,30 @@ module.exports = (sequelize, DataTypes) => {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoIncrement: true,
+        autoIncrement: true
       },
       notification_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER
       },
-      resident_id: {
-        type: DataTypes.INTEGER,
+      user_id: {
+        type: DataTypes.INTEGER
       },
       is_read: {
         type: DataTypes.BOOLEAN,
-        defaultValue: false,
+        defaultValue: false
       },
       read_at: {
-        type: DataTypes.DATE,
-      },
+        type: DataTypes.DATE
+      }
     },
     {
       sequelize,
-      modelName: "NotificationReceiver",
-      tableName: "notification_receivers",
+      modelName: 'NotificationReceiver',
+      tableName: 'notification_receivers',
       underscored: true,
-      timestamps: false,
+      timestamps: false
     }
-  );
+  )
 
-  return NotificationReceiver;
-};
+  return NotificationReceiver
+}

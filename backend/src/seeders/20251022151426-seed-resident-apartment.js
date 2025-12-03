@@ -44,7 +44,7 @@ module.exports = {
         links.push({
           resident_id: resident.id,
           apartment_id: apt.id,
-          relationship: 'relative',
+          relationship: 'member',
           start_date: start.toISOString().split('T')[0],
           end_date: null
         })

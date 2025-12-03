@@ -27,7 +27,31 @@ async function getAllApartments() {
 }
 
 async function getApartmentById(id) {
-  return Apartment.findByPk(id)
+  return Apartment.findByPk(id, {
+    include: [
+      {
+        model: ApartmentType,
+        as: 'type',
+        attributes: ['id', 'name', 'description']
+      },
+      {
+        model: Resident,
+        as: 'residents',
+        through: {
+          attributes: ['relationship', 'start_date', 'end_date', 'is_living'],
+          where: { end_date: null, is_living: true }
+        },
+        include: [
+          {
+            model: Apartment,
+            as: 'apartments',
+            attributes: ['apartment_code'],
+            through: { attributes: [] }
+          }
+        ]
+      }
+    ]
+  })
 }
 
 async function getApartmentByCode(apartment_code) {
@@ -91,7 +115,7 @@ async function filterApartments(filters) {
         as: 'residents',
         attributes: ['id', 'full_name', 'registered_at'],
         through: {
-          attributes: ['relationship'],
+          attributes: ['relationship', 'is_living'],
           where: { end_date: null, relationship: 'owner' }
         }
       }

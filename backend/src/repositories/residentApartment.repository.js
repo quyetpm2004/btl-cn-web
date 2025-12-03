@@ -43,15 +43,10 @@ async function getCurrentOwnerByApartmentId(apartment_id) {
   })
 }
 
-async function deleteResidentApartment(resident_id) {
-  return ResidentApartment.destroy({ where: { resident_id } })
-}
-
 export {
   createResidentApartment,
   getResidentApartmentByResidentId,
   updateResidentApartmentByResidentId,
   updateResidentApartmentByApartmentId,
-  getCurrentOwnerByApartmentId,
-  deleteResidentApartment
+  getCurrentOwnerByApartmentId
 }

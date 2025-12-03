@@ -11,7 +11,13 @@ import {
 } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
 
-export function DatePicker({ value, onChange, disabled, className, ...props }) {
+export const DatePicker = ({
+  value,
+  onChange,
+  disabled,
+  className,
+  ...props
+}) => {
   const [open, setOpen] = React.useState(false)
 
   return (

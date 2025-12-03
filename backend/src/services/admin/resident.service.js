@@ -1,8 +1,8 @@
-import { AppError } from '../utils/errors.js'
+import { AppError } from '../../utils/errors.js'
 import { StatusCodes } from 'http-status-codes'
-import * as residentRepo from '../repositories/resident.repository.js'
-import * as residentApartmentRepo from '../repositories/residentApartment.repository.js'
-import { sequelize } from '../models/index.js'
+import * as residentRepo from '../../repositories/resident.repository.js'
+import * as residentApartmentRepo from '../../repositories/residentApartment.repository.js'
+import { sequelize } from '../../models/index.js'
 
 async function createResidentService(data) {
   const t = await sequelize.transaction()
@@ -31,7 +31,7 @@ async function createResidentService(data) {
         {
           resident_id: resident.id,
           apartment_id: data.apartment_id,
-          relationship: data?.relationship || 'relative',
+          relationship: data?.relationship || 'member',
           start_date: data?.start_date || new Date()
         },
         { transaction: t }
@@ -79,24 +79,29 @@ async function updateResidentService(id, data) {
       { transaction: t }
     )
     if (data.apartment_id) {
-      // Update or create resident-apartment association
-      ;[updatedRows] =
-        await residentApartmentRepo.updateResidentApartmentByResidentId(
-          id,
-          {
-            end_date: new Date()
-          },
-          { transaction: t }
-        )
+      await residentApartmentRepo.updateResidentApartmentByResidentId(
+        id,
+        {
+          end_date: new Date(),
+          is_living: false
+        },
+        {
+          transaction: t
+        }
+      )
+
       await residentApartmentRepo.createResidentApartment(
         {
           resident_id: id,
           apartment_id: data.apartment_id,
-          relationship: data?.relationship || 'relative',
-          start_date: data?.start_date || new Date()
+          relationship: data?.relationship || 'member',
+          start_date: data?.start_date || new Date(),
+          is_living: true
         },
         { transaction: t }
       )
+
+      updatedRows += 1
     }
     if (updatedRows === 0) {
       throw new AppError(
