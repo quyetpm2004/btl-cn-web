@@ -2,13 +2,13 @@ import {
   getUserById,
   getUserWithResident,
   updateUser,
-  updateUserWithResident,
-} from "../../repositories/user.repository";
-import { comparePassword, hashPassword } from "../../validations/password";
+  updateUserWithResident
+} from '../../repositories/user.repository'
+import { comparePassword, hashPassword } from '../../validations/password'
 
 const handleGetProfile = async (userId) => {
-  const result = await getUserWithResident(userId);
-  const { email, phone, resident, avatar_url } = result;
+  const result = await getUserWithResident(userId)
+  const { email, phone, resident, avatar_url } = result
   if (resident) {
     const {
       full_name,
@@ -18,8 +18,8 @@ const handleGetProfile = async (userId) => {
       hometown,
       ethnicity,
       occupation,
-      household_no,
-    } = resident;
+      household_no
+    } = resident
     return {
       email,
       full_name,
@@ -31,12 +31,12 @@ const handleGetProfile = async (userId) => {
       ethnicity,
       occupation,
       household_no,
-      avatar_url,
-    };
+      avatar_url
+    }
   } else {
-    return { email, phone, avatar_url };
+    return { email, phone, avatar_url }
   }
-};
+}
 
 const handleUpdateProfile = async (
   userId,
@@ -49,6 +49,7 @@ const handleUpdateProfile = async (
   hometown,
   ethnicity,
   occupation,
+  household_no,
   avatar
 ) => {
   return await updateUserWithResident(userId, {
@@ -61,9 +62,10 @@ const handleUpdateProfile = async (
     hometown,
     ethnicity,
     occupation,
-    avatar,
-  });
-};
+    household_no,
+    avatar
+  })
+}
 
 const handleUpdatePassword = async (
   userId,
@@ -72,24 +74,28 @@ const handleUpdatePassword = async (
   confirmPassword
 ) => {
   // Implementation for updating password goes here
-  const { password } = await getUserById(userId);
+  const { password } = await getUserById(userId)
 
-  const isMatch = await comparePassword(oldPassword, password);
+  const isMatch = await comparePassword(oldPassword, password)
 
   if (!isMatch) {
-    throw new Error("Old password is incorrect");
+    throw new Error('Old password is incorrect')
   }
 
   if (newPassword !== confirmPassword) {
-    throw new Error("New password and confirm password do not match");
+    throw new Error('New password and confirm password do not match')
   }
 
-  const hashedNewPassword = await hashPassword(newPassword);
-  await updateUser(userId, { password: hashedNewPassword });
+  if (newPassword.length < 6) {
+    throw new Error('New password must be at least 6 characters long')
+  }
+
+  const hashedNewPassword = await hashPassword(newPassword)
+  await updateUser(userId, { password: hashedNewPassword })
 
   return {
-    success: true,
-  };
-};
+    success: true
+  }
+}
 
-export { handleGetProfile, handleUpdatePassword, handleUpdateProfile };
+export { handleGetProfile, handleUpdatePassword, handleUpdateProfile }

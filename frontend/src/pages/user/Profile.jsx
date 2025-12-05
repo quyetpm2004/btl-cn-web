@@ -42,6 +42,7 @@ const ProfileSection = () => {
   }
   const handleSave = async (e) => {
     e.preventDefault()
+
     let res
     // If a new avatar has been selected, send as FormData
     if (avatarFile) {
@@ -49,7 +50,9 @@ const ProfileSection = () => {
       // Append primitive fields from residentInfo
       Object.keys(residentInfo || {}).forEach((k) => {
         const v = residentInfo[k]
-        if (v !== undefined && v !== null) form.append(k, v)
+        if (v !== undefined && v !== null) {
+          form.append(k, v)
+        }
       })
       form.append('avatar', avatarFile)
       res = await updateProfileApi(form)
@@ -58,18 +61,15 @@ const ProfileSection = () => {
     }
     if (res.data) {
       toast.success('Cập nhật thông tin thành công!')
+      refreshResident()
+      fetchResidentInfo()
+      // Reset preview/file state
+      setAvatarFile(null)
+      setAvatarPreview(null)
+      setIsEditing(false)
     } else {
-      toast.error('Cập nhật thông tin thất bại. Vui lòng thử lại.')
+      toast.error(res?.details[0]?.message || res.error || 'Đã có lỗi xảy ra!')
     }
-    refreshResident()
-
-    fetchResidentInfo()
-
-    // Reset preview/file state
-    setAvatarFile(null)
-    setAvatarPreview(null)
-
-    setIsEditing(false)
   }
 
   const handleChange = (e) => {
@@ -164,7 +164,10 @@ const ProfileSection = () => {
                 <div className="text-center md:text-left">
                   <h3 className="text-xl font-semibold">{fullName}</h3>
                   <p className="text-gray-600">
-                    {relationship} - Căn hộ {apartmentCode}
+                    {relationship === 'owner'
+                      ? 'Chủ hộ'
+                      : 'Thành viên gia đình'}{' '}
+                    - Căn hộ {apartmentCode}
                   </p>
                   <p className="text-sm text-gray-500">
                     Thành viên từ: {startDate}
@@ -215,6 +218,7 @@ const ProfileSection = () => {
                   <EditInput
                     label="Họ và tên"
                     name="full_name"
+                    required={true}
                     value={residentInfo.full_name}
                     onChange={handleChange}
                   />
@@ -222,6 +226,7 @@ const ProfileSection = () => {
                     label="Email"
                     name="email"
                     type="email"
+                    required={true}
                     value={residentInfo.email}
                     onChange={handleChange}
                   />
@@ -299,32 +304,6 @@ const ProfileSection = () => {
 
           {/* RIGHT SIDE */}
           <div className="space-y-6">
-            {/* Family Members */}
-            <div className="rounded-xl bg-white p-6 shadow-sm">
-              <div className="mb-4 flex items-center justify-between">
-                <h4 className="font-semibold text-gray-800">
-                  Thành viên gia đình
-                </h4>
-              </div>
-              <div className="space-y-3">
-                <FamilyMemberCard
-                  name="Trần Thị Bình"
-                  relationship="Vợ"
-                  phone="0987654321"
-                  dob="20/05/1988"
-                  initials="TB"
-                  color="bg-blue-500"
-                />
-                <FamilyMemberCard
-                  name="Nguyễn Minh Khang"
-                  relationship="Con trai"
-                  age="15 tuổi"
-                  dob="10/12/2008"
-                  initials="NK"
-                  color="bg-green-500"
-                />
-              </div>
-            </div>
             <AccountSettings changePassword={changePassword} />
           </div>
         </div>
@@ -345,7 +324,14 @@ const Info = ({ label, value }) => (
   </div>
 )
 
-const EditInput = ({ label, name, value, onChange, type = 'text' }) => (
+const EditInput = ({
+  label,
+  name,
+  value,
+  onChange,
+  type = 'text',
+  required = false
+}) => (
   <div>
     <label className="mb-1 block text-sm text-gray-600">{label}</label>
     <input
@@ -353,6 +339,7 @@ const EditInput = ({ label, name, value, onChange, type = 'text' }) => (
       name={name}
       value={value}
       onChange={onChange}
+      required={required}
       className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
     />
   </div>

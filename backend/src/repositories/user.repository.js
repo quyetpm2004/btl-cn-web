@@ -59,6 +59,7 @@ async function updateUserWithResident(userId, data) {
     hometown,
     ethnicity,
     occupation,
+    household_no,
     avatar
   } = data
 
@@ -79,7 +80,8 @@ async function updateUserWithResident(userId, data) {
       gender,
       hometown,
       ethnicity,
-      occupation
+      occupation,
+      household_no
     },
     { where: { user_id: userId } }
   )

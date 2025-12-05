@@ -1,22 +1,22 @@
 import {
   handleGetProfile,
   handleUpdatePassword,
-  handleUpdateProfile,
-} from "../../services/user/profile.service";
+  handleUpdateProfile
+} from '../../services/user/profile.service'
 
 const getProfile = async (req, res) => {
-  const { id } = req.user;
+  const { id } = req.user
 
   try {
-    const data = await handleGetProfile(id);
-    return res.status(200).json({ message: "Get profile successful", data });
+    const data = await handleGetProfile(id)
+    return res.status(200).json({ message: 'Get profile successful', data })
   } catch (err) {
-    return res.status(400).json({ error: err.message });
+    return res.status(400).json({ error: err.message })
   }
-};
+}
 
 const updateProfile = async (req, res) => {
-  const { id } = req.user;
+  const { id } = req.user
   const {
     email,
     full_name,
@@ -27,8 +27,9 @@ const updateProfile = async (req, res) => {
     hometown,
     ethnicity,
     occupation,
-  } = req.body;
-  const avatar = req.file ? req.file.filename : null;
+    household_no
+  } = req.body
+  const avatar = req.file ? req.file.filename : null
   try {
     const data = await handleUpdateProfile(
       id,
@@ -41,30 +42,29 @@ const updateProfile = async (req, res) => {
       hometown,
       ethnicity,
       occupation,
+      household_no,
       avatar
-    );
-    return res.status(200).json({ message: "Update profile successful", data });
+    )
+    return res.status(200).json({ message: 'Update profile successful', data })
   } catch (err) {
-    return res.status(400).json({ error: err.message });
+    return res.status(400).json({ error: err.message })
   }
-};
+}
 
 const updatePassword = async (req, res) => {
-  const { id } = req.user;
-  const { oldPassword, newPassword, confirmPassword } = req.body;
+  const { id } = req.user
+  const { oldPassword, newPassword, confirmPassword } = req.body
   try {
     const data = await handleUpdatePassword(
       id,
       oldPassword,
       newPassword,
       confirmPassword
-    );
-    return res
-      .status(200)
-      .json({ message: "Update password successful", data });
+    )
+    return res.status(200).json({ message: 'Update password successful', data })
   } catch (err) {
-    return res.status(400).json({ error: err.message });
+    return res.status(400).json({ error: err.message })
   }
-};
+}
 
-export { getProfile, updatePassword, updateProfile };
+export { getProfile, updatePassword, updateProfile }

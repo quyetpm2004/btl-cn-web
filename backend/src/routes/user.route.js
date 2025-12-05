@@ -37,6 +37,8 @@ import {
 } from '../controllers/user/payment.controller.js'
 import { getDashboard } from '../controllers/user/dashboard.controller.js'
 import { serviceController } from '../controllers/service.controller.js'
+import { validateBody } from '../middlewares/validate.js'
+import { profileSchema } from '../schemas/profile.schema.js'
 const uploadAvatar = uploadFile('avatar')
 const uploadRequestImages = uploadFile('request')
 
@@ -44,7 +46,12 @@ const userRoute = express.Router()
 
 // profle
 userRoute.get('/profile', getProfile)
-userRoute.put('/profile', uploadAvatar.single('avatar'), updateProfile)
+userRoute.put(
+  '/profile',
+  uploadAvatar.single('avatar'),
+  validateBody(profileSchema),
+  updateProfile
+)
 userRoute.put('/password', updatePassword)
 
 // apartment

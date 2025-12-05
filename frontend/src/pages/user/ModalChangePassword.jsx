@@ -6,19 +6,22 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger
+  DialogTitle
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { updatePasswordApi } from '@/services/user.api.js'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { Eye, EyeOff } from 'lucide-react'
 
 export function ModalChangePassword({
   isOpenChangePassword,
   handleClosePassword
 }) {
+  const [showOld, setShowOld] = useState(false)
+  const [showNew, setShowNew] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -30,7 +33,6 @@ export function ModalChangePassword({
       newPassword,
       confirmPassword
     })
-    console.log(res)
     if (res.data) {
       toast.success('Mật khẩu đã được thay đổi!')
       handleClosePassword()
@@ -45,32 +47,66 @@ export function ModalChangePassword({
           <DialogHeader>
             <DialogTitle>Đổi mật khẩu</DialogTitle>
           </DialogHeader>
+
           <div className="grid gap-4">
+            {/* Mật khẩu cũ */}
             <div className="grid gap-3">
-              <Label htmlFor="name-1">Mật khẩu cũ</Label>
-              <Input
-                value={oldPassword}
-                onChange={(e) => setOldPassword(e.target.value)}
-                type="password"
-              />
+              <Label>Mật khẩu cũ</Label>
+              <div className="relative">
+                <Input
+                  type={showOld ? 'text' : 'password'}
+                  value={oldPassword}
+                  onChange={(e) => setOldPassword(e.target.value)}
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowOld(!showOld)}
+                  className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500">
+                  {showOld ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
+
+            {/* Mật khẩu mới */}
             <div className="grid gap-3">
-              <Label htmlFor="name-1">Mật khẩu mới</Label>
-              <Input
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                type="password"
-              />
+              <Label>Mật khẩu mới</Label>
+              <div className="relative">
+                <Input
+                  type={showNew ? 'text' : 'password'}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNew(!showNew)}
+                  className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500">
+                  {showNew ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
+
+            {/* Xác nhận mật khẩu */}
             <div className="grid gap-3">
-              <Label htmlFor="name-1">Xác nhận mât khẩu</Label>
-              <Input
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                type="password"
-              />
+              <Label>Xác nhận mật khẩu</Label>
+              <div className="relative">
+                <Input
+                  type={showConfirm ? 'text' : 'password'}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500">
+                  {showConfirm ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
           </div>
+
           <DialogFooter>
             <DialogClose asChild>
               <Button onClick={handleClosePassword} variant="outline">
