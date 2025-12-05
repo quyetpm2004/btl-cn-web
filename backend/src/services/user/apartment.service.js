@@ -1,21 +1,23 @@
-import { getApartmentByUserId } from "../../repositories/apartment.repository";
-import { getResidentApartmentByResidentId } from "../../repositories/residentApartment.repository";
-import { AppError } from "../../utils/errors";
-import { User, Apartment, Resident } from "../../models";
+import { getApartmentByUserId } from '../../repositories/apartment.repository'
+import { getResidentApartmentByResidentId } from '../../repositories/residentApartment.repository'
+import { AppError } from '../../utils/errors'
+import { User, Apartment, Resident, ApartmentType } from '../../models'
+import { includes } from 'zod'
+import apartment from '../../models/apartment'
 
 const handleGetApartment = async (userId) => {
-  const apartment = await getApartmentByUserId(userId);
-  const { owner } = apartment;
-  const residentId = owner.id;
-  const residentApartment = await getResidentApartmentByResidentId(residentId);
+  const apartment = await getApartmentByUserId(userId)
+  const { owner } = apartment
+  const residentId = owner.id
+  const residentApartment = await getResidentApartmentByResidentId(residentId)
 
-  return { apartment, residentApartment };
-};
+  return { apartment, residentApartment }
+}
 
 const handleFetchResident = async (userId) => {
   try {
     if (!userId) {
-      throw new AppError(StatusCodes.UNAUTHORIZED, "Unauthorized");
+      throw new AppError(StatusCodes.UNAUTHORIZED, 'Unauthorized')
     }
 
     const resident = await Resident.findOne({
@@ -23,19 +25,25 @@ const handleFetchResident = async (userId) => {
       include: [
         {
           model: Apartment,
-          as: "apartments",
-          attributes: ["id", "apartment_code", "building", "area", "floor"],
+          as: 'apartments',
+          attributes: ['id', 'apartment_code', 'building', 'area', 'floor'],
+          include: [
+            {
+              model: ApartmentType,
+              as: 'type'
+            }
+          ]
         },
         {
           model: User,
-          as: "user",
-          attributes: ["username", "email", "phone", "avatar_url"],
-        },
-      ],
-    });
+          as: 'user',
+          attributes: ['username', 'email', 'phone', 'avatar_url']
+        }
+      ]
+    })
 
     if (!resident) {
-      throw new AppError(StatusCodes.NOT_FOUND, "Resident profile not found");
+      throw new AppError(StatusCodes.NOT_FOUND, 'Resident profile not found')
     }
 
     const result = {
@@ -49,13 +57,15 @@ const handleFetchResident = async (userId) => {
         relationship: a.ResidentApartment.relationship,
         startDate: a.ResidentApartment.start_date,
         area: a.area,
-      })),
-    };
+        name: a.type.name,
+        description: a.type.description
+      }))
+    }
 
-    return result;
+    return result
   } catch (err) {
-    throw err;
+    throw err
   }
-};
+}
 
-export { handleGetApartment, handleFetchResident };
+export { handleGetApartment, handleFetchResident }

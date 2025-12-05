@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import MaintenanceRequestModal from './MaintenanceRequestModal'
 import {
   createMaintenanceRequestApi,
+  deleteMaintenanceRequestApi,
   getAllWorkType,
   getMaintenanceRequestsApi
 } from '@/services/api'
@@ -10,6 +11,17 @@ import { useResidentStore } from '@/stores/useResidentStore'
 import { toast } from 'sonner'
 import LightboxModal from './LightboxModal'
 import ModalDetailRequest from './ModalDetailRequest'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '@/components/ui/alert-dialog'
 
 export default function Maintenance() {
   // Convert priority number → label
@@ -92,15 +104,26 @@ export default function Maintenance() {
     }
   }
 
+  const handleDeleteRequest = async (id) => {
+    try {
+      const res = await deleteMaintenanceRequestApi(id)
+      if (res.data) {
+        toast.success('Xóa yêu cầu thành công!')
+        fetchData() // load lại danh sách
+      }
+    } catch (error) {
+      console.error(error)
+      toast.error('Không thể xóa yêu cầu!')
+    }
+  }
+
   const [lightboxImage, setLightboxImage] = useState(null) // for fullscreen preview
 
   return (
     <div className="space-y-6">
       {/* Header Section */}
       <div className="mb-6">
-        <h2 className="mb-2 text-2xl font-bold text-gray-800">
-          Phản ánh
-        </h2>
+        <h2 className="mb-2 text-2xl font-bold text-gray-800">Phản ánh</h2>
         <p className="text-gray-600">
           Nơi giúp bạn giải quyết được những vấn đề khó khăn gặp phải
         </p>
@@ -132,15 +155,47 @@ export default function Maintenance() {
       {/* Main Content */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {maintenanceRequests.map((item) => (
-          <div className="bg-card border-border col-span-1 cursor-pointer overflow-hidden rounded-lg border shadow-sm transition-all hover:shadow-lg">
+          <div className="bg-card border-border relative col-span-1 overflow-hidden rounded-lg border shadow-sm transition-all hover:shadow-lg">
+            {/* Nút Xóa */}
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation() // không cho mở modal detail
+                  }}
+                  className="absolute right-2 bottom-2 cursor-pointer rounded bg-red-500 px-2 py-1 text-xs font-semibold text-white hover:bg-red-600">
+                  Xóa
+                </button>
+              </AlertDialogTrigger>
+
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Bạn chắc chắn muốn xóa?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Yêu cầu này sẽ bị xóa vĩnh viễn và không thể khôi phục.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Hủy</AlertDialogCancel>
+
+                  <AlertDialogAction
+                    onClick={() => handleDeleteRequest(item.id)}
+                    className="bg-red-600 text-white hover:bg-red-700">
+                    Xóa
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+
             <div
-              className="p-4"
+              className="cursor-pointer p-4"
               onClick={() => {
                 openRequest(item)
               }}>
               <div className="border-border flex items-center justify-between border-b pb-3">
                 <span
-                  className={` ${statusColorLabel[item.status].class} status-pending rounded-full border px-3 py-1 text-xs font-semibold`}>
+                  className={` ${statusColorLabel[item.status].class} rounded-full border px-3 py-1 text-xs font-semibold`}>
                   {statusColorLabel[item.status].label ||
                     requestStatusMap[item.status]}
                 </span>
@@ -155,6 +210,7 @@ export default function Maintenance() {
                   })}
                 </span>
               </div>
+
               <div className="mt-3 flex items-start justify-between">
                 <div className="space-y-1">
                   <h3 className="text-card-foreground mb-1 font-bold">

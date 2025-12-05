@@ -1,4 +1,3 @@
-import * as React from 'react'
 import { Link, useLocation } from 'react-router'
 import {
   ChevronRight,
@@ -26,8 +25,23 @@ import {
   SidebarMenuItem,
   SidebarRail
 } from '@/components/ui/sidebar'
+import { useNotificationStore } from '@/stores/useNotificationStore'
+import { useEffect } from 'react'
+import { useResidentStore } from '@/stores/useResidentStore'
 
 const AppSidebar = () => {
+  const { resident } = useResidentStore()
+  const residentId = resident.id
+
+  const unreadCount = useNotificationStore((s) => s.unreadCount)
+  const fetchNotifications = useNotificationStore((s) => s.fetchNotifications)
+
+  useEffect(() => {
+    if (residentId) {
+      fetchNotifications(residentId)
+    }
+  }, [residentId])
+
   const location = useLocation()
 
   const isActive = (path) => location.pathname === path
@@ -44,23 +58,7 @@ const AppSidebar = () => {
         }
       ]
     },
-    {
-      title: 'Thông tin cá nhân',
-      items: [
-        {
-          title: 'Hồ sơ cá nhân',
-          url: '/user/profile',
-          icon: <User className="h-4 w-4" />,
-          isActive: isActive('/user/profile')
-        },
-        {
-          title: 'Thông tin căn hộ',
-          url: '/user/apartment',
-          icon: <Building className="h-4 w-4" />,
-          isActive: isActive('/user/apartment')
-        }
-      ]
-    },
+
     {
       title: 'Dịch vụ',
       items: [
@@ -73,7 +71,17 @@ const AppSidebar = () => {
         {
           title: 'Thông báo',
           url: '/user/notification',
-          icon: <Bell className="h-4 w-4" />,
+          icon: (
+            <div className="relative cursor-pointer">
+              <Bell className="h-4 w-4" />
+
+              {unreadCount > 0 && (
+                <span className="absolute -top-2 -right-2 rounded-full bg-red-500 px-1 text-xs text-white">
+                  {unreadCount}
+                </span>
+              )}
+            </div>
+          ),
           isActive: isActive('/user/notification')
         },
         {
@@ -81,6 +89,17 @@ const AppSidebar = () => {
           url: '/user/maintenance',
           icon: <ToolCase className="h-4 w-4" />,
           isActive: isActive('/user/maintenance')
+        }
+      ]
+    },
+    {
+      title: 'Thông tin cá nhân',
+      items: [
+        {
+          title: 'Hồ sơ cá nhân',
+          url: '/user/profile',
+          icon: <User className="h-4 w-4" />,
+          isActive: isActive('/user/profile')
         }
       ]
     }

@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
+import { CalendarDays, Cctv, ChartArea, ClipboardType } from 'lucide-react'
 
 const UserDashboard = () => {
   const [currentDate, setCurrentDate] = useState('')
@@ -24,6 +25,8 @@ const UserDashboard = () => {
   const [error, setError] = useState(null)
 
   const { resident } = useResidentStore()
+
+  const apartments = resident?.apartments ?? []
 
   const formatUnit = (unit) => {
     switch (unit) {
@@ -114,7 +117,9 @@ const UserDashboard = () => {
       {/* Quick Stats */}
       <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         {/* Hóa đơn chưa thanh toán */}
-        <div className="card-hover rounded-xl bg-white p-6 shadow-sm">
+        <Link
+          to={'/user/payment'}
+          className="card-hover rounded-xl bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">
@@ -128,10 +133,12 @@ const UserDashboard = () => {
               <i className="fas fa-exclamation-triangle text-red-600"></i>
             </div>
           </div>
-        </div>
+        </Link>
 
         {/* Căn hộ đang sở hữu */}
-        <div className="card-hover rounded-xl bg-white p-6 shadow-sm">
+        <Link
+          to={'/user'}
+          className="card-hover rounded-xl bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">
@@ -145,10 +152,12 @@ const UserDashboard = () => {
               <i className="fas fa-check-circle text-green-600"></i>
             </div>
           </div>
-        </div>
+        </Link>
 
         {/* Phản ánh đang xử lý */}
-        <div className="card-hover rounded-xl bg-white p-6 shadow-sm">
+        <Link
+          to={'/user/maintenance'}
+          className="card-hover rounded-xl bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">
@@ -162,10 +171,12 @@ const UserDashboard = () => {
               <i className="fas fa-clock text-yellow-600"></i>
             </div>
           </div>
-        </div>
+        </Link>
 
         {/* Thông báo mới */}
-        <div className="card-hover rounded-xl bg-white p-6 shadow-sm">
+        <Link
+          to={'/user/notification'}
+          className="card-hover rounded-xl bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Thông báo mới</p>
@@ -177,64 +188,94 @@ const UserDashboard = () => {
               <i className="fas fa-bell text-blue-600"></i>
             </div>
           </div>
-        </div>
+        </Link>
       </div>
 
-      {/* Quick Actions */}
-      <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Link
-          to={'/user/payment'}
-          className="card-hover cursor-pointer rounded-xl bg-gradient-to-br from-green-500 to-green-600 p-6 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="mb-2 text-lg font-semibold">Thanh toán hóa đơn</h3>
-              <p className="text-sm opacity-90">
-                Thanh toán nhanh chóng và an toàn
-              </p>
-            </div>
-            <i className="fas fa-credit-card text-3xl opacity-80"></i>
-          </div>
-        </Link>
+      {/* Căn hộ đang ở */}
+      <div className="mt-8">
+        <div className="mb-4">
+          <p className="text-lg font-medium text-gray-600">Chi tiết căn hộ</p>
+        </div>
 
-        <Link
-          to={'/user/profile'}
-          className="card-hover cursor-pointer rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 p-6 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="mb-2 text-lg font-semibold">Hồ sơ cá nhân</h3>
-              <p className="text-sm opacity-90">Quản lý thông tin cá nhân</p>
+        {apartments.map((apt, index) => (
+          <div key={index} className="mb-6 rounded-xl bg-white p-6 shadow-sm">
+            {/* Header */}
+            <div className="mb-6 flex flex-col items-start gap-2 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h3 className="text-xl font-semibold">
+                  Căn hộ {apt.apartmentCode}
+                </h3>
+                <p className="text-gray-600">
+                  Tòa {apt.building} - Tầng {apt.floor} - Luxury Residence
+                </p>
+              </div>
+              <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-800">
+                Đang ở
+              </span>
             </div>
-            <i className="fas fa-user text-3xl opacity-80"></i>
-          </div>
-        </Link>
 
-        <Link
-          to={'/user/maintenance'}
-          className="card-hover cursor-pointer rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 p-6 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="mb-2 text-lg font-semibold">Phản ánh chung cư</h3>
-              <p className="text-sm opacity-90">
-                Gửi yêu cầu bảo trì và phản ánh sự cố
-              </p>
+            {/* Nội dung */}
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              {/* Apartment Info */}
+              <div>
+                <h4 className="mb-4 text-gray-800">Thông số căn hộ</h4>
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-3 rounded-lg bg-gray-50 p-3">
+                    <ChartArea />
+                    <div>
+                      <p className="text-sm text-gray-600">Diện tích</p>
+                      <p className="font-medium">{apt.area} m²</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-3 rounded-lg bg-gray-50 p-3">
+                    <ClipboardType />
+                    <div>
+                      <p className="text-sm text-gray-600">Loại căn hộ</p>
+                      <p className="font-medium">{apt.name}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Contract Info */}
+              <div>
+                <h4 className="mb-4 font-semibold text-gray-800">
+                  Thông tin chi tiết
+                </h4>
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-3 rounded-lg bg-gray-50 p-3">
+                    <CalendarDays />
+                    <div>
+                      <p className="text-sm text-gray-600">
+                        Ngày bắt đầu sử dụng
+                      </p>
+                      <p className="font-medium">{apt.startDate}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3 rounded-lg bg-gray-50 p-3">
+                    <Cctv />
+                    <div>
+                      <p className="text-sm text-gray-600">Mô tả căn hộ</p>
+                      <p className="font-medium">{apt.description}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <i className="fas fa-concierge-bell text-3xl opacity-80"></i>
           </div>
-        </Link>
+        ))}
       </div>
 
       {/* Services Section */}
-      <div className="mb-8">
+      <div className="mb-4">
         <div className="mb-4">
-          <h3 className="mb-2 text-xl font-bold text-gray-800">
-            Dịch vụ hiện có
-          </h3>
-          <p className="text-gray-600">
-            Danh sách các dịch vụ được cung cấp bởi chung cư
+          <p className="text-lg font-medium text-gray-600">
+            Danh sách các dịch vụ
           </p>
         </div>
 
-        <div className="rounded-lg border bg-white shadow-sm">
+        <div className="rounded-lg border bg-white px-4 shadow-sm">
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-50 hover:bg-gray-50">
