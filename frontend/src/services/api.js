@@ -150,6 +150,18 @@ const paymentResultApi = async (query) => {
   return response
 }
 
+const dashboardApi = async (residentId) => {
+  const response = await instance.get(
+    `/user/dashboard?residentId=${residentId}`
+  )
+  return response
+}
+
+const getServicesApi = async () => {
+  const response = await instance.get('/user/services')
+  return response
+}
+
 export {
   loginApi,
   registerApi,
@@ -169,5 +181,7 @@ export {
   getUnpaidApi,
   getPaymentHistoryApi,
   createQrApi,
-  paymentResultApi
+  paymentResultApi,
+  dashboardApi,
+  getServicesApi
 }

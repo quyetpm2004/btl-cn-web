@@ -29,7 +29,14 @@ import {
   getEquipmentById
 } from '../controllers/user/equipment.controller.js'
 import { getAllWorkType } from '../controllers/user/worktype.controller.js'
-import { getPaymentUnpaid, getPaymentPaid, createPayment, vnpayReturn } from '../controllers/user/payment.controller.js'
+import {
+  getPaymentUnpaid,
+  getPaymentPaid,
+  createPayment,
+  vnpayReturn
+} from '../controllers/user/payment.controller.js'
+import { getDashboard } from '../controllers/user/dashboard.controller.js'
+import { serviceController } from '../controllers/service.controller.js'
 const uploadAvatar = uploadFile('avatar')
 const uploadRequestImages = uploadFile('request')
 
@@ -82,8 +89,13 @@ userRoute.get('/work-type', getAllWorkType)
 // Fee
 userRoute.get('/payment/unpaid', getPaymentUnpaid)
 userRoute.get('/payment/paid', getPaymentPaid)
-userRoute.post("/payment/create-qr", createPayment);
-userRoute.get("/payment/vnpay_return", vnpayReturn);
+userRoute.post('/payment/create-qr', createPayment)
+userRoute.get('/payment/vnpay_return', vnpayReturn)
 
+// Dashboard
+userRoute.get('/dashboard', getDashboard)
+
+// Services
+userRoute.get('/services', serviceController.getServices)
 
 export default userRoute

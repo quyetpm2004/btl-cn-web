@@ -9,7 +9,7 @@ module.exports = {
         name: 'Phí quản lý',
         description: 'Phí quản lý chung cư hàng tháng',
         price: 15000,
-        unit: 'm2/tháng'
+        unit: 'm2'
       },
       {
         name: 'Điện',
