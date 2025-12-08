@@ -87,7 +87,7 @@ async function getTotalPaidForInvoice(invoiceId, transaction) {
  * @returns {Promise<void>}
  */
 async function updateInvoice(invoiceId, data) {
-  await Invoice.update( data , { where: { id: invoiceId } })
+  await Invoice.update(data, { where: { id: invoiceId } })
 }
 
 /**
@@ -199,29 +199,38 @@ export {
  * @param {number|Array<number>} status - invoice status or array of statuses
  * @returns {Promise<Array<Invoice>>}
  */
-async function getInvoicesByApartmentAndStatus(apartmentId, status) {
-  const where = { apartment_id: apartmentId };
+async function getInvoicesByApartmentAndStatus(apartments, status) {
+  // Lấy danh sách id từ mảng apartment
+  const apartmentIds = apartments.map((a) => a.id)
 
-  if (Array.isArray(status)) {
-    where.status = { [Op.in]: status };
-  } else if (status !== undefined && status !== null) {
-    where.status = status;
+  // Tạo điều kiện where
+  const where = {
+    apartment_id: { [Op.in]: apartmentIds }
   }
 
+  // Điều kiện status
+  if (Array.isArray(status)) {
+    where.status = { [Op.in]: status }
+  } else if (status !== undefined && status !== null) {
+    where.status = status
+  }
+
+  // Query invoice
   const invoices = await Invoice.findAll({
     where,
     include: [
-      { model: db.sequelize.models.InvoiceItem, as: 'items',
-        include: [
-          { model: db.sequelize.models.Service, as: 'service' }
-        ]
-       },
+      {
+        model: db.sequelize.models.InvoiceItem,
+        as: 'items',
+        include: [{ model: db.sequelize.models.Service, as: 'service' }]
+      },
       { model: db.sequelize.models.CollectionPeriod, as: 'period' }
     ],
-    order: [['id']]
-  });
+    order: [['id', 'ASC']]
+  })
 
-  return invoices.map(invoice => ({
+  // Format kết quả trả về
+  return invoices.map((invoice) => ({
     id: invoice.id,
     apartment_id: invoice.apartment_id,
     total_amount: invoice.total_amount,
@@ -231,9 +240,8 @@ async function getInvoicesByApartmentAndStatus(apartmentId, status) {
     created_at: invoice.created_at,
     items: invoice.items,
     name: invoice.period?.name
-  }));
+  }))
 }
-
 
 /**
  * Get all invoices for an apartment (optional pagination/filtering could be added later)
@@ -243,7 +251,4 @@ async function getInvoicesByApartment(apartmentId) {
 }
 
 // Export the new helpers
-export {
-  getInvoicesByApartmentAndStatus,
-  getInvoicesByApartment
-}
+export { getInvoicesByApartmentAndStatus, getInvoicesByApartment }

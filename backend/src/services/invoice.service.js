@@ -129,7 +129,7 @@ async function checkOverdueInvoicesService() {
 async function getUnpaidInvoicesForUser(userId) {
   const apartment = await getApartmentByUserId(userId)
   if (!apartment) return []
-  return invoiceRepo.getInvoicesByApartmentAndStatus(apartment.id, 0)
+  return invoiceRepo.getInvoicesByApartmentAndStatus(apartment, 0)
 }
 
 /**
@@ -139,7 +139,7 @@ async function getUnpaidInvoicesForUser(userId) {
 async function getPaidInvoicesForUser(userId) {
   const apartment = await getApartmentByUserId(userId)
   if (!apartment) return []
-  return invoiceRepo.getInvoicesByApartmentAndStatus(apartment.id, 1)
+  return invoiceRepo.getInvoicesByApartmentAndStatus(apartment, 1)
 }
 
 export const invoiceService = {
@@ -150,4 +150,3 @@ export const invoiceService = {
   getUnpaidInvoicesForUser,
   getPaidInvoicesForUser
 }
-

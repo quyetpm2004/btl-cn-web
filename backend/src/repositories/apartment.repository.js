@@ -1,4 +1,10 @@
-import { Apartment, Resident, User, ApartmentType, ResidentApartment } from '../models/index.js'
+import {
+  Apartment,
+  Resident,
+  User,
+  ApartmentType,
+  ResidentApartment
+} from '../models/index.js'
 import { Op } from 'sequelize'
 
 async function createApartment(data, options = {}) {
@@ -113,11 +119,12 @@ async function getApartmentByUserId(userId) {
         include: [{ model: Apartment, as: 'apartment' }]
       }
     ]
-  });
+  })
 
-
-  const apartment = resident.residentApartment[0].apartment;
-  return apartment;
+  const apartment = resident.residentApartment.map((item) => {
+    return item.apartment
+  })
+  return apartment
 }
 
 async function getBuildingsApartment() {

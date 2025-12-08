@@ -76,6 +76,10 @@ async function createNotification(payload) {
   return Notification.create(payload)
 }
 
+async function createNotificationReceiver(payload) {
+  return NotificationReceiver.create(payload)
+}
+
 async function markAsRead(id) {
   return NotificationReceiver.update({ is_read: true }, { where: { id } })
 }
@@ -111,5 +115,6 @@ export {
   markAllAsRead,
   deleteNotification,
   getAllNotifications,
-  markAsUnRead
+  markAsUnRead,
+  createNotificationReceiver
 }
