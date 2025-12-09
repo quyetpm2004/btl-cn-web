@@ -14,8 +14,8 @@ apartmentRouter.post(
   validateBody(createApartmentSchema),
   apartmentController.createApartment
 )
-apartmentRouter.get('/', apartmentController.getApartments)
 apartmentRouter.get('/filter', apartmentController.filterApartments)
+apartmentRouter.get('/services', apartmentController.getApartmentsWithServices)
 apartmentRouter.get('/count', apartmentController.getApartmentCount)
 apartmentRouter.get('/buildings', apartmentController.getBuildingsApartment)
 apartmentRouter.get('/types', apartmentController.getTypesApartment)
@@ -36,10 +36,20 @@ apartmentRouter.delete(
   apartmentController.deleteApartment
 )
 
-apartmentRouter.post('/:id/residents', apartmentController.addResident)
+apartmentRouter.post(
+  '/:id/residents',
+  validateParams(apartmentIdParamSchema),
+  apartmentController.addResident
+)
 apartmentRouter.delete(
   '/:id/residents/:residentId',
+  validateParams(apartmentIdParamSchema),
   apartmentController.removeResident
+)
+apartmentRouter.put(
+  '/:id/services',
+  validateParams(apartmentIdParamSchema),
+  apartmentController.updateServices
 )
 
 export default apartmentRouter

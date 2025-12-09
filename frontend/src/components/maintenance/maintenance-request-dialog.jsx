@@ -78,7 +78,8 @@ export const MaintenanceRequestDialog = ({
                 : 'Chi tiết báo cáo'}
           </DialogTitle>
           <DialogDescription>
-            {request.title} - {request.location}
+            {request.title} -{' '}
+            {request.location || 'Căn hộ ' + request.apartment?.apartment_code}
           </DialogDescription>
         </DialogHeader>
 
@@ -104,24 +105,20 @@ export const MaintenanceRequestDialog = ({
               {request.description}
             </span>
           </div>
-
-          {user.role_id !== 5 && (
+          {mode === 'assign' && user.role_id !== 5 && (
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="technician" className="text-right">
-                Kỹ thuật viên
+                Kỹ thuật viên:
               </Label>
               <div className="col-span-3">
-                <Select
-                  value={technicianId}
-                  onValueChange={setTechnicianId}
-                  disabled={mode !== 'assign'}>
+                <Select value={technicianId} onValueChange={setTechnicianId}>
                   <SelectTrigger id="technician" className="w-full">
                     <SelectValue placeholder="Chọn kỹ thuật viên" />
                   </SelectTrigger>
                   <SelectContent>
                     {technicians.map((tech) => (
                       <SelectItem key={tech.id} value={String(tech.id)}>
-                        {tech.full_name} ({tech.user?.email})
+                        {tech.full_name} ({tech.user?.username})
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -130,12 +127,20 @@ export const MaintenanceRequestDialog = ({
             </div>
           )}
 
+          {mode === 'view' && user.role_id !== 5 && request.assigned_to && (
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label>Kỹ thuật viên:</Label>
+              <span className="col-span-3 text-sm">
+                {request.assignee?.full_name} (
+                {request.assignee?.user?.username})
+              </span>
+            </div>
+          )}
+
           {/* Complete Mode */}
           {mode === 'complete' && (
             <div className="grid grid-cols-4 items-start gap-4">
-              <Label htmlFor="result" className="text-right">
-                Kết quả
-              </Label>
+              <Label htmlFor="result">Kết quả</Label>
               <Textarea
                 id="result"
                 value={result}
@@ -149,7 +154,7 @@ export const MaintenanceRequestDialog = ({
           {/* View Mode - Show result if done */}
           {mode === 'view' && request.status === 1 && (
             <div className="grid grid-cols-4 items-start gap-4">
-              <Label className="text-right font-bold">Kết quả:</Label>
+              <Label>Kết quả:</Label>
               <span className="col-span-3 text-sm text-green-700">
                 {request.result}
               </span>

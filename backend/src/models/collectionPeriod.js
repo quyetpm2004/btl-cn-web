@@ -51,8 +51,8 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER
       },
       status: {
-        type: DataTypes.TINYINT,
-        defaultValue: 1
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
       }
     },
     {

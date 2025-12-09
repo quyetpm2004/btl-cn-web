@@ -24,6 +24,16 @@ async function getResidents(req, res) {
   }
 }
 
+async function getResidentsWithoutAccount(req, res) {
+  try {
+    const residents = await residentService.getResidentsWithoutAccountService()
+    return res.status(StatusCodes.OK).json({ residents })
+  } catch (err) {
+    const http = toHttpError(err)
+    return res.status(http.status).json(http.body)
+  }
+}
+
 async function getResidentDetail(req, res) {
   try {
     const residentId = req.params.id
@@ -89,5 +99,6 @@ export const residentController = {
   updateResident,
   filterResidents,
   deleteResident,
-  getResidentCount
+  getResidentCount,
+  getResidentsWithoutAccount
 }

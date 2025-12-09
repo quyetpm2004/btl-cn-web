@@ -36,3 +36,8 @@ export const getResidentCountApi = async (config) => {
   const res = await instance.get('/residents/count', config)
   return res.data
 }
+
+export const getResidentsWithoutAccountApi = async () => {
+  const res = await instance.get('/residents/no-account')
+  return res.data
+}

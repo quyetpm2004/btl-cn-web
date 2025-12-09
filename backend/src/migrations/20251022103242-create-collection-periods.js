@@ -40,8 +40,8 @@ module.exports = {
         onDelete: 'SET NULL'
       },
       status: {
-        type: Sequelize.TINYINT,
-        defaultValue: 1,
+        type: Sequelize.BOOLEAN,
+        defaultValue: true,
         comment: '0: closed | 1: open'
       }
     })

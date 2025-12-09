@@ -139,8 +139,6 @@ export const ApartmentDialog = ({
           'is_living',
           apartment.residents?.[0]?.ResidentApartment?.is_living ?? true
         )
-      } else {
-        form.reset()
       }
     }
   }, [apartment, open, form])
@@ -420,16 +418,7 @@ export const ApartmentDialog = ({
         onSave={async (data) => {
           try {
             const payload = {
-              full_name: data.full_name,
-              gender: data.gender ? parseInt(data.gender) : null,
-              dob: data.dob,
-              place_of_birth: data.place_of_birth,
-              ethnicity: data.ethnicity,
-              occupation: data.occupation,
-              hometown: data.hometown,
-              id_card: data.id_card,
-              household_no: data.household_no,
-              status: parseInt(data.status),
+              ...data,
               registered_at: new Date().toISOString().split('T')[0]
             }
             await createResidentApi(payload)

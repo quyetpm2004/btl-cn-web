@@ -257,7 +257,7 @@ export const MaintenanceScheduleDialog = ({
                   <SelectContent>
                     {assignees.map((staff) => (
                       <SelectItem key={staff.id} value={String(staff.id)}>
-                        {staff.full_name} ({staff.user?.email})
+                        {staff.full_name} ({staff.user?.username})
                       </SelectItem>
                     ))}
                   </SelectContent>

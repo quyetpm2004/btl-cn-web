@@ -70,25 +70,19 @@ async function deleteRequest(id) {
   }
 }
 
-async function assignRequest(id, technicianId) {
+/**
+ * Assign maintenance request to a technician.
+ * @param {*} id
+ * @param {*} technicianId
+ * @returns Maintenance request with updated assignee and status
+ */
+async function assign(id, technicianId) {
   const request = await MaintenanceRequestRepo.findById(id)
   if (!request) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Maintenance request not found')
   }
-  // Status 1: Assigned/In Progress (depending on your logic, let's say 1 is Assigned)
-  // Or maybe keep status 0 (Pending) but assigned_to is set.
-  // Let's assume status 1 is "Processing" or "Assigned".
-  // Based on migration: 0:pending | 1:done | 2:cancelled.
-  // Wait, the migration says: 0:pending | 1:done | 2:cancelled.
-  // It doesn't have an "Assigned" or "In Progress" status explicitly documented in comment,
-  // but usually we need one. Let's assume we can use 3 for "In Progress" or just keep it 0 but assigned.
-  // However, the user wants "Xử lý ngay" -> "Nhận công việc" (Accept).
-  // Let's define:
-  // 0: Pending (Chưa xử lý)
-  // 1: Done (Đã hoàn thành)
-  // 2: Cancelled (Đã hủy)
-  // 3: Assigned/In Progress (Đang xử lý)
 
+  // Phân công và đặt trạng thái thành 3: in progress (đã nhận việc)
   await MaintenanceRequestRepo.updateRequest(id, {
     assigned_to: technicianId,
     status: 3 // Assigned
@@ -96,6 +90,15 @@ async function assignRequest(id, technicianId) {
   return await MaintenanceRequestRepo.findById(id)
 }
 
+/**
+ * Update maintenance request status.
+ * If status = 0 (Pending), reset assigned_to to null.
+ * If status = 3 (In Progress) and userId is provided, set assigned_to = userId.
+ * @param {*} id
+ * @param {*} status
+ * @param {*} userId
+ * @returns
+ */
 async function updateStatus(id, status, userId = null) {
   const request = await MaintenanceRequestRepo.findById(id)
   if (!request) {
@@ -116,7 +119,13 @@ async function updateStatus(id, status, userId = null) {
   return await MaintenanceRequestRepo.findById(id)
 }
 
-async function completeRequest(id, result) {
+/**
+ * Complete maintenance request.
+ * @param {*} id
+ * @param {*} result
+ * @returns
+ */
+async function complete(id, result) {
   const request = await MaintenanceRequestRepo.findById(id)
   if (!request) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Maintenance request not found')
@@ -129,12 +138,17 @@ async function completeRequest(id, result) {
   return await MaintenanceRequestRepo.findById(id)
 }
 
+async function getAll(filters) {
+  return await MaintenanceRequestRepo.findAll(filters)
+}
+
 export {
   getAllPending,
   getDetail,
   update,
   deleteRequest,
-  assignRequest,
+  assign,
   updateStatus,
-  completeRequest
+  complete,
+  getAll
 }

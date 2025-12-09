@@ -7,7 +7,7 @@ async function getAllStaffs() {
       {
         model: User,
         as: 'user',
-        attributes: ['id', 'username', 'email', 'phone', 'avatar_url']
+        attributes: ['id', 'username', 'email', 'avatar_url']
       }
     ]
   })
@@ -27,10 +27,18 @@ async function getTechnicians() {
       {
         model: User,
         as: 'user',
-        attributes: ['id', 'username', 'email', 'phone', 'avatar_url']
+        attributes: ['id', 'username', 'avatar_url']
       }
     ]
   })
 }
 
-export { getAllStaffs, getTechnicians }
+async function createStaff(data, options = {}) {
+  return Staff.create(data, options)
+}
+
+async function updateStaff(id, data, options = {}) {
+  return Staff.update(data, { where: { id }, ...options })
+}
+
+export { getAllStaffs, getTechnicians, createStaff, updateStaff }

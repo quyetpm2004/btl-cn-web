@@ -29,7 +29,7 @@ const UserDashboard = ({ onNavigate }) => {
       {/* Quick Stats */}
       <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         {/* Hóa đơn chưa thanh toán */}
-        <div className="card-hover rounded-xl bg-white p-6 shadow-sm">
+        <div className="rounded-xl bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">
@@ -45,7 +45,7 @@ const UserDashboard = ({ onNavigate }) => {
         </div>
 
         {/* Dịch vụ đang dùng */}
-        <div className="card-hover rounded-xl bg-white p-6 shadow-sm">
+        <div className="rounded-xl bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">
@@ -61,7 +61,7 @@ const UserDashboard = ({ onNavigate }) => {
         </div>
 
         {/* Phản ánh đang xử lý */}
-        <div className="card-hover rounded-xl bg-white p-6 shadow-sm">
+        <div className="rounded-xl bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">
@@ -77,7 +77,7 @@ const UserDashboard = ({ onNavigate }) => {
         </div>
 
         {/* Thông báo mới */}
-        <div className="card-hover rounded-xl bg-white p-6 shadow-sm">
+        <div className="rounded-xl bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Thông báo mới</p>
@@ -94,7 +94,7 @@ const UserDashboard = ({ onNavigate }) => {
       {/* Quick Actions */}
       <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         <div
-          className="card-hover cursor-pointer rounded-xl bg-gradient-to-br from-green-500 to-green-600 p-6 text-white"
+          className="cursor-pointer rounded-xl bg-gradient-to-br from-green-500 to-green-600 p-6 text-white"
           onClick={() => onNavigate?.('payment')}>
           <div className="flex items-center justify-between">
             <div>
@@ -108,7 +108,7 @@ const UserDashboard = ({ onNavigate }) => {
         </div>
 
         <div
-          className="card-hover cursor-pointer rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 p-6 text-white"
+          className="cursor-pointer rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 p-6 text-white"
           onClick={() => onNavigate?.('profile')}>
           <div className="flex items-center justify-between">
             <div>
@@ -120,7 +120,7 @@ const UserDashboard = ({ onNavigate }) => {
         </div>
 
         <div
-          className="card-hover cursor-pointer rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 p-6 text-white"
+          className="cursor-pointer rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 p-6 text-white"
           onClick={() => onNavigate?.('services')}>
           <div className="flex items-center justify-between">
             <div>

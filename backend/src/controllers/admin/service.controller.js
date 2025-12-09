@@ -1,33 +1,22 @@
-import { serviceService } from '@/services/service.service.js'
+import * as serviceService from '@/services/admin/service.service.js'
 import { toHttpError } from '@/utils/errors.js'
 import { StatusCodes } from 'http-status-codes'
 
 async function createService(req, res) {
   try {
     const serviceData = req.body
-    const newService = await serviceService.createServiceService(serviceData)
-    return res.status(StatusCodes.CREATED).json({ service: newService })
+    const service = await serviceService.create(serviceData)
+    return res.status(StatusCodes.CREATED).json({ service })
   } catch (err) {
     const http = toHttpError(err)
     return res.status(http.status).json(http.body)
   }
 }
 
-async function getServices(req, res) {
+async function getAllActiveServices(req, res) {
   try {
-    const services = await serviceService.getServicesService()
+    const services = await serviceService.getAllActive()
     return res.status(StatusCodes.OK).json({ services })
-  } catch (err) {
-    const http = toHttpError(err)
-    return res.status(http.status).json(http.body)
-  }
-}
-
-async function getServiceDetail(req, res) {
-  try {
-    const serviceId = req.params.id
-    const service = await serviceService.getServiceDetailService(serviceId)
-    return res.status(StatusCodes.OK).json({ service })
   } catch (err) {
     const http = toHttpError(err)
     return res.status(http.status).json(http.body)
@@ -38,22 +27,8 @@ async function updateService(req, res) {
   try {
     const serviceId = req.params.id
     const serviceData = req.body
-    const updatedService = await serviceService.updateServiceService(
-      serviceId,
-      serviceData
-    )
+    const updatedService = await serviceService.update(serviceId, serviceData)
     return res.status(StatusCodes.OK).json({ service: updatedService })
-  } catch (err) {
-    const http = toHttpError(err)
-    return res.status(http.status).json(http.body)
-  }
-}
-
-async function filterServices(req, res) {
-  try {
-    const filters = req.query
-    const services = await serviceService.filterServicesService(filters)
-    return res.status(StatusCodes.OK).json({ services })
   } catch (err) {
     const http = toHttpError(err)
     return res.status(http.status).json(http.body)
@@ -63,7 +38,7 @@ async function filterServices(req, res) {
 async function deleteService(req, res) {
   try {
     const serviceId = req.params.id
-    await serviceService.deleteServiceService(serviceId)
+    await serviceService.deleteService(serviceId)
     return res.status(StatusCodes.NO_CONTENT).send()
   } catch (err) {
     const http = toHttpError(err)
@@ -71,11 +46,4 @@ async function deleteService(req, res) {
   }
 }
 
-export const serviceController = {
-  createService,
-  getServices,
-  getServiceDetail,
-  updateService,
-  filterServices,
-  deleteService
-}
+export { createService, getAllActiveServices, updateService, deleteService }

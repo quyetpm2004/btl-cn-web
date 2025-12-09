@@ -9,7 +9,7 @@ const instance = axios.create({
 instance.interceptors.request.use(
   function (config) {
     // Lấy dữ liệu từ localStorage (Zustand persist)
-    const persistedData = localStorage.getItem('access_token')
+    const persistedData = localStorage.getItem('auth_storage')
 
     let token = null
     if (persistedData) {
@@ -17,7 +17,7 @@ instance.interceptors.request.use(
         const parsed = JSON.parse(persistedData)
         token = parsed?.state?.accessToken || null // 👈 lấy đúng token
       } catch (e) {
-        console.error('❌ Lỗi parse access_token:', e)
+        console.error('❌ Lỗi parse auth_storage:', e)
       }
     }
 

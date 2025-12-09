@@ -20,6 +20,9 @@ export const Header = () => {
     navigate('/auth/login')
   }
 
+  const baseURL =
+    import.meta.env.VITE_BASE_URL_BACKEND || 'http://localhost:8000'
+
   return (
     <header className="fixed top-0 z-20 w-full bg-white text-black shadow-sm">
       <div className="container mx-auto flex items-center justify-between px-6 py-4">
@@ -45,14 +48,26 @@ export const Header = () => {
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Avatar className="h-8 w-8 cursor-pointer">
+              {/* <Avatar className="h-8 w-8 cursor-pointer">
                 <AvatarImage src={user?.avatar_url} alt="Avatar" />
+                <AvatarFallback>
+                  <i className="fas fa-user text-black"></i>
+                </AvatarFallback>
+              </Avatar> */}
+              <Avatar className="h-8 w-8 cursor-pointer">
+                <AvatarImage
+                  src={`${baseURL}/images/avatar/${user?.avatar_url}`}
+                  alt="Avatar"
+                />
                 <AvatarFallback>
                   <i className="fas fa-user text-black"></i>
                 </AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent sideOffset={10} align="center">
+              <DropdownMenuItem onClick={() => navigate('/admin/profile')}>
+                Hồ sơ cá nhân
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={handleLogout}>
                 Đăng xuất
               </DropdownMenuItem>

@@ -7,7 +7,7 @@ const unit = z.string().min(1, 'unit is required')
 
 export const createServiceSchema = z.strictObject({
   name,
-  description: description.optional(),
+  description,
   price,
   unit
 })

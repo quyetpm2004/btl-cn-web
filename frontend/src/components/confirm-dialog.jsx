@@ -26,7 +26,8 @@ export const ConfirmDialog = ({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>
             {description}
-            <p>Hành động này không thể hoàn tác.</p>
+            <br />
+            Hành động này không thể hoàn tác.
           </DialogDescription>
         </DialogHeader>
 

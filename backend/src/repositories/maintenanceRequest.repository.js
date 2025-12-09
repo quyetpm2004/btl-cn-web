@@ -1,4 +1,11 @@
-import { MaintenanceRequest, WorkType, Resident } from '../models/index.js'
+import {
+  MaintenanceRequest,
+  WorkType,
+  Resident,
+  Staff,
+  User,
+  Apartment
+} from '../models/index.js'
 import { Op } from 'sequelize'
 
 async function createMaintenanceRequest(data, option = {}) {
@@ -59,8 +66,75 @@ async function findAllPending(user) {
         model: Resident,
         as: 'resident',
         attributes: ['id', 'full_name']
+      },
+      {
+        model: Staff,
+        as: 'assignee',
+        attributes: ['id', 'full_name'],
+        include: [
+          {
+            model: User,
+            as: 'user',
+            attributes: ['id', 'username']
+          }
+        ]
       }
     ]
+  })
+}
+
+async function findAll(filters) {
+  const page = Number(filters.page) > 0 ? Number(filters.page) : 1
+  const limit = Number(filters.limit) > 0 ? Number(filters.limit) : 10
+  const offset = (page - 1) * limit
+
+  const { page: _p, limit: _l, offset: _o } = filters || {}
+
+  const total = await MaintenanceRequest.count()
+  const items = await MaintenanceRequest.findAll({
+    order: [['created_at', 'DESC']],
+    include: [
+      {
+        model: WorkType,
+        as: 'work_type',
+        attributes: ['id', 'name']
+      },
+      {
+        model: Resident,
+        as: 'resident',
+        attributes: ['id', 'full_name']
+      },
+      {
+        model: Staff,
+        as: 'assignee',
+        attributes: ['id', 'full_name'],
+        include: [
+          {
+            model: User,
+            as: 'user',
+            attributes: ['id', 'username']
+          }
+        ]
+      },
+      {
+        model: Apartment,
+        as: 'apartment',
+        attributes: ['id', 'apartment_code']
+      }
+    ],
+    limit,
+    offset
+  })
+  return { items, total, page, limit }
+}
+
+async function getRequestCount() {
+  return MaintenanceRequest.count({
+    where: {
+      status: {
+        [Op.in]: [0, 3] // 0: Pending, 3: In Progress
+      }
+    }
   })
 }
 
@@ -70,5 +144,7 @@ export {
   findById,
   updateRequest,
   deleteRequest,
-  findAllPending
+  findAllPending,
+  findAll,
+  getRequestCount
 }

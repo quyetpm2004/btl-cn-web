@@ -9,6 +9,11 @@ module.exports = (sequelize, DataTypes) => {
         as: 'resident'
       })
 
+      MaintenanceRequest.belongsTo(models.Apartment, {
+        foreignKey: 'apartment_id',
+        as: 'apartment'
+      })
+
       MaintenanceRequest.belongsTo(models.Staff, {
         foreignKey: 'assigned_to',
         as: 'assignee'

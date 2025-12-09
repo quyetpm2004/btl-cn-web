@@ -91,7 +91,7 @@ export const Register = () => {
         <input
           type="text"
           className="input-glow focus:border-primary-500 w-full rounded-lg border border-white px-4 py-3 text-white transition-all duration-300 hover:-translate-y-0.5 focus:outline-none"
-          placeholder="VD: A-1201"
+          placeholder="VD: A101"
           value={apartmentCode}
           onChange={(e) => setApartmentCode(e.target.value)}
           required

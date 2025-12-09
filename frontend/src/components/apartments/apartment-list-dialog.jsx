@@ -19,7 +19,7 @@ import { PaginationControls } from '@/components/pagination-controls'
 import { usePagination } from '@/hooks/use-pagination'
 import { filterApartmentsApi } from '@/services/apartment.api'
 import { useState, useMemo, useEffect } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 
 export const ApartmentListDialog = ({ open, onOpenChange, onSelect }) => {
   const [searchQuery, setSearchQuery] = useState('')
@@ -40,7 +40,7 @@ export const ApartmentListDialog = ({ open, onOpenChange, onSelect }) => {
     queryKey: ['apartments', filters],
     queryFn: () => filterApartmentsApi(filters),
     enabled: open, // Only fetch when dialog is open
-    keepPreviousData: true
+    placeholderData: keepPreviousData
   })
 
   const apartments = data?.items || []
@@ -89,7 +89,7 @@ export const ApartmentListDialog = ({ open, onOpenChange, onSelect }) => {
             <div className="relative flex-1">
               <Input
                 className="flex-1"
-                placeholder="Tìm kiếm theo mã căn hộ hoặc tên chủ hộ..."
+                placeholder="Tìm kiếm theo mã căn hộ..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}

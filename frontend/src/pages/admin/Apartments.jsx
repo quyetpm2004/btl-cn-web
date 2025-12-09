@@ -25,6 +25,7 @@ import {
   useQuery,
   useQueryClient
 } from '@tanstack/react-query'
+import { Badge } from '../../components/ui/badge'
 
 export const Apartments = () => {
   const queryClient = useQueryClient()
@@ -320,10 +321,10 @@ export const Apartments = () => {
                 <h3 className="text-lg font-semibold">
                   {apt?.apartment_code || '—'}
                 </h3>
-                <span
-                  className={`rounded-full px-2 py-1 text-xs font-semibold ${apt?.status ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-700'}`}>
+                <Badge
+                  className={`${apt?.status ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-700'}`}>
                   {apt?.status ? 'Đang ở' : 'Trống'}
-                </span>
+                </Badge>
               </div>
 
               <div className="space-y-2 text-sm text-gray-600">

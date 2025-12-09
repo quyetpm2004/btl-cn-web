@@ -44,30 +44,40 @@ export function ModalChangePassword({
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Đổi mật khẩu</DialogTitle>
+            <DialogDescription></DialogDescription>
           </DialogHeader>
           <div className="grid gap-4">
             <div className="grid gap-3">
-              <Label htmlFor="name-1">Mật khẩu cũ</Label>
+              <Label required htmlFor="oldPassword">
+                Mật khẩu cũ
+              </Label>
               <Input
                 value={oldPassword}
                 onChange={(e) => setOldPassword(e.target.value)}
                 type="password"
+                id="oldPassword"
               />
             </div>
             <div className="grid gap-3">
-              <Label htmlFor="name-1">Mật khẩu mới</Label>
+              <Label required htmlFor="newPassword">
+                Mật khẩu mới
+              </Label>
               <Input
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 type="password"
+                id="newPassword"
               />
             </div>
             <div className="grid gap-3">
-              <Label htmlFor="name-1">Xác nhận mât khẩu</Label>
+              <Label required htmlFor="confirmPassword">
+                Xác nhận mật khẩu
+              </Label>
               <Input
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 type="password"
+                id="confirmPassword"
               />
             </div>
           </div>

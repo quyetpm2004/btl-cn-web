@@ -15,16 +15,6 @@ async function createApartment(req, res) {
   }
 }
 
-async function getApartments(req, res) {
-  try {
-    const apartments = await apartmentService.getApartmentsService()
-    return res.status(StatusCodes.OK).json({ apartments })
-  } catch (err) {
-    const http = toHttpError(err)
-    return res.status(http.status).json(http.body)
-  }
-}
-
 async function getApartmentDetail(req, res) {
   try {
     const apartmentId = req.params.id
@@ -56,6 +46,18 @@ async function filterApartments(req, res) {
   try {
     const filters = req.query
     const result = await apartmentService.filterApartmentsService(filters)
+    return res.status(StatusCodes.OK).json(result)
+  } catch (err) {
+    const http = toHttpError(err)
+    return res.status(http.status).json(http.body)
+  }
+}
+
+async function getApartmentsWithServices(req, res) {
+  try {
+    const filters = req.query
+    const result =
+      await apartmentService.getApartmentsWithServicesService(filters)
     return res.status(StatusCodes.OK).json(result)
   } catch (err) {
     const http = toHttpError(err)
@@ -138,16 +140,29 @@ async function removeResident(req, res) {
   }
 }
 
+async function updateServices(req, res) {
+  try {
+    const apartmentId = req.params.id
+    const services = req.body.services // Array of { serviceId }
+    await apartmentService.updateApartmentServices(apartmentId, services)
+    return res.status(StatusCodes.OK).json({ message: 'Updated successfully' })
+  } catch (err) {
+    const http = toHttpError(err)
+    return res.status(http.status).json(http.body)
+  }
+}
+
 export const apartmentController = {
   createApartment,
-  getApartments,
   getApartmentDetail,
   updateApartment,
   filterApartments,
+  getApartmentsWithServices,
   deleteApartment,
   getApartmentCount,
   getBuildingsApartment,
   getTypesApartment,
   addResident,
-  removeResident
+  removeResident,
+  updateServices
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router'
 
 const navItems = {
   'Giới thiệu': 'gioi-thieu',
@@ -18,7 +19,10 @@ export const Navbar = () => {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="text-2xl font-bold text-gray-800">
-            <span className="text-purple-600">Luxury</span> Residence
+            <a href="/">
+              <span className="text-purple-600">Luxury</span>
+              Residence
+            </a>
           </div>
           <div className="hidden md:block">
             <div className="ml-10 flex space-x-8">

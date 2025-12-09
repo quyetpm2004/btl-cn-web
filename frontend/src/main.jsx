@@ -9,8 +9,11 @@ import { Dashboard } from './pages/admin/Dashboard.jsx'
 import { Residents } from './pages/admin/Residents.jsx'
 import { Apartments } from './pages/admin/Apartments.jsx'
 import { Fees } from './pages/admin/Fees.jsx'
+import { Invoices } from './pages/admin/fees/Invoices.jsx'
+import { Services } from './pages/admin/fees/Services.jsx'
+import { Registrations } from './pages/admin/fees/Registrations.jsx'
 import { AdminMaintenance } from './pages/admin/Maintenance.jsx'
-import { Staffs } from './pages/admin/Staffs.jsx'
+import { Accounts } from './pages/admin/Accounts.jsx'
 import { Notifications } from './pages/admin/Notifications.jsx'
 import { LandingPage } from './pages/landing-page/layout/LandingPage.jsx'
 import { AuthLayout } from './pages/auth/AuthLayout.jsx'
@@ -25,6 +28,7 @@ import Apartment from './pages/user/Apartment'
 import Payment from './pages/user/Payment'
 import Notification from './pages/user/Notification'
 import Maintenance from './pages/user/Maintenance'
+import { Profile } from './pages/admin/Profile'
 
 const queryClient = new QueryClient()
 
@@ -43,10 +47,19 @@ const router = createBrowserRouter([
           { index: true, Component: Dashboard },
           { path: 'residents', Component: Residents },
           { path: 'apartments', Component: Apartments },
-          { path: 'fees', Component: Fees },
+          {
+            path: 'fees',
+            children: [
+              { index: true, Component: Fees },
+              { path: 'invoices', Component: Invoices },
+              { path: 'services', Component: Services },
+              { path: 'registrations', Component: Registrations }
+            ]
+          },
           { path: 'maintenance', Component: AdminMaintenance },
-          { path: 'staffs', Component: Staffs },
-          { path: 'notifications', Component: Notifications }
+          { path: 'accounts', Component: Accounts },
+          { path: 'notifications', Component: Notifications },
+          { path: 'profile', Component: Profile }
         ]
       }
     ]
@@ -71,9 +84,6 @@ const router = createBrowserRouter([
   {
     path: '/',
     Component: LandingPage
-    // children: [
-    //   { index: true, Component: HomePage }
-    // ]
   },
   {
     path: '/auth',

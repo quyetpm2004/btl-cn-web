@@ -44,7 +44,7 @@ module.exports = {
       status: {
         type: Sequelize.TINYINT,
         defaultValue: 0,
-        comment: '0:pending | 1:done | 2:cancelled'
+        comment: '0:pending | 1:done | 2:cancelled | 3:in progress'
       },
       result: {
         type: Sequelize.TEXT,

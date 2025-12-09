@@ -31,6 +31,10 @@ module.exports = {
       dob: {
         type: Sequelize.DATEONLY
       },
+      id_card: {
+        type: Sequelize.STRING,
+        unique: true
+      },
       place_of_birth: {
         type: Sequelize.STRING
       },
@@ -43,21 +47,17 @@ module.exports = {
       hometown: {
         type: Sequelize.STRING
       },
-      id_card: {
-        type: Sequelize.STRING,
-        unique: true
-      },
       household_no: {
         type: Sequelize.STRING
+      },
+      registered_at: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       status: {
         type: Sequelize.TINYINT,
         defaultValue: 1,
         comment: '1: currently residing | 2: temporarily absent | 3: moved out'
-      },
-      registered_at: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
     })
   },

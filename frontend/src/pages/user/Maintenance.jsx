@@ -10,9 +10,9 @@ import { useResidentStore } from '@/stores/useResidentStore'
 import { toast } from 'sonner'
 import LightboxModal from './LightboxModal'
 import ModalDetailRequest from './ModalDetailRequest'
+import { format } from 'date-fns'
 
 export default function Maintenance() {
-  // Convert priority number → label
   const statusColorLabel = {
     0: {
       label: 'Đang chờ xử lý', // Pending
@@ -23,11 +23,11 @@ export default function Maintenance() {
       class: 'border border-yellow-400 text-yellow-600 bg-yellow-50'
     },
     2: {
-      label: 'Đã hoàn thành', // Completed/Success
+      label: 'Đã hoàn thành', // Completed
       class: 'border border-green-400 text-green-600 bg-green-50'
     },
     3: {
-      label: 'Đã hủy', // Cancelled/Failed
+      label: 'Đã hủy', // Cancelled
       class: 'border border-red-600 bg-red-600 text-white'
     },
 
@@ -35,13 +35,6 @@ export default function Maintenance() {
       label: 'Không xác định', // Undefined
       class: 'border border-gray-400 text-gray-600 bg-gray-50'
     }
-  }
-  // Convert status number → label
-  const requestStatusMap = {
-    0: 'Đang chờ xử lý',
-    1: 'Đang xử lý',
-    2: 'Đã hoàn thành',
-    3: 'Đã hủy'
   }
 
   const { resident } = useResidentStore()
@@ -69,6 +62,7 @@ export default function Maintenance() {
   useEffect(() => {
     fetchData()
     fetchWorkTypeData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const [isOpenModal, setIsOpenModal] = useState(false)
@@ -98,9 +92,7 @@ export default function Maintenance() {
     <div className="space-y-6">
       {/* Header Section */}
       <div className="mb-6">
-        <h2 className="mb-2 text-2xl font-bold text-gray-800">
-          Phản ánh
-        </h2>
+        <h2 className="mb-2 text-2xl font-bold text-gray-800">Phản ánh</h2>
         <p className="text-gray-600">
           Nơi giúp bạn giải quyết được những vấn đề khó khăn gặp phải
         </p>
@@ -140,19 +132,12 @@ export default function Maintenance() {
               }}>
               <div className="border-border flex items-center justify-between border-b pb-3">
                 <span
-                  className={` ${statusColorLabel[item.status].class} status-pending rounded-full border px-3 py-1 text-xs font-semibold`}>
-                  {statusColorLabel[item.status].label ||
-                    requestStatusMap[item.status]}
+                  className={` ${statusColorLabel[item.status].class} rounded-full border px-3 py-1 text-xs font-semibold`}>
+                  {statusColorLabel[item.status].label}
                 </span>
                 <span className="text-muted-foreground text-xs">
-                  {new Date(item.createdAt).toLocaleString('vi-VN', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                  })}
+                  {item.created_at &&
+                    format(new Date(item.created_at), 'HH:mm dd/MM/yyyy')}
                 </span>
               </div>
               <div className="mt-3 flex items-start justify-between">

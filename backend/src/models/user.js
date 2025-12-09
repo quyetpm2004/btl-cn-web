@@ -66,14 +66,12 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false
       },
+      email: {
+        type: DataTypes.STRING,
+        unique: true
+      },
       role_id: {
         type: DataTypes.INTEGER
-      },
-      email: {
-        type: DataTypes.STRING
-      },
-      phone: {
-        type: DataTypes.STRING
       },
       avatar_url: {
         type: DataTypes.STRING

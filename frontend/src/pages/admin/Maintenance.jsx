@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button'
 import { MaintenanceScheduleDialog } from '@/components/maintenance/maintenance-schedule-dialog'
 import { MaintenanceScheduleHistoryDialog } from '@/components/maintenance/maintenance-schedule-history-dialog'
 import { MaintenanceRequestDialog } from '@/components/maintenance/maintenance-request-dialog'
+import { MaintenanceRequestHistoryDialog } from '@/components/maintenance/maintenance-request-history-dialog'
 import { ConfirmDialog } from '@/components/confirm-dialog.jsx'
 import {
   keepPreviousData,
@@ -27,42 +28,39 @@ import { format, formatDistanceToNow } from 'date-fns'
 import { vi } from 'date-fns/locale'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { io } from 'socket.io-client'
+import { Badge } from '../../components/ui/badge'
 
 export const AdminMaintenance = () => {
   const { user } = useAuthStore()
   const queryClient = useQueryClient()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [historyDialogOpen, setHistoryDialogOpen] = useState(false)
+  const [reqHistoryDialogOpen, setReqHistoryDialogOpen] = useState(false)
   const [selectedSchedule, setSelectedSchedule] = useState(null)
   const [dialogMode, setDialogMode] = useState('view') // 'view', 'edit', 'create'
   const [deleteDialog, setDeleteDialog] = useState({
     open: false,
     schedule: null
   })
-
-  // Socket.io connection
-  useEffect(() => {
-    const socket = io('http://localhost:8080')
-
-    socket.on('maintenance_updated', (data) => {
-      queryClient.invalidateQueries({ queryKey: ['maintenanceRequests'] })
-      // Optional: Show toast notification
-      // if (data.action === 'assign') toast.info('Có yêu cầu vừa được phân công')
-      // if (data.action === 'update_status') toast.info('Trạng thái yêu cầu đã thay đổi')
-      // if (data.action === 'complete') toast.success('Một yêu cầu đã hoàn thành')
-    })
-
-    return () => {
-      socket.disconnect()
-    }
-  }, [queryClient])
-
   // Request Dialog State
   const [reqDialog, setReqDialog] = useState({
     open: false,
     mode: 'view', // 'view', 'assign', 'complete'
     request: null
   })
+
+  // Socket.io connection
+  useEffect(() => {
+    const socket = io('http://localhost:8080')
+
+    socket.on('maintenance_request_updated', () => {
+      queryClient.invalidateQueries({ queryKey: ['maintenanceRequests'] })
+    })
+
+    return () => {
+      socket.disconnect()
+    }
+  }, [queryClient])
 
   // Schedule Query
   const {
@@ -247,6 +245,12 @@ export const AdminMaintenance = () => {
         onViewDetail={(schedule) => handleOpenDialog(schedule, 'view')}
       />
 
+      <MaintenanceRequestHistoryDialog
+        open={reqHistoryDialogOpen}
+        onOpenChange={setReqHistoryDialogOpen}
+        onViewDetail={(request) => handleViewRequest(request)}
+      />
+
       <MaintenanceRequestDialog
         open={reqDialog.open}
         onOpenChange={(open) => setReqDialog((prev) => ({ ...prev, open }))}
@@ -354,9 +358,20 @@ export const AdminMaintenance = () => {
         {/* Right Column: Incident Reports */}
         <div className="rounded-xl bg-white shadow-sm">
           <div className="border-b border-gray-200 p-6">
-            <h3 className="h-9 text-lg font-semibold">Báo cáo sự cố</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="h-9 text-lg font-semibold">Báo cáo sự cố</h3>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => setReqHistoryDialogOpen(true)}
+                  variant="outline"
+                  className="border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700">
+                  <i className="fas fa-history"></i>
+                  Lịch sử
+                </Button>
+              </div>
+            </div>
           </div>
-          <div className="p-6">
+          <div className="py-6 pr-2 pl-6">
             {requestsLoading && (
               <div className="py-4 text-center text-gray-500">
                 Đang tải danh sách...
@@ -367,11 +382,11 @@ export const AdminMaintenance = () => {
                 Chưa có báo cáo nào
               </div>
             )}
-            <div className="flex flex-col gap-y-4">
+            <div className="flex snap-y flex-col gap-y-4 overflow-y-scroll pr-2 md:max-h-[474px]">
               {requests.map((request) => (
                 <div
                   key={request.id}
-                  className={`rounded border-l-4 p-4 ${
+                  className={`snap-start rounded border-l-4 p-4 ${
                     request.status === 3
                       ? 'border-blue-500 bg-blue-50'
                       : 'border-red-500 bg-red-50'
@@ -403,14 +418,14 @@ export const AdminMaintenance = () => {
                           : 'Vừa xong'}
                       </p>
                     </div>
-                    <span
-                      className={`rounded-full px-2 py-1 text-xs font-semibold ${
+                    <Badge
+                      className={`${
                         request.status === 3
                           ? 'bg-blue-100 text-blue-800'
                           : 'bg-red-100 text-red-800'
                       }`}>
                       {request.status === 3 ? 'Đang xử lý' : 'Chờ xử lý'}
-                    </span>
+                    </Badge>
                   </div>
                   <div className="mt-3 flex gap-x-2">
                     {/* Status 0: Pending */}
@@ -438,7 +453,7 @@ export const AdminMaintenance = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="border-red-200 text-red-600 hover:bg-red-50"
+                            className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
                             onClick={() => handleCancelRequest(request)}>
                             Hủy
                           </Button>
@@ -451,7 +466,7 @@ export const AdminMaintenance = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="border-yellow-200 text-yellow-600 hover:bg-yellow-50"
+                          className="border-yellow-200 text-yellow-600 hover:bg-yellow-50 hover:text-yellow-700"
                           onClick={() => handleEditRequest(request)}>
                           Sửa
                         </Button>
@@ -462,8 +477,8 @@ export const AdminMaintenance = () => {
                       size="sm"
                       className={`${
                         request.status === 3
-                          ? 'border-blue-200 text-blue-600 hover:bg-blue-50'
-                          : 'border-red-200 text-red-500 hover:bg-red-50'
+                          ? 'border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700'
+                          : 'border-red-200 text-red-500 hover:bg-red-50 hover:text-red-600'
                       }`}
                       onClick={() => handleViewRequest(request)}>
                       Chi tiết

@@ -21,12 +21,19 @@ module.exports = {
       full_name: {
         type: Sequelize.STRING
       },
-      dob: {
-        type: Sequelize.DATEONLY
-      },
       gender: {
         type: Sequelize.TINYINT,
         comment: '1: male | 2: female | 3: other'
+      },
+      phone: {
+        type: Sequelize.STRING
+      },
+      dob: {
+        type: Sequelize.DATEONLY
+      },
+      id_card: {
+        type: Sequelize.STRING,
+        unique: true
       },
       position: {
         type: Sequelize.STRING
@@ -34,17 +41,8 @@ module.exports = {
       department: {
         type: Sequelize.STRING
       },
-      id_card: {
-        type: Sequelize.STRING
-      },
-      address: {
-        type: Sequelize.STRING
-      },
       start_date: {
         type: Sequelize.DATEONLY
-      },
-      salary: {
-        type: Sequelize.INTEGER
       },
       status: {
         type: Sequelize.TINYINT,

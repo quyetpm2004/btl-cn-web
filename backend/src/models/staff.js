@@ -43,6 +43,9 @@ module.exports = (sequelize, DataTypes) => {
       gender: {
         type: DataTypes.TINYINT
       },
+      phone: {
+        type: DataTypes.STRING
+      },
       position: {
         type: DataTypes.STRING
       },
@@ -52,14 +55,8 @@ module.exports = (sequelize, DataTypes) => {
       id_card: {
         type: DataTypes.STRING
       },
-      address: {
-        type: DataTypes.STRING
-      },
       start_date: {
         type: DataTypes.DATEONLY
-      },
-      salary: {
-        type: DataTypes.INTEGER
       },
       status: {
         type: DataTypes.TINYINT,

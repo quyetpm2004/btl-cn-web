@@ -78,17 +78,19 @@ export const useAuthStore = create(
           isAuthenticated: false,
           user: null
         })
-        localStorage.removeItem('access_token')
+        localStorage.removeItem('auth_storage')
         toast.success('Logged out successfully.')
-      }
+      },
+
+      setUser: (user) => set({ user })
     }),
 
     {
-      name: 'access_token',
-      serialize: (state) => state.state.accessToken || '',
-      deserialize: (str) => ({
-        state: { accessToken: str || null },
-        version: 0
+      name: 'auth_storage',
+      partialize: (state) => ({
+        accessToken: state.accessToken,
+        isAuthenticated: state.isAuthenticated,
+        user: state.user
       })
     }
   )

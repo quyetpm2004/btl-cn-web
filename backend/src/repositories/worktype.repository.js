@@ -1,9 +1,7 @@
-import { WorkType } from "../models/index.js";
-
-
+import { WorkType } from '../models/index.js'
 
 async function getAllWorkType() {
-  return WorkType.findAll();
+  return WorkType.findAll()
 }
 
-export { getAllWorkType };
+export { getAllWorkType }

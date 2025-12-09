@@ -60,7 +60,7 @@ export const Amenities = () => {
           {amenities.map((item, index) => (
             <div
               key={index}
-              className="card-hover fade-in rounded-xl bg-white p-6 text-center transition-transform duration-300 hover:-translate-y-1">
+              className="fade-in rounded-xl bg-white p-6 text-center transition-transform duration-300 hover:-translate-y-1">
               <img
                 src={item.img}
                 alt={item.title}

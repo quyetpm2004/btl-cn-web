@@ -18,6 +18,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      email: {
+        type: Sequelize.STRING,
+        unique: true
+      },
       role_id: {
         type: Sequelize.INTEGER,
         references: {
@@ -26,12 +30,6 @@ module.exports = {
         },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
-      },
-      email: {
-        type: Sequelize.STRING
-      },
-      phone: {
-        type: Sequelize.STRING
       },
       avatar_url: {
         type: Sequelize.STRING

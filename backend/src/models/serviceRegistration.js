@@ -38,8 +38,8 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATEONLY
       },
       status: {
-        type: DataTypes.TINYINT,
-        defaultValue: 1
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
       }
     },
     {

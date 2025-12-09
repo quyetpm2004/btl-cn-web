@@ -33,14 +33,14 @@ module.exports = {
         gender: Math.floor(Math.random() * 3) + 1,
         phone: `0${900000000 + i}`,
         dob: dob.toISOString().split('T')[0],
+        id_card: `${300000000 + i}`,
         place_of_birth: `Tỉnh ${Math.floor(Math.random() * 63) + 1}`,
         ethnicity: 'Kinh',
         occupation: occupations[Math.floor(Math.random() * occupations.length)],
         hometown: 'Hà Nội',
-        id_card: `${300000000 + i}`,
         household_no: `HH${i + 1}`,
-        status: 1,
-        registered_at: new Date()
+        registered_at: new Date(),
+        status: 1
       })
     }
 

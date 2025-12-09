@@ -28,16 +28,13 @@ async function assignRequest(req, res) {
   try {
     const { id } = req.params
     const { technician_id } = req.body
-    const request = await MaintenanceRequestService.assignRequest(
-      id,
-      technician_id
-    )
-    
+    const request = await MaintenanceRequestService.assign(id, technician_id)
+
     // Emit socket event
-    req.io.emit('maintenance_updated', { 
-      action: 'assign', 
+    req.io.emit('maintenance_request_updated', {
+      action: 'assign',
       requestId: id,
-      technicianId: technician_id 
+      technicianId: technician_id
     })
 
     return res.status(StatusCodes.OK).json({ request })
@@ -59,8 +56,8 @@ async function updateStatus(req, res) {
     )
 
     // Emit socket event
-    req.io.emit('maintenance_updated', { 
-      action: 'update_status', 
+    req.io.emit('maintenance_request_updated', {
+      action: 'update_status',
       requestId: id,
       status: status,
       userId: req.user?.id
@@ -77,15 +74,26 @@ async function completeRequest(req, res) {
   try {
     const { id } = req.params
     const { result } = req.body
-    const request = await MaintenanceRequestService.completeRequest(id, result)
+    const request = await MaintenanceRequestService.complete(id, result)
 
     // Emit socket event
-    req.io.emit('maintenance_updated', { 
-      action: 'complete', 
-      requestId: id 
+    req.io.emit('maintenance_request_updated', {
+      action: 'complete',
+      requestId: id
     })
 
     return res.status(StatusCodes.OK).json({ request })
+  } catch (err) {
+    const http = toHttpError(err)
+    return res.status(http.status).json(http.body)
+  }
+}
+
+async function getAllMaintenanceRequests(req, res) {
+  try {
+    const filters = req.query
+    const requests = await MaintenanceRequestService.getAll(filters)
+    return res.status(StatusCodes.OK).json(requests)
   } catch (err) {
     const http = toHttpError(err)
     return res.status(http.status).json(http.body)
@@ -97,5 +105,6 @@ export {
   getAllPendingMaintenanceRequests,
   assignRequest,
   updateStatus,
-  completeRequest
+  completeRequest,
+  getAllMaintenanceRequests
 }
