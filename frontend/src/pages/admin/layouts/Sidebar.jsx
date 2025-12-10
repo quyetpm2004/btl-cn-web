@@ -80,9 +80,7 @@ export const Sidebar = () => {
         },
         {
           title: 'Phí & Thu chi',
-          url: '/admin/fees',
           icon: <CreditCard className="h-4 w-4" />,
-          isActive: isActive('/admin/fees'),
           allowedRoles: [ROLES.ADMIN, ROLES.ACCOUNTANT],
           items: [
             {
@@ -164,16 +162,9 @@ export const Sidebar = () => {
                       <SidebarMenuItem key={item.title}>
                         {item.items ? (
                           <>
-                            <SidebarMenuButton
-                              asChild
-                              isActive={item.isActive}
-                              className="flex items-center gap-2">
-                              {/* {item.icon}
-                              <span>{item.title}</span> */}
-                              <Link to={item.url}>
-                                {item.icon}
-                                <span>{item.title}</span>
-                              </Link>
+                            <SidebarMenuButton className="flex items-center gap-2">
+                              {item.icon}
+                              <span>{item.title}</span>
                             </SidebarMenuButton>
                             <SidebarMenuSub>
                               {item.items.map((subItem) => (

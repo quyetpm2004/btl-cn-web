@@ -21,7 +21,7 @@ const buttonVariants = cva(
         link: 'text-primary underline-offset-4 hover:underline',
         icon: 'bg-transparent p-4',
         success:
-          'border-transparent bg-green-500 text-white [a&]:hover:bg-green-600 focus-visible:ring-green-500/20 dark:focus-visible:ring-green-400/40 dark:bg-green-600/70',
+          'border-transparent bg-green-500 text-white hover:bg-green-600 focus-visible:ring-green-500/20 dark:focus-visible:ring-green-400/40 dark:bg-green-600/70',
         blue: 'border-transparent bg-blue-500 text-white hover:bg-blue-600 focus-visible:ring-blue-500/20  dark:focus-visible:ring-blue-400/40 dark:bg-blue-600/70',
         gray: 'bg-gray-700 text-white hover:bg-gray-900',
         red: 'bg-red-500 text-white hover:bg-red-600'

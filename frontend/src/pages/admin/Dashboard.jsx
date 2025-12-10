@@ -1,6 +1,21 @@
 import { getDashboardStatsApi } from '@/services/stat.api.js'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 
+const StatsCard = ({ title, value, icon, color }) => (
+  <div className="rounded-xl bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl">
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-sm font-medium text-gray-600">{title}</p>
+        <p className="text-2xl font-bold text-gray-900">{value ?? '-'}</p>
+      </div>
+      <div
+        className={`flex h-12 w-12 items-center justify-center rounded-lg bg-${color}-100`}>
+        <i className={`fas fa-${icon} text-${color}-600`}></i>
+      </div>
+    </div>
+  </div>
+)
+
 export const Dashboard = () => {
   const {
     data: dashboardStatsData,
@@ -29,61 +44,39 @@ export const Dashboard = () => {
       </div>
 
       <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-xl bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Tổng căn hộ</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {dashboardStats?.apartmentCount ?? '-'}
-              </p>
-            </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
-              <i className="fas fa-home text-blue-600"></i>
-            </div>
-          </div>
-        </div>
+        <StatsCard
+          title="Tổng căn hộ"
+          value={dashboardStats?.apartmentCount}
+          icon="home"
+          color="blue"
+        />
+        <StatsCard
+          title="Tổng cư dân"
+          value={dashboardStats?.residentCount}
+          icon="users"
+          color="green"
+        />
 
-        <div className="rounded-xl bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Cư dân</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {dashboardStats?.residentCount ?? '-'}
-              </p>
-            </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
-              <i className="fas fa-users text-green-600"></i>
-            </div>
-          </div>
-        </div>
+        <StatsCard
+          title="Tổng doanh thu"
+          value={
+            dashboardStats?.totalInvoiceAmount
+              ? new Intl.NumberFormat('vi-VN', {
+                  style: 'currency',
+                  currency: 'VND'
+                }).format(dashboardStats.totalInvoiceAmount)
+              : '-'
+          }
+          icon="money-bill-wave"
+          color="yellow"
+        />
 
-        <div className="rounded-xl bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">
-                Thu nhập tháng
-              </p>
-              <p className="text-2xl font-bold text-gray-900">2.4B</p>
-            </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-yellow-100">
-              <i className="fas fa-money-bill-wave text-yellow-600"></i>
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-xl bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Phản ánh</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {dashboardStats?.requestCount ?? '-'}
-              </p>
-            </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100">
-              <i className="fas fa-exclamation-triangle text-red-600"></i>
-            </div>
-          </div>
-        </div>
+        <StatsCard
+          title="Phản ánh"
+          value={dashboardStats?.requestCount}
+          icon="tools"
+          color="red"
+        />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

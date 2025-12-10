@@ -208,172 +208,170 @@ export const Apartments = () => {
         />
       </div>
 
-      <div className="rounded-xl bg-white shadow-sm">
-        {/* Filters */}
-        <div className="border-b border-gray-200 p-6">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-10">
-            <div className="relative md:col-span-3">
-              <Input
-                name="search"
-                type="text"
-                placeholder="Tìm kiếm căn hộ / chủ hộ..."
-                value={queryInput}
-                onChange={handleQueryChange}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              />
-              <Button
-                onClick={handleSearch}
-                className="absolute right-0.5 cursor-pointer text-gray-500 hover:text-blue-500"
-                variant="icon"
-                size="icon">
-                <i className="fas fa-search"></i>
-              </Button>
-            </div>
-
-            <div className="md:col-span-2">
-              <Select
-                value={building || '-1'}
-                onValueChange={(value) =>
-                  handleFilterChange('building')({
-                    target: { value: value === '-1' ? '' : value }
-                  })
-                }>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Tất cả tòa" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="-1">Tất cả tòa</SelectItem>
-                  {buildingFilter.map((b) => (
-                    <SelectItem key={b} value={b}>
-                      {b}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="md:col-span-2">
-              <Select
-                value={status || '-1'}
-                onValueChange={(value) =>
-                  handleFilterChange('status')({
-                    target: { value: value === '-1' ? '' : value }
-                  })
-                }>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Tất cả trạng thái" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="-1">Tất cả trạng thái</SelectItem>
-                  <SelectItem value="1">Đang ở</SelectItem>
-                  <SelectItem value="0">Trống</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="md:col-span-2">
-              <Select
-                value={String(typeId) || '-1'}
-                onValueChange={(value) =>
-                  handleFilterChange('type_id')({
-                    target: { value: value === '-1' ? '' : value }
-                  })
-                }>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Tất cả loại" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="-1">Tất cả loại</SelectItem>
-                  {typeFilter.map((t, idx) => (
-                    <SelectItem key={t} value={String(idx + 1)}>
-                      {t}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <Button onClick={handleReset} variant="outline">
-              Đặt lại
+      {/* Filters */}
+      <div className="mb-6 rounded-xl bg-white p-4 shadow-sm">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-10">
+          <div className="relative md:col-span-3">
+            <Input
+              name="search"
+              type="text"
+              placeholder="Tìm kiếm căn hộ..."
+              value={queryInput}
+              onChange={handleQueryChange}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+            />
+            <Button
+              onClick={handleSearch}
+              className="absolute right-0.5 cursor-pointer text-gray-500 hover:text-blue-500"
+              variant="icon"
+              size="icon">
+              <i className="fas fa-search"></i>
             </Button>
           </div>
+
+          <div className="md:col-span-2">
+            <Select
+              value={building || '-1'}
+              onValueChange={(value) =>
+                handleFilterChange('building')({
+                  target: { value: value === '-1' ? '' : value }
+                })
+              }>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Tất cả tòa" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="-1">Tất cả tòa</SelectItem>
+                {buildingFilter.map((b) => (
+                  <SelectItem key={b} value={b}>
+                    {b}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="md:col-span-2">
+            <Select
+              value={status || '-1'}
+              onValueChange={(value) =>
+                handleFilterChange('status')({
+                  target: { value: value === '-1' ? '' : value }
+                })
+              }>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Tất cả trạng thái" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="-1">Tất cả trạng thái</SelectItem>
+                <SelectItem value="1">Đang ở</SelectItem>
+                <SelectItem value="0">Trống</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="md:col-span-2">
+            <Select
+              value={String(typeId) || '-1'}
+              onValueChange={(value) =>
+                handleFilterChange('type_id')({
+                  target: { value: value === '-1' ? '' : value }
+                })
+              }>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Tất cả loại" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="-1">Tất cả loại</SelectItem>
+                {typeFilter.map((t, idx) => (
+                  <SelectItem key={t} value={String(idx + 1)}>
+                    {t}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <Button onClick={handleReset} variant="outline">
+            Đặt lại
+          </Button>
         </div>
+      </div>
 
-        {/* Apartments List */}
-        <div className="grid grid-cols-1 gap-6 p-6 md:grid-cols-2 lg:grid-cols-3">
-          {isLoading && (!apartments || apartments.length === 0) && (
-            <div className="col-span-full text-center text-gray-500">
-              Đang tải danh sách...
+      {/* Apartments List */}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {isLoading && (!apartments || apartments.length === 0) && (
+          <div className="col-span-full text-center text-gray-500">
+            Đang tải danh sách...
+          </div>
+        )}
+
+        {!isLoading && (!apartments || apartments.length === 0) && (
+          <div className="col-span-full text-center text-gray-500">
+            Không có dữ liệu
+          </div>
+        )}
+
+        {apartments.map((apt) => (
+          <div
+            key={apt?.id}
+            className="rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md">
+            <div className="mb-3 flex items-start justify-between">
+              <h3 className="text-lg font-semibold">
+                {apt?.apartment_code || '—'}
+              </h3>
+              <Badge
+                className={`${apt?.status ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-700'}`}>
+                {apt?.status ? 'Đang ở' : 'Trống'}
+              </Badge>
             </div>
-          )}
 
-          {!isLoading && (!apartments || apartments.length === 0) && (
-            <div className="col-span-full text-center text-gray-500">
-              Không có dữ liệu
-            </div>
-          )}
-
-          {apartments.map((apt) => (
-            <div
-              key={apt?.id}
-              className="rounded-lg border border-gray-200 p-4 transition-shadow hover:shadow-md">
-              <div className="mb-3 flex items-start justify-between">
-                <h3 className="text-lg font-semibold">
-                  {apt?.apartment_code || '—'}
-                </h3>
-                <Badge
-                  className={`${apt?.status ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-700'}`}>
-                  {apt?.status ? 'Đang ở' : 'Trống'}
-                </Badge>
-              </div>
-
-              <div className="space-y-2 text-sm text-gray-600">
-                <p>
-                  <i className="fas fa-ruler-combined mr-2"></i>
-                  {apt?.area ? `${apt.area}m²` : '—'}
-                </p>
-                <p>
-                  <i className="fas fa-building mr-2"></i>
-                  {apt?.type?.name ? `${apt.type.name}` : '—'}
-                </p>
-                <p>
-                  <i className="fas fa-user mr-2"></i>
-                  {/* {apt?.owner?.full_name || '—'} */}
-                  {apt?.residents?.[0]?.full_name || '—'}
-                </p>
-                <p>
-                  <i className="fas fa-calendar mr-2"></i>
-                  {/* {apt?.owner
+            <div className="space-y-2 text-sm text-gray-600">
+              <p>
+                <i className="fas fa-ruler-combined mr-2"></i>
+                {apt?.area ? `${apt.area}m²` : '—'}
+              </p>
+              <p>
+                <i className="fas fa-building mr-2"></i>
+                {apt?.type?.name ? `${apt.type.name}` : '—'}
+              </p>
+              <p>
+                <i className="fas fa-user mr-2"></i>
+                {/* {apt?.owner?.full_name || '—'} */}
+                {apt?.residents?.[0]?.full_name || '—'}
+              </p>
+              <p>
+                <i className="fas fa-calendar mr-2"></i>
+                {/* {apt?.owner
                     ? new Date(apt?.owner?.registered_at).toLocaleDateString()
                     : '—'} */}
-                  {apt?.residents?.[0]
-                    ? new Date(
-                        apt?.residents[0]?.registered_at
-                      ).toLocaleDateString()
-                    : '—'}
-                </p>
-              </div>
-
-              <div className="mt-4 flex gap-x-2">
-                <Button
-                  onClick={() => handleOpenDialog(apt, 'view')}
-                  variant="blue"
-                  className="flex-1">
-                  Xem chi tiết
-                </Button>
-                <Button
-                  onClick={() => handleOpenDialog(apt, 'edit')}
-                  variant="outline">
-                  <i className="fas fa-edit"></i>
-                </Button>
-              </div>
+                {apt?.residents?.[0]
+                  ? new Date(
+                      apt?.residents[0]?.registered_at
+                    ).toLocaleDateString()
+                  : '—'}
+              </p>
             </div>
-          ))}
-        </div>
 
-        {/* Pagination */}
-        <PaginationControls pagination={pagination} />
+            <div className="mt-4 flex gap-x-2">
+              <Button
+                onClick={() => handleOpenDialog(apt, 'view')}
+                variant="blue"
+                className="flex-1">
+                Xem chi tiết
+              </Button>
+              <Button
+                onClick={() => handleOpenDialog(apt, 'edit')}
+                variant="outline">
+                <i className="fas fa-edit"></i>
+              </Button>
+            </div>
+          </div>
+        ))}
       </div>
+
+      {/* Pagination */}
+      <PaginationControls pagination={pagination} />
     </>
   )
 }

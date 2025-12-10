@@ -8,7 +8,6 @@ import { Layout } from './pages/admin/layouts/Layout.jsx'
 import { Dashboard } from './pages/admin/Dashboard.jsx'
 import { Residents } from './pages/admin/Residents.jsx'
 import { Apartments } from './pages/admin/Apartments.jsx'
-import { Fees } from './pages/admin/Fees.jsx'
 import { Invoices } from './pages/admin/fees/Invoices.jsx'
 import { Services } from './pages/admin/fees/Services.jsx'
 import { Registrations } from './pages/admin/fees/Registrations.jsx'
@@ -50,7 +49,6 @@ const router = createBrowserRouter([
           {
             path: 'fees',
             children: [
-              { index: true, Component: Fees },
               { path: 'invoices', Component: Invoices },
               { path: 'services', Component: Services },
               { path: 'registrations', Component: Registrations }

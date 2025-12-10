@@ -29,7 +29,14 @@ import { getAllAccountsApi, deleteAccountApi } from '@/services/account.api'
 import { AccountDialog } from '@/components/accounts/accounts-dialog'
 import { toast } from 'sonner'
 import { ConfirmDialog } from '@/components/confirm-dialog'
-import { useAuthStore } from '../../stores/useAuthStore'
+import { useAuthStore } from '@/stores/useAuthStore'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip'
+import { Edit, Eye, Lock } from 'lucide-react'
 
 const roles = {
   1: 'Quản trị viên',
@@ -38,6 +45,18 @@ const roles = {
   4: 'Kế toán',
   5: 'Kỹ thuật viên'
 }
+
+const StatsCard = ({ role, value, icon, color }) => (
+  <div className="rounded-xl bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-xl">
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-sm text-gray-500">{roles[role]}</p>
+        <p className={`text-2xl font-bold ${color}`}>{value}</p>
+      </div>
+      <i className={`fas fa-${icon} text-2xl ${color}`}></i>
+    </div>
+  </div>
+)
 
 export const Accounts = () => {
   const user = useAuthStore()
@@ -165,207 +184,223 @@ export const Accounts = () => {
         </Button>
       </div>
 
-      <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
-        <div className="rounded-xl bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Quản trị viên</p>
-              <p className="text-2xl font-bold text-blue-600">
-                {accountStats?.adminCount ?? '-'}
-              </p>
-            </div>
-            <i className="fas fa-user-shield text-2xl text-blue-500"></i>
+      <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-4">
+        <StatsCard
+          role="1"
+          value={accountStats?.adminCount ?? '-'}
+          icon="user-shield"
+          color="text-blue-500"
+        />
+        <StatsCard
+          role="3"
+          value={accountStats?.managerCount ?? '-'}
+          icon="user-tie"
+          color="text-green-500"
+        />
+        <StatsCard
+          role="4"
+          value={accountStats?.accountantCount ?? '-'}
+          icon="calculator"
+          color="text-purple-500"
+        />
+        <StatsCard
+          role="5"
+          value={accountStats?.technicianCount ?? '-'}
+          icon="user-gear"
+          color="text-orange-500"
+        />
+      </div>
+
+      <div className="mb-6 rounded-xl bg-white p-4 shadow-sm">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-10">
+          <div className="relative md:col-span-3">
+            <Input
+              name="search"
+              type="text"
+              placeholder="Tìm kiếm tài khoản..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+            />
+            <Button
+              variant="icon"
+              onClick={handleSearch}
+              size="icon"
+              className="absolute right-0.5 cursor-pointer text-gray-500 hover:text-blue-500">
+              <i className="fas fa-search"></i>
+            </Button>
           </div>
-        </div>
-        <div className="rounded-xl bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Quản lý</p>
-              <p className="text-2xl font-bold text-green-600">
-                {accountStats?.managerCount ?? '-'}
-              </p>
-            </div>
-            <i className="fas fa-user-tie text-2xl text-green-500"></i>
+
+          <div className="md:col-span-2 md:col-start-6">
+            <Select
+              value={roleFilter || '-1'}
+              onValueChange={(value) =>
+                handleFilterChange('role_id')({
+                  target: { value: value === '-1' ? '' : value }
+                })
+              }>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Tất cả vai trò" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="-1">Tất cả vai trò</SelectItem>
+                <SelectItem value="1">Quản trị viên</SelectItem>
+                <SelectItem value="2">Cư dân</SelectItem>
+                <SelectItem value="3">Quản lý</SelectItem>
+                <SelectItem value="4">Kế toán</SelectItem>
+                <SelectItem value="5">Kỹ thuật viên</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-        </div>
-        <div className="rounded-xl bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Kế toán</p>
-              <p className="text-2xl font-bold text-purple-600">
-                {accountStats?.accountantCount ?? '-'}
-              </p>
-            </div>
-            <i className="fas fa-calculator text-2xl text-purple-500"></i>
+
+          <div className="md:col-span-2 md:col-start-8">
+            <Select
+              value={statusFilter || '-1'}
+              onValueChange={(value) =>
+                handleFilterChange('status')({
+                  target: { value: value === '-1' ? '' : value }
+                })
+              }>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Tất cả trạng thái" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="-1">Tất cả trạng thái</SelectItem>
+                <SelectItem value="1">Hoạt động</SelectItem>
+                <SelectItem value="0">Bị khóa</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-        </div>
-        <div className="rounded-xl bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Kỹ thuật viên</p>
-              <p className="text-2xl font-bold text-orange-600">
-                {accountStats?.technicianCount ?? '-'}
-              </p>
-            </div>
-            <i className="fas fa-user-gear text-2xl text-orange-500"></i>
-          </div>
+
+          <Button onClick={handleReset} variant="outline">
+            Đặt lại
+          </Button>
         </div>
       </div>
 
-      <div className="rounded-xl bg-white shadow-sm">
-        <div className="border-b border-gray-200 p-6">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-10">
-            <div className="relative md:col-span-3">
-              <Input
-                name="search"
-                type="text"
-                placeholder="Tìm kiếm tài khoản..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              />
-              <Button
-                variant="icon"
-                onClick={handleSearch}
-                size="icon"
-                className="absolute right-0.5 cursor-pointer text-gray-500 hover:text-blue-500">
-                <i className="fas fa-search"></i>
-              </Button>
-            </div>
-
-            <div className="md:col-span-2 md:col-start-6">
-              <Select
-                value={roleFilter || '-1'}
-                onValueChange={(value) =>
-                  handleFilterChange('role_id')({
-                    target: { value: value === '-1' ? '' : value }
-                  })
-                }>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Tất cả vai trò" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="-1">Tất cả vai trò</SelectItem>
-                  <SelectItem value="1">Quản trị viên</SelectItem>
-                  <SelectItem value="2">Cư dân</SelectItem>
-                  <SelectItem value="3">Quản lý</SelectItem>
-                  <SelectItem value="4">Kế toán</SelectItem>
-                  <SelectItem value="5">Kỹ thuật viên</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="md:col-span-2 md:col-start-8">
-              <Select
-                value={statusFilter || '-1'}
-                onValueChange={(value) =>
-                  handleFilterChange('status')({
-                    target: { value: value === '-1' ? '' : value }
-                  })
-                }>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Tất cả trạng thái" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="-1">Tất cả trạng thái</SelectItem>
-                  <SelectItem value="1">Hoạt động</SelectItem>
-                  <SelectItem value="0">Bị khóa</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <Button onClick={handleReset} variant="outline">
-              Đặt lại
-            </Button>
-          </div>
-        </div>
-
-        <div className="px-6 pt-2">
-          <Table>
-            <TableHeader>
-              <TableRow className="hover:bg-transparent">
-                <TableHead className="lg:min-w-42">Người dùng</TableHead>
-                <TableHead className="lg:min-w-30">Vai trò</TableHead>
-                <TableHead>Số điện thoại</TableHead>
-                <TableHead>Trạng thái</TableHead>
-                <TableHead>Thao tác</TableHead>
+      <div className="overflow-hidden rounded-xl border bg-white shadow-sm">
+        <Table>
+          <TableHeader className="bg-gray-50">
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="py-4 pl-6 font-medium text-gray-500 lg:min-w-42">
+                Người dùng
+              </TableHead>
+              <TableHead className="py-4 font-medium text-gray-500 lg:min-w-30">
+                Vai trò
+              </TableHead>
+              <TableHead className="py-4 font-medium text-gray-500">
+                Số điện thoại
+              </TableHead>
+              <TableHead className="py-4 font-medium text-gray-500">
+                Trạng thái
+              </TableHead>
+              <TableHead className="py-4 pr-6 text-right font-medium text-gray-500">
+                Thao tác
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {isAccountsLoading && (!accounts || accounts.length === 0) && (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center text-gray-500">
+                  Đang tải danh sách...
+                </TableCell>
               </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isAccountsLoading && (!accounts || accounts.length === 0) && (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center text-gray-500">
-                    Đang tải danh sách...
-                  </TableCell>
-                </TableRow>
-              )}
+            )}
 
-              {!isAccountsLoading && (!accounts || accounts.length === 0) && (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center text-gray-500">
-                    Không có dữ liệu
-                  </TableCell>
-                </TableRow>
-              )}
+            {!isAccountsLoading && (!accounts || accounts.length === 0) && (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center text-gray-500">
+                  Không có dữ liệu
+                </TableCell>
+              </TableRow>
+            )}
 
-              {accounts.map((account) => (
-                <TableRow key={account?.id}>
-                  <TableCell>
-                    <div className="flex items-center">
-                      <div className="flex size-9 items-center justify-center rounded-full bg-blue-500">
-                        <i className="fas fa-user text-white"></i>
+            {accounts.map((account) => (
+              <TableRow key={account?.id} className="group h-14">
+                <TableCell className="pl-6">
+                  <div className="flex items-center">
+                    <div className="flex size-9 items-center justify-center rounded-full bg-blue-500">
+                      <i className="fas fa-user text-white"></i>
+                    </div>
+                    <div className="ml-4">
+                      <div className="font-medium">
+                        {account?.resident?.full_name ||
+                          account?.staff?.full_name ||
+                          '—'}
                       </div>
-                      <div className="ml-4">
-                        <div className="font-medium">
-                          {account?.resident?.full_name ||
-                            account?.staff?.full_name ||
-                            '—'}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {account?.username || '—'}
-                        </div>
+                      <div className="text-xs text-gray-500">
+                        {account?.username || '—'}
                       </div>
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    {account?.role_id ? roles[account.role_id] : '—'}
-                  </TableCell>
-                  <TableCell>
-                    {account?.resident?.phone || account?.staff?.phone || '—'}
-                  </TableCell>
-                  <TableCell className="w-44">
-                    <span
-                      className={`rounded-full px-2 py-1 text-xs font-semibold ${account?.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                      {account?.status ? 'Hoạt động' : 'Bị khóa'}
-                    </span>
-                  </TableCell>
-                  <TableCell className="w-40">
-                    <div className="space-x-4">
-                      <button
-                        onClick={() => handleOpenDialog(account, 'view')}
-                        className="h-8 cursor-pointer font-bold text-blue-500 hover:text-blue-700">
-                        Xem
-                      </button>
-                      <button
-                        onClick={() => handleOpenDialog(account, 'edit')}
-                        className="cursor-pointer font-bold text-yellow-500 hover:text-yellow-700">
-                        Sửa
-                      </button>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  {account?.role_id ? roles[account.role_id] : '—'}
+                </TableCell>
+                <TableCell>
+                  {account?.resident?.phone || account?.staff?.phone || '—'}
+                </TableCell>
+                <TableCell className="w-44">
+                  <span
+                    className={`rounded-full px-2 py-1 text-xs font-semibold ${account?.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    {account?.status ? 'Hoạt động' : 'Bị khóa'}
+                  </span>
+                </TableCell>
+                <TableCell className="w-40 space-x-2 pr-6 text-right opacity-0 transition-opacity group-hover:opacity-100">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="icon"
+                          size="icon-sm"
+                          onClick={() => handleOpenDialog(account, 'view')}
+                          className="text-gray-600 hover:bg-gray-100">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Xem chi tiết</p>
+                      </TooltipContent>
+                    </Tooltip>
 
-                      {account.id === user.user.id ? null : (
-                        <button
-                          onClick={() => handleDeleteAccount(account)}
-                          className="cursor-pointer font-bold text-red-500 hover:text-red-700">
-                          Khóa
-                        </button>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="icon"
+                          size="icon-sm"
+                          onClick={() => handleOpenDialog(account, 'edit')}
+                          className="text-blue-600 hover:bg-blue-50">
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Chỉnh sửa</p>
+                      </TooltipContent>
+                    </Tooltip>
+
+                    {account.id === user.user.id ? null : (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="icon"
+                            size="icon-sm"
+                            onClick={() => handleDeleteAccount(account)}
+                            className="text-red-600 hover:bg-red-50">
+                            <Lock className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Khóa tài khoản</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
+                  </TooltipProvider>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
 
         <PaginationControls pagination={pagination} />
       </div>
