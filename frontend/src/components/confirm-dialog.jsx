@@ -17,7 +17,8 @@ export const ConfirmDialog = ({
   confirmText = 'Xác nhận',
   cancelText = 'Hủy',
   onConfirm,
-  isLoading = false
+  isLoading = false,
+  color = 'destructive'
 }) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -37,10 +38,7 @@ export const ConfirmDialog = ({
               {cancelText}
             </Button>
           </DialogClose>
-          <Button
-            onClick={onConfirm}
-            disabled={isLoading}
-            variant="destructive">
+          <Button onClick={onConfirm} disabled={isLoading} variant={color}>
             {isLoading ? 'Đang xử lý...' : confirmText}
           </Button>
         </DialogFooter>

@@ -122,7 +122,7 @@ export const Registrations = () => {
             <Input
               name="search"
               type="text"
-              placeholder="Tìm kiếm mã căn hộ..."
+              placeholder="Tìm kiếm căn hộ..."
               value={queryInput}
               onChange={(e) => setQueryInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -181,11 +181,11 @@ export const Registrations = () => {
 
             {apartments.map((apt) => (
               <TableRow key={apt.id} className="group h-14">
-                <TableCell className="pl-6 font-bold text-gray-900 md:w-30">
+                <TableCell className="pl-6 font-bold md:w-30">
                   {apt.apartment_code}
                 </TableCell>
                 <TableCell className="md:w-50">
-                  <div className="font-medium text-gray-900">
+                  <div className="font-medium">
                     {apt.residents?.[0]?.full_name || '---'}
                   </div>
                   <div className="flex items-center gap-1 text-xs text-gray-500">

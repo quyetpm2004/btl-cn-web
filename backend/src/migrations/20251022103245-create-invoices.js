@@ -30,6 +30,9 @@ module.exports = {
       total_amount: {
         type: Sequelize.BIGINT
       },
+      end_date: {
+        type: Sequelize.DATEONLY
+      },
       status: {
         type: Sequelize.TINYINT,
         defaultValue: 0,
@@ -50,6 +53,10 @@ module.exports = {
       },
       note: {
         type: Sequelize.TEXT
+      },
+      paid_at: {
+        type: Sequelize.DATE,
+        allowNull: true
       }
     })
   },

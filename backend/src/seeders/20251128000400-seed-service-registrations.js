@@ -14,7 +14,7 @@ module.exports = {
         })
       }
 
-      if (i < 5) {
+      if (i <= 5) {
         registration.push({
           apartment_id: i,
           service_id: 4,

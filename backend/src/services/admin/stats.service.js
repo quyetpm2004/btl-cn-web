@@ -4,6 +4,7 @@ import * as userRepo from '@/repositories/user.repository.js'
 import * as residentRepo from '@/repositories/resident.repository.js'
 import * as apartmentRepo from '@/repositories/apartment.repository.js'
 import * as maintenanceRequestRepo from '@/repositories/maintenanceRequest.repository.js'
+import { Invoice } from '@/models/index.js'
 
 /**
  * Get dashboard statistics for admin
@@ -11,15 +12,18 @@ import * as maintenanceRequestRepo from '@/repositories/maintenanceRequest.repos
  */
 async function getDashboardStats() {
   try {
-    const [residentCount, apartmentCount, requestCount] = await Promise.all([
-      residentRepo.getResidentCount(),
-      apartmentRepo.getApartmentCount(),
-      maintenanceRequestRepo.getRequestCount()
-    ])
+    const [residentCount, apartmentCount, requestCount, totalInvoiceAmount] =
+      await Promise.all([
+        residentRepo.getResidentCount(),
+        apartmentRepo.getApartmentCount(),
+        maintenanceRequestRepo.getRequestCount(),
+        Invoice.sum('total_amount')
+      ])
     return {
       residentCount,
       apartmentCount,
-      requestCount
+      requestCount,
+      totalInvoiceAmount
     }
   } catch (error) {
     throw new AppError(

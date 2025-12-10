@@ -40,7 +40,7 @@ async function getInvoiceStatsService(periodId) {
   }
 }
 
-async function generateInvoicesForPeriodService(periodId) {
+async function generateInvoicesForPeriodService({ periodId, userId }) {
   const {
     CollectionPeriod,
     Invoice,
@@ -105,7 +105,9 @@ async function generateInvoicesForPeriodService(periodId) {
           period_id: periodId,
           status: 0,
           total_amount: 0,
-          created_at: new Date()
+          created_at: new Date(),
+          created_by: userId || null,
+          end_date: period.end_date
         },
         { transaction: trx }
       )
@@ -139,9 +141,98 @@ async function generateInvoicesForPeriodService(periodId) {
   }
 }
 
+async function payInvoiceService(invoiceId) {
+  const { Invoice, Payment } = db
+  const invoice = await Invoice.findByPk(invoiceId)
+  if (!invoice) throw new AppError(StatusCodes.NOT_FOUND, 'Invoice not found')
+  if (invoice.status === 1)
+    throw new AppError(StatusCodes.BAD_REQUEST, 'Invoice already paid')
+
+  await db.sequelize.transaction(async (trx) => {
+    await Payment.create(
+      {
+        invoice_id: invoiceId,
+        amount: invoice.total_amount,
+        paid_at: new Date(),
+        method: 'cash' // Default to CASH for quick pay
+      },
+      { transaction: trx }
+    )
+
+    await invoice.update({ status: 1 }, { transaction: trx })
+  })
+}
+
+async function bulkUpdateInvoicesService(periodId, items) {
+  const { Invoice, InvoiceItem, Apartment, Service } = db
+  let updatedCount = 0
+  let errors = []
+
+  for (const item of items) {
+    try {
+      const { apartment_code, service_name, amount } = item
+      if (!apartment_code || !service_name || amount === undefined) continue
+
+      const apartment = await Apartment.findOne({ where: { apartment_code } })
+      if (!apartment) {
+        errors.push(`Apartment ${apartment_code} not found`)
+        continue
+      }
+
+      const invoice = await Invoice.findOne({
+        where: { apartment_id: apartment.id, period_id: periodId }
+      })
+      if (!invoice) {
+        errors.push(`Invoice for ${apartment_code} in this period not found`)
+        continue
+      }
+
+      const service = await Service.findOne({
+        where: { name: { [Op.like]: `%${service_name}%` } }
+      })
+      if (!service) {
+        errors.push(`Service ${service_name} not found`)
+        continue
+      }
+
+      const invoiceItem = await InvoiceItem.findOne({
+        where: { invoice_id: invoice.id, service_id: service.id }
+      })
+
+      if (invoiceItem) {
+        await invoiceItem.update({ amount: amount })
+      } else {
+        // Create new item if not exists (optional, but good for flexibility)
+        await InvoiceItem.create({
+          invoice_id: invoice.id,
+          service_id: service.id,
+          amount: amount,
+          quantity: 1,
+          unit_price: amount
+        })
+      }
+
+      // Recalculate total
+      const total = await InvoiceItem.sum('amount', {
+        where: { invoice_id: invoice.id }
+      })
+      await invoice.update({ total_amount: total })
+
+      updatedCount++
+    } catch (err) {
+      console.error(err)
+      errors.push(`Error updating ${item.apartment_code}: ${err.message}`)
+    }
+  }
+
+  return { updated: updatedCount, errors }
+}
+
 export {
   createInvoiceService,
   getInvoicesService,
   getInvoiceStatsService,
-  generateInvoicesForPeriodService
+  generateInvoicesForPeriodService,
+  payInvoiceService,
+  bulkUpdateInvoicesService
 }

@@ -41,6 +41,7 @@ import {
 } from '@/components/ui/table'
 import { format } from 'date-fns'
 import { Badge } from '../../../components/ui/badge'
+import { useAuthStore } from '../../../stores/useAuthStore'
 
 const types = {
   1: 'Hàng tháng',
@@ -49,6 +50,8 @@ const types = {
 }
 
 export const Services = () => {
+  const user = useAuthStore((s) => s.user)
+  console.log('User in Services.jsx:', user)
   const queryClient = useQueryClient()
 
   const [activeTab, setActiveTab] = useState('services')
@@ -592,7 +595,10 @@ export const Services = () => {
           } else if (confirmDialog.type === 'close_period') {
             closePeriodMutation.mutate(confirmDialog.data.id)
           } else if (confirmDialog.type === 'generate_invoices') {
-            generateInvoicesMutation.mutate(confirmDialog.data.id)
+            generateInvoicesMutation.mutate({
+              periodId: confirmDialog.data.id,
+              userId: user.id
+            })
           }
         }}
         isLoading={
@@ -604,6 +610,7 @@ export const Services = () => {
                 ? closePeriodMutation.isPending
                 : generateInvoicesMutation.isPending
         }
+        color={confirmDialog.type === 'delete_period' ? 'destructive' : 'blue'}
       />
     </>
   )

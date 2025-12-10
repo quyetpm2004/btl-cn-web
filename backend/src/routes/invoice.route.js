@@ -6,5 +6,7 @@ const invoiceRouter = express.Router()
 invoiceRouter.get('/', invoiceController.getInvoices)
 invoiceRouter.get('/stats', invoiceController.getInvoiceStats)
 invoiceRouter.post('/generate', invoiceController.generateInvoices)
+invoiceRouter.post('/pay', invoiceController.payInvoice)
+invoiceRouter.post('/bulk-update', invoiceController.bulkUpdateInvoices)
 
 export default invoiceRouter

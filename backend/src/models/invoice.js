@@ -11,9 +11,9 @@ module.exports = (sequelize, DataTypes) => {
       })
 
       Invoice.hasMany(models.InvoiceItem, {
-        foreignKey: "invoice_id",
-        as: "items",
-      });
+        foreignKey: 'invoice_id',
+        as: 'items'
+      })
 
       // Invoice belongs to Collection Period
       Invoice.belongsTo(models.CollectionPeriod, {
@@ -51,6 +51,9 @@ module.exports = (sequelize, DataTypes) => {
       total_amount: {
         type: DataTypes.BIGINT
       },
+      end_date: {
+        type: DataTypes.DATEONLY
+      },
       status: {
         type: DataTypes.TINYINT,
         defaultValue: 0
@@ -60,6 +63,10 @@ module.exports = (sequelize, DataTypes) => {
       },
       note: {
         type: DataTypes.TEXT
+      },
+      paid_at: {
+        type: DataTypes.DATE,
+        allowNull: true
       }
     },
     {

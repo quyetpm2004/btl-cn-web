@@ -1,11 +1,11 @@
 import {
   Invoice,
-  Payment,
   InvoiceItem,
   CollectionPeriod,
   Apartment,
   Service,
-  Resident
+  Resident,
+  Payment
 } from '../models/index.js'
 import { Op } from 'sequelize'
 
@@ -67,7 +67,15 @@ async function getInvoices(filters) {
       {
         model: InvoiceItem,
         as: 'items',
-        include: [{ model: Service, as: 'service', attributes: ['name'] }]
+        attributes: ['amount', 'quantity'],
+        include: [
+          { model: Service, as: 'service', attributes: ['name', 'unit'] }
+        ]
+      },
+      {
+        model: Payment,
+        as: 'payments',
+        attributes: ['amount', 'method', 'paid_at']
       }
     ],
     limit,
@@ -78,21 +86,4 @@ async function getInvoices(filters) {
   return { items, total, page, limit }
 }
 
-// Total revenue collected this calendar month based on actual Payments (recommended)
-async function getPaymentAmountCurrentMonth(date) {
-  const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
-  const startOfNextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1)
-
-  const total = await Payment.sum('amount', {
-    where: {
-      paid_at: {
-        [Op.gte]: startOfMonth,
-        [Op.lt]: startOfNextMonth
-      }
-    }
-  })
-
-  return Number(total || 0)
-}
-
-export { createInvoice, getInvoices, getPaymentAmountCurrentMonth }
+export { createInvoice, getInvoices }

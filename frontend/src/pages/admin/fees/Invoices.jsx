@@ -1,18 +1,15 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import {
-  Search,
-  Filter,
   Download,
   Eye,
   CheckCircle,
   Calendar,
-  Plus,
   Clock,
   AlertCircle,
   FileText,
-  X,
   CreditCard,
-  Loader2
+  Loader2,
+  Upload
 } from 'lucide-react'
 import {
   keepPreviousData,
@@ -21,7 +18,12 @@ import {
   useQueryClient
 } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { getInvoicesApi, getInvoiceStatsApi } from '@/services/invoice.api'
+import {
+  getInvoicesApi,
+  getInvoiceStatsApi,
+  payInvoiceApi,
+  bulkUpdateInvoicesApi
+} from '@/services/invoice.api'
 import { getAllCollectionPeriodsApi } from '@/services/collectionPeriod.api'
 import { usePagination } from '@/hooks/use-pagination'
 import { PaginationControls } from '@/components/pagination-controls'
@@ -34,17 +36,11 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog'
+import { format } from 'date-fns'
+import { InvoiceDetailDialog } from '@/components/fees/invoice-detail-dialog'
+import { ConfirmDialog } from '@/components/confirm-dialog'
+import * as XLSX from 'xlsx'
 
-// --- HELPERS ---
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
@@ -52,8 +48,9 @@ const formatCurrency = (amount) => {
   }).format(amount)
 }
 
+// eslint-disable-next-line no-unused-vars
 const StatsCard = ({ title, value, icon: Icon, color, subValue }) => (
-  <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
+  <div className="rounded-xl bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl">
     <div className="flex items-center justify-between">
       <div>
         <p className="text-sm font-medium text-gray-500">{title}</p>
@@ -61,7 +58,7 @@ const StatsCard = ({ title, value, icon: Icon, color, subValue }) => (
         {subValue && <p className="mt-1 text-xs text-gray-500">{subValue}</p>}
       </div>
       <div className={`rounded-full p-3 ${color}`}>
-        <Icon />
+        <Icon className="h-6 w-6 text-white" />
       </div>
     </div>
   </div>
@@ -97,116 +94,18 @@ const StatusBadge = ({ status }) => {
   )
 }
 
-const InvoiceDetailModal = ({ invoice, onClose, onPay }) => {
-  if (!invoice) return null
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="animate-in fade-in zoom-in w-full max-w-lg overflow-hidden rounded-xl bg-white shadow-xl duration-200">
-        <div className="flex items-center justify-between border-b border-gray-100 p-5">
-          <div>
-            <h3 className="text-lg font-bold text-gray-900">
-              Chi tiết hóa đơn
-            </h3>
-            <p className="text-sm text-gray-500">
-              #{invoice.id} - {invoice.period?.name}
-            </p>
-          </div>
-          <button
-            onClick={onClose}
-            className="rounded-full p-1 transition-colors hover:bg-gray-100">
-            <X className="h-5 w-5 text-gray-500" />
-          </button>
-        </div>
-
-        <div className="space-y-6 p-6">
-          {/* Info Card */}
-          <div className="flex items-start justify-between rounded-lg border border-blue-100 bg-blue-50 p-4">
-            <div>
-              <p className="text-xs font-semibold tracking-wide text-blue-600 uppercase">
-                Căn hộ
-              </p>
-              <p className="text-xl font-bold text-gray-900">
-                {invoice.apartment?.apartment_code}
-              </p>
-              <p className="text-sm text-gray-600">
-                {invoice.apartment?.residents?.[0]?.full_name || '---'}
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="text-xs font-semibold tracking-wide text-blue-600 uppercase">
-                Tổng cộng
-              </p>
-              <p className="text-xl font-bold text-blue-700">
-                {formatCurrency(invoice.total_amount)}
-              </p>
-              <div className="mt-1">
-                <StatusBadge status={invoice.status} />
-              </div>
-            </div>
-          </div>
-
-          {/* Details List */}
-          <div>
-            <h4 className="mb-3 flex items-center gap-2 text-sm font-medium text-gray-700">
-              <FileText className="h-4 w-4" /> Các khoản phí
-            </h4>
-            <ul className="space-y-3">
-              {invoice.items?.map((item, idx) => (
-                <li
-                  key={idx}
-                  className="flex justify-between border-b border-gray-50 py-2 text-sm last:border-0">
-                  <span className="text-gray-600">
-                    {item.service?.name || 'Dịch vụ'} (x{item.quantity})
-                  </span>
-                  <span className="font-medium text-gray-900">
-                    {formatCurrency(item.amount)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Payment Info if Paid */}
-          {invoice.status === 1 && (
-            <div className="flex items-start gap-2 rounded border border-green-100 bg-green-50 p-3 text-sm text-green-800">
-              <CheckCircle className="mt-0.5 h-4 w-4" />
-              <div>
-                <span className="font-semibold">Đã thanh toán</span>
-                {/* Add payment date if available */}
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="flex justify-end gap-3 border-t border-gray-100 bg-gray-50 p-5">
-          <button
-            onClick={onClose}
-            className="rounded-lg border border-transparent px-4 py-2 text-sm font-medium text-gray-600 transition-all hover:border-gray-200 hover:bg-white">
-            Đóng
-          </button>
-          {invoice.status !== 1 && (
-            <button
-              onClick={() => onPay(invoice)}
-              className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all hover:bg-blue-700">
-              <CreditCard className="h-4 w-4" /> Xác nhận thanh toán
-            </button>
-          )}
-        </div>
-      </div>
-    </div>
-  )
-}
-
 export const Invoices = () => {
   const queryClient = useQueryClient()
   const pagination = usePagination(1, 10)
+  const fileInputRef = useRef(null)
 
   const [search, setSearch] = useState('')
   const [queryInput, setQueryInput] = useState('')
   const [periodId, setPeriodId] = useState('all')
   const [status, setStatus] = useState('all')
   const [selectedInvoice, setSelectedInvoice] = useState(null)
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [invoiceToPay, setInvoiceToPay] = useState(null)
 
   const filters = useMemo(
     () => ({
@@ -255,6 +154,41 @@ export const Invoices = () => {
     pagination.setTotal(total)
   }, [total, pagination])
 
+  // Mutations
+  const payMutation = useMutation({
+    mutationFn: payInvoiceApi,
+    onSuccess: () => {
+      toast.success('Thanh toán thành công')
+      queryClient.invalidateQueries(['invoices'])
+      queryClient.invalidateQueries(['invoice-stats'])
+      setSelectedInvoice(null)
+    },
+    onError: (err) => {
+      toast.error(
+        'Lỗi thanh toán: ' + (err.response?.data?.message || err.message)
+      )
+    }
+  })
+
+  const bulkUpdateMutation = useMutation({
+    mutationFn: bulkUpdateInvoicesApi,
+    onSuccess: (data) => {
+      toast.success(`Đã cập nhật ${data.data.updated} hóa đơn`)
+      if (data.data.errors?.length > 0) {
+        toast.warning(`Có ${data.data.errors.length} lỗi xảy ra`)
+        console.warn(data.data.errors)
+      }
+      queryClient.invalidateQueries(['invoices'])
+      queryClient.invalidateQueries(['invoice-stats'])
+    },
+    onError: (err) => {
+      toast.error(
+        'Lỗi cập nhật: ' + (err.response?.data?.message || err.message)
+      )
+    }
+  })
+
+  // Handlers
   const handleSearch = () => {
     pagination.setPage(1)
     setSearch(queryInput)
@@ -268,20 +202,127 @@ export const Invoices = () => {
     pagination.setPage(1)
   }
 
-  // Mock pay function (replace with real API later)
+  const handleFilterChange = (newFilters) => {
+    if (newFilters.periodId !== undefined) setPeriodId(newFilters.periodId)
+    if (newFilters.status !== undefined) setStatus(newFilters.status)
+    pagination.setPage(1)
+  }
+
   const handlePayInvoice = (invoice) => {
-    toast.info('Chức năng thanh toán đang phát triển')
+    setInvoiceToPay(invoice)
+    setConfirmOpen(true)
+  }
+
+  const handleConfirmPay = () => {
+    if (invoiceToPay) {
+      payMutation.mutate(invoiceToPay.id)
+      setConfirmOpen(false)
+    }
+  }
+
+  const handleExport = () => {
+    if (invoices.length === 0) {
+      toast.error('Không có dữ liệu để xuất')
+      return
+    }
+
+    const data = invoices.map((inv) => ({
+      'Mã hóa đơn': inv.id,
+      'Căn hộ': inv.apartment?.apartment_code,
+      'Chủ hộ': inv.apartment?.residents?.[0]?.full_name || '',
+      'Đợt thu': inv.period?.name,
+      'Tổng tiền': inv.total_amount,
+      'Trạng thái':
+        inv.status === 1
+          ? 'Đã thanh toán'
+          : inv.status === 2
+            ? 'Quá hạn'
+            : 'Chờ thanh toán',
+      'Ngày tạo': format(new Date(inv.created_at), 'dd/MM/yyyy')
+    }))
+
+    const worksheet = XLSX.utils.json_to_sheet(data)
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Invoices')
+    XLSX.writeFile(workbook, `Invoices_${format(new Date(), 'yyyyMMdd')}.xlsx`)
+  }
+
+  const handleImportClick = () => {
+    if (periodId === 'all') {
+      toast.error('Vui lòng chọn đợt thu cụ thể để nhập dữ liệu')
+      return
+    }
+    fileInputRef.current?.click()
+  }
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = (evt) => {
+      try {
+        const bstr = evt.target.result
+        const wb = XLSX.read(bstr, { type: 'binary' })
+        const wsname = wb.SheetNames[0]
+        const ws = wb.Sheets[wsname]
+        const data = XLSX.utils.sheet_to_json(ws)
+
+        // Expected format: ApartmentCode, ServiceName, Amount
+        // Map keys if necessary or assume headers: "Mã căn hộ", "Dịch vụ", "Số tiền"
+        const items = data.map((row) => ({
+          apartment_code: row['Mã căn hộ'] || row['ApartmentCode'],
+          service_name: row['Dịch vụ'] || row['Service'],
+          amount: row['Số tiền'] || row['Amount']
+        }))
+
+        if (items.length === 0) {
+          toast.error('File không có dữ liệu hợp lệ')
+          return
+        }
+
+        bulkUpdateMutation.mutate({ periodId, items })
+      } catch (error) {
+        console.error(error)
+        toast.error('Lỗi đọc file Excel')
+      }
+    }
+    reader.readAsBinaryString(file)
+    e.target.value = null // Reset input
   }
 
   return (
     <div className="animate-in fade-in space-y-6 duration-300">
-      <div className="mb-6">
-        <h2 className="mb-2 text-2xl font-bold text-gray-800">
-          Quản lý Hóa đơn
-        </h2>
-        <p className="text-gray-600">
-          Theo dõi và quản lý hóa đơn thu phí của cư dân
-        </p>
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+        <div>
+          <h2 className="mb-2 text-2xl font-bold text-gray-800">
+            Quản lý Hóa đơn
+          </h2>
+          <p className="text-gray-600">
+            Theo dõi và quản lý hóa đơn thu phí của cư dân
+          </p>
+        </div>
+
+        <div>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileUpload}
+            className="hidden"
+            accept=".xlsx, .xls"
+          />
+          <Button
+            variant="blue"
+            onClick={handleImportClick}
+            className="mr-4 gap-2">
+            <Upload className="h-4 w-4" />
+            Nhập Excel
+          </Button>
+          <Button variant="blue" onClick={handleExport} className="gap-2">
+            <Download className="h-4 w-4" />
+            Xuất Excel
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -305,7 +346,7 @@ export const Invoices = () => {
           value={formatCurrency(stats.unpaid_amount || 0)}
           icon={Clock}
           color="bg-yellow-500"
-          subValue="Cần thu hồi"
+          subValue="Cần thu"
         />
         <StatsCard
           title="Tổng hóa đơn"
@@ -317,50 +358,60 @@ export const Invoices = () => {
       </div>
 
       {/* Toolbar */}
-      <div className="flex flex-col justify-between gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm lg:flex-row">
-        <div className="flex flex-1 flex-col gap-3 md:flex-row">
-          <div className="relative w-full md:w-64">
+      <div className="rounded-xl bg-white p-4 shadow-sm">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-10">
+          <div className="relative md:col-span-3">
             <Input
-              placeholder="Tìm căn hộ..."
+              placeholder="Tìm kiếm căn hộ..."
               value={queryInput}
               onChange={(e) => setQueryInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
             />
             <Button
+              variant="icon"
               onClick={handleSearch}
-              className="absolute top-0.5 right-0.5 h-9 w-9 text-gray-500 hover:text-blue-600"
-              variant="ghost"
-              size="icon">
-              <Search className="h-4 w-4" />
+              size="icon"
+              className="absolute right-0.5 cursor-pointer text-gray-500 hover:text-blue-500">
+              <i className="fas fa-search"></i>
             </Button>
           </div>
 
-          <Select value={periodId} onValueChange={setPeriodId}>
-            <SelectTrigger className="w-full md:w-[200px]">
-              <SelectValue placeholder="Chọn đợt thu" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tất cả đợt thu</SelectItem>
-              {periods.map((p) => (
-                <SelectItem key={p.id} value={String(p.id)}>
-                  {p.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="md:col-span-2 md:col-start-6">
+            <Select
+              value={periodId}
+              onValueChange={(value) =>
+                handleFilterChange({ periodId: value })
+              }>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Chọn đợt thu" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tất cả đợt thu</SelectItem>
+                {periods.map((p) => (
+                  <SelectItem key={p.id} value={String(p.id)}>
+                    {p.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-          <Select value={status} onValueChange={setStatus}>
-            <SelectTrigger className="w-full md:w-[180px]">
-              <SelectValue placeholder="Trạng thái" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tất cả trạng thái</SelectItem>
-              <SelectItem value="0">Chờ thanh toán</SelectItem>
-              <SelectItem value="1">Đã thanh toán</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="md:col-span-2 md:col-start-8">
+            <Select
+              value={status}
+              onValueChange={(value) => handleFilterChange({ status: value })}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Trạng thái" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tất cả trạng thái</SelectItem>
+                <SelectItem value="0">Chờ thanh toán</SelectItem>
+                <SelectItem value="1">Đã thanh toán</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-          <Button variant="ghost" onClick={handleReset}>
+          <Button variant="outline" onClick={handleReset}>
             Đặt lại
           </Button>
         </div>
@@ -430,7 +481,11 @@ export const Invoices = () => {
                         {invoice.period?.name}
                       </div>
                       <div className="mt-0.5 text-xs text-gray-400">
-                        Hạn: {invoice.period?.end_date}
+                        Hạn:{' '}
+                        {format(
+                          new Date(invoice?.period?.end_date || new Date()),
+                          'dd/MM/yyyy'
+                        )}
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right font-bold whitespace-nowrap text-gray-900">
@@ -468,12 +523,36 @@ export const Invoices = () => {
       </div>
 
       {selectedInvoice && (
-        <InvoiceDetailModal
+        <InvoiceDetailDialog
           invoice={selectedInvoice}
-          onClose={() => setSelectedInvoice(null)}
+          open={!!selectedInvoice}
+          onOpenChange={(open) => !open && setSelectedInvoice(null)}
           onPay={handlePayInvoice}
         />
       )}
+
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title="Xác nhận thanh toán"
+        description={
+          invoiceToPay ? (
+            <span>
+              Bạn có chắc muốn xác nhận thanh toán cho hóa đơn{' '}
+              <strong>{invoiceToPay.period?.name}</strong> của căn hộ{' '}
+              <strong>{invoiceToPay.apartment?.apartment_code}</strong>?
+              <br />
+              Tổng tiền:{' '}
+              <strong>{formatCurrency(invoiceToPay.total_amount)}</strong>
+            </span>
+          ) : (
+            'Bạn có chắc muốn thực hiện hành động này?'
+          )
+        }
+        onConfirm={handleConfirmPay}
+        isLoading={payMutation.isPending}
+        color="blue"
+      />
     </div>
   )
 }

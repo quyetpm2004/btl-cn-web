@@ -8,6 +8,14 @@ export const getInvoiceStatsApi = (params) => {
   return axios.get('/invoices/stats', { params })
 }
 
-export const generateInvoicesApi = (periodId) => {
-  return axios.post('/invoices/generate', { periodId })
+export const generateInvoicesApi = ({ periodId, userId }) => {
+  return axios.post('/invoices/generate', { periodId, userId })
+}
+
+export const payInvoiceApi = (invoiceId) => {
+  return axios.post('/invoices/pay', { invoice_id: invoiceId })
+}
+
+export const bulkUpdateInvoicesApi = ({ periodId, items }) => {
+  return axios.post('/invoices/bulk-update', { period_id: periodId, items })
 }
