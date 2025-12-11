@@ -33,7 +33,7 @@ const UserLayoutContent = () => {
   const { state } = useSidebar()
 
   return (
-    <div className="system-ui min-h-screen w-full bg-gray-50">
+    <div className="min-h-screen w-full bg-gray-50">
       <Header />
       <div className="mt-20 flex transition-all duration-300">
         <AppSidebar />

@@ -29,7 +29,7 @@ module.exports = {
       },
       relationship: {
         type: Sequelize.STRING,
-        comment: 'owner | relative'
+        comment: 'owner | member'
       },
       is_living: {
         type: Sequelize.BOOLEAN,

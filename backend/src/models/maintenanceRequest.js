@@ -28,9 +28,29 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true
       },
+      resident_id: {
+        type: DataTypes.INTEGER
+      },
+      apartment_id: {
+        type: DataTypes.INTEGER
+      },
+      location: {
+        type: DataTypes.STRING
+      },
       title: {
         type: DataTypes.STRING,
         allowNull: false
+      },
+      description: {
+        type: DataTypes.TEXT
+      },
+      images: {
+        type: DataTypes.JSON,
+        allowNull: true
+      },
+      status: {
+        type: DataTypes.TINYINT,
+        defaultValue: 0
       },
       result: {
         type: DataTypes.TEXT,
@@ -39,27 +59,6 @@ module.exports = (sequelize, DataTypes) => {
       work_type_id: {
         type: DataTypes.INTEGER,
         allowNull: false
-      },
-      resident_id: {
-        type: DataTypes.INTEGER
-      },
-      description: {
-        type: DataTypes.TEXT
-      },
-      result: {
-        type: DataTypes.TEXT,
-        allowNull: true
-      },
-      images: {
-        type: DataTypes.JSON,
-        allowNull: true
-      },
-      priority: {
-        type: DataTypes.TINYINT
-      },
-      status: {
-        type: DataTypes.TINYINT,
-        defaultValue: 0
       },
       assigned_to: {
         type: DataTypes.INTEGER
@@ -73,7 +72,8 @@ module.exports = (sequelize, DataTypes) => {
       modelName: 'MaintenanceRequest',
       tableName: 'maintenance_requests',
       underscored: true,
-      updatedAt: false
+      updatedAt: false,
+      createdAt: 'created_at'
     }
   )
 

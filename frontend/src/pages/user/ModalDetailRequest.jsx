@@ -14,7 +14,6 @@ const ModalDetailRequest = ({
   selectedRequest,
   setLightboxImage
 }) => {
-  console.log('request detail modal', selectedRequest)
   const baseURL =
     import.meta.env.VITE_BASE_URL_BACKEND || 'http://localhost:8000'
   const statusColorLabel = {

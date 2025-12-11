@@ -190,7 +190,7 @@ export const Residents = () => {
           <p className="text-gray-600">Quản lý thông tin và hồ sơ cư dân</p>
         </div>
         <Button onClick={() => handleOpenDialog(null, 'create')} variant="blue">
-          <i className="fas fa-plus mr-2"></i>
+          <i className="fas fa-plus"></i>
           Thêm cư dân
         </Button>
       </div>
@@ -240,88 +240,94 @@ export const Residents = () => {
           </div>
         </div>
 
-        <div>
-          <Table>
-            <TableHeader>
-              <TableRow className="hover:bg-transparent">
-                <TableHead>Cư dân</TableHead>
-                <TableHead>Căn hộ</TableHead>
-                <TableHead>Giới tính</TableHead>
-                <TableHead>Căn cước</TableHead>
-                <TableHead>Trạng thái</TableHead>
-                <TableHead>Thao tác</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading && (!residents || residents.length === 0) && (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center text-gray-500">
-                    Đang tải danh sách...
-                  </TableCell>
+        <div className="p-6">
+          <div className="overflow-hidden rounded-lg border">
+            <Table>
+              <TableHeader>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead>Cư dân</TableHead>
+                  <TableHead>Căn hộ</TableHead>
+                  <TableHead>Giới tính</TableHead>
+                  <TableHead>Căn cước</TableHead>
+                  <TableHead>Trạng thái</TableHead>
+                  <TableHead>Thao tác</TableHead>
                 </TableRow>
-              )}
+              </TableHeader>
+              <TableBody>
+                {isLoading && (!residents || residents.length === 0) && (
+                  <TableRow>
+                    <TableCell
+                      colSpan={6}
+                      className="text-center text-gray-500">
+                      Đang tải danh sách...
+                    </TableCell>
+                  </TableRow>
+                )}
 
-              {!isLoading && (!residents || residents.length === 0) && (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center text-gray-500">
-                    Không có dữ liệu
-                  </TableCell>
-                </TableRow>
-              )}
+                {!isLoading && (!residents || residents.length === 0) && (
+                  <TableRow>
+                    <TableCell
+                      colSpan={6}
+                      className="text-center text-gray-500">
+                      Không có dữ liệu
+                    </TableCell>
+                  </TableRow>
+                )}
 
-              {residents.map((resident) => (
-                <TableRow key={resident?.id}>
-                  <TableCell className="font-medium">
-                    {resident?.full_name}
-                  </TableCell>
-                  <TableCell>
-                    {resident?.apartments?.length > 0
-                      ? resident.apartments
-                          .map((apt) => apt.apartment_code)
-                          .join(', ')
-                      : '—'}
-                  </TableCell>
-                  <TableCell>
-                    {resident?.gender === 1
-                      ? 'Nam'
-                      : resident?.gender === 2
-                        ? 'Nữ'
-                        : 'Khác'}
-                  </TableCell>
-                  <TableCell>{resident?.id_card || '—'}</TableCell>
-                  <TableCell className="w-44">
-                    <span
-                      className={`rounded-full px-2 py-1 text-xs font-semibold ${resident?.status === 1 ? 'bg-green-100 text-green-800' : resident?.status === 2 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-800'}`}>
-                      {resident?.status === 1
-                        ? 'Đang ở'
-                        : resident?.status === 2
-                          ? 'Tạm vắng'
-                          : 'Đã chuyển đi'}
-                    </span>
-                  </TableCell>
-                  <TableCell className="w-40">
-                    <div className="space-x-4">
-                      <button
-                        onClick={() => handleOpenDialog(resident, 'view')}
-                        className="cursor-pointer font-bold text-blue-500 hover:text-blue-700">
-                        Xem
-                      </button>
-                      <button
-                        onClick={() => handleOpenDialog(resident, 'edit')}
-                        className="cursor-pointer font-bold text-yellow-500 hover:text-yellow-700">
-                        Sửa
-                      </button>
-                      <button
-                        onClick={() => handleDeleteResident(resident)}
-                        className="cursor-pointer font-bold text-red-500 hover:text-red-700">
-                        Xóa
-                      </button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                {residents.map((resident) => (
+                  <TableRow key={resident?.id}>
+                    <TableCell className="font-medium">
+                      {resident?.full_name}
+                    </TableCell>
+                    <TableCell>
+                      {resident?.apartments?.length > 0
+                        ? resident.apartments
+                            .map((apt) => apt.apartment_code)
+                            .join(', ')
+                        : '—'}
+                    </TableCell>
+                    <TableCell>
+                      {resident?.gender === 1
+                        ? 'Nam'
+                        : resident?.gender === 2
+                          ? 'Nữ'
+                          : 'Khác'}
+                    </TableCell>
+                    <TableCell>{resident?.id_card || '—'}</TableCell>
+                    <TableCell className="w-44">
+                      <span
+                        className={`rounded-full px-2 py-1 text-xs font-semibold ${resident?.status === 1 ? 'bg-green-100 text-green-800' : resident?.status === 2 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-800'}`}>
+                        {resident?.status === 1
+                          ? 'Đang ở'
+                          : resident?.status === 2
+                            ? 'Tạm vắng'
+                            : 'Đã chuyển đi'}
+                      </span>
+                    </TableCell>
+                    <TableCell className="w-40">
+                      <div className="space-x-4">
+                        <button
+                          onClick={() => handleOpenDialog(resident, 'view')}
+                          className="cursor-pointer font-bold text-blue-500 hover:text-blue-700">
+                          Xem
+                        </button>
+                        <button
+                          onClick={() => handleOpenDialog(resident, 'edit')}
+                          className="cursor-pointer font-bold text-yellow-500 hover:text-yellow-700">
+                          Sửa
+                        </button>
+                        <button
+                          onClick={() => handleDeleteResident(resident)}
+                          className="cursor-pointer font-bold text-red-500 hover:text-red-700">
+                          Xóa
+                        </button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
 
         <PaginationControls pagination={pagination} />
@@ -339,7 +345,7 @@ export const Residents = () => {
         open={deleteDialog.open}
         onOpenChange={(open) => setDeleteDialog({ ...deleteDialog, open })}
         title="Xác nhận xóa cư dân"
-        description={`Bạn có chắc muốn xóa cư dân ${deleteDialog.resident?.full_name}? Hành động này không thể hoàn tác.`}
+        description={`Bạn có chắc muốn xóa cư dân ${deleteDialog.resident?.full_name}?`}
         confirmText="Xóa"
         cancelText="Hủy"
         onConfirm={handleConfirmDelete}

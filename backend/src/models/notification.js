@@ -10,11 +10,11 @@ module.exports = (sequelize, DataTypes) => {
         as: 'creator'
       })
 
-      // Notification sent to Residents many-to-many
-      Notification.belongsToMany(models.Resident, {
+      // Notification sent to Users many-to-many
+      Notification.belongsToMany(models.User, {
         through: 'notification_receivers',
         foreignKey: 'notification_id',
-        otherKey: 'resident_id',
+        otherKey: 'user_id',
         as: 'receivers'
       })
     }
@@ -34,11 +34,11 @@ module.exports = (sequelize, DataTypes) => {
       content: {
         type: DataTypes.TEXT
       },
-      created_by: {
-        type: DataTypes.INTEGER
-      },
       category: {
         type: DataTypes.TINYINT
+      },
+      created_by: {
+        type: DataTypes.INTEGER
       }
     },
     {

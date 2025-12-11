@@ -1,5 +1,6 @@
-import { apartmentService } from '../services/apartment.service.js'
-import { toHttpError } from '../utils/errors.js'
+import { apartmentService } from '@/services/admin/apartment.service.js'
+import { residentApartmentService } from '@/services/admin/residentApartment.service.js'
+import { toHttpError } from '@/utils/errors.js'
 import { StatusCodes } from 'http-status-codes'
 
 async function createApartment(req, res) {
@@ -103,6 +104,40 @@ async function getTypesApartment(req, res) {
   }
 }
 
+async function addResident(req, res) {
+  try {
+    const apartmentId = req.params.id
+    const { resident_id } = req.body
+    await residentApartmentService.addResidentToApartment(
+      resident_id,
+      apartmentId
+    )
+    return res
+      .status(StatusCodes.OK)
+      .json({ message: 'Resident added successfully' })
+  } catch (err) {
+    const http = toHttpError(err)
+    return res.status(http.status).json(http.body)
+  }
+}
+
+async function removeResident(req, res) {
+  try {
+    const apartmentId = req.params.id
+    const residentId = req.params.residentId
+    await residentApartmentService.removeResidentFromApartment(
+      residentId,
+      apartmentId
+    )
+    return res
+      .status(StatusCodes.OK)
+      .json({ message: 'Resident removed successfully' })
+  } catch (err) {
+    const http = toHttpError(err)
+    return res.status(http.status).json(http.body)
+  }
+}
+
 export const apartmentController = {
   createApartment,
   getApartments,
@@ -112,5 +147,7 @@ export const apartmentController = {
   deleteApartment,
   getApartmentCount,
   getBuildingsApartment,
-  getTypesApartment
+  getTypesApartment,
+  addResident,
+  removeResident
 }

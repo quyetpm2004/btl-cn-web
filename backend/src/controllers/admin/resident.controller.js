@@ -1,5 +1,5 @@
-import { residentService } from '../services/resident.service.js'
-import { toHttpError } from '../utils/errors.js'
+import { residentService } from '@/services/admin/resident.service.js'
+import { toHttpError } from '@/utils/errors.js'
 import { StatusCodes } from 'http-status-codes'
 
 async function createResident(req, res) {

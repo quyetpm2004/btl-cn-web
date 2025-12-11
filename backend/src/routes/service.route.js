@@ -1,11 +1,11 @@
 import express from 'express'
-import { serviceController } from '../controllers/service.controller.js'
-import { validateBody, validateParams } from '../middlewares/validate.js'
+import { serviceController } from '@/controllers/admin/service.controller.js'
+import { validateBody, validateParams } from '@/middlewares/validate.js'
 import {
   createServiceSchema,
   updateServiceSchema,
   serviceIdParamSchema
-} from '../schemas/service.schema.js'
+} from '@/schemas/service.schema.js'
 
 const serviceRouter = express.Router()
 

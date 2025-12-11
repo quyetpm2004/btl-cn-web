@@ -1,5 +1,5 @@
-import { serviceService } from '../services/service.service.js'
-import { toHttpError } from '../utils/errors.js'
+import { serviceService } from '@/services/service.service.js'
+import { toHttpError } from '@/utils/errors.js'
 import { StatusCodes } from 'http-status-codes'
 
 async function createService(req, res) {

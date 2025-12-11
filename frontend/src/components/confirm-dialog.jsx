@@ -24,7 +24,10 @@ export const ConfirmDialog = ({
       <DialogContent className="max-w-sm">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
+          <DialogDescription>
+            {description}
+            <p>Hành động này không thể hoàn tác.</p>
+          </DialogDescription>
         </DialogHeader>
 
         <DialogFooter className="flex justify-end gap-2">

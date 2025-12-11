@@ -5,23 +5,24 @@ import { useNavigate } from 'react-router'
 export const Login = () => {
   const navigate = useNavigate()
   const { user, login, accessToken } = useAuthStore()
-  // 👇 Điều hướng khi accessToken có
+
   useEffect(() => {
-    if (accessToken) {
-      navigate('/user')
+    if (accessToken && user) {
+      if (user.role_name === 'Resident') {
+        navigate('/user')
+      } else {
+        navigate('/admin')
+      }
     }
-  }, [accessToken, navigate])
+  }, [accessToken, user, navigate])
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const handleLogin = async (e) => {
     e.preventDefault()
-    // Xử lý đăng nhập ở đây
-
     try {
       await login(username, password)
-      navigate('/admin')
     } catch (error) {
       console.error('Login error:', error)
     }
@@ -31,13 +32,13 @@ export const Login = () => {
     <form id="loginForm" className="space-y-6">
       <div>
         <label className="mb-2 block text-sm font-medium text-white">
-          Email hoặc Số điện thoại
+          Tên đăng nhập
         </label>
         <input
           type="text"
-          id="loginEmail"
+          id="loginUsername"
           className="input-glow focus:border-primary-500 w-full rounded-lg border border-gray-300 px-4 py-3 text-white transition-all duration-300 hover:-translate-y-0.5 focus:outline-none"
-          placeholder="Nhập email hoặc số điện thoại"
+          placeholder="Nhập tên đăng nhập"
           name="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}

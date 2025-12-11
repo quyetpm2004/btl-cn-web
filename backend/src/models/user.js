@@ -37,7 +37,15 @@ module.exports = (sequelize, DataTypes) => {
       // User created Notifications
       User.hasMany(models.Notification, {
         foreignKey: 'created_by',
-        as: 'notifications'
+        as: 'createdNotifications'
+      })
+
+      // User receives Notifications
+      User.belongsToMany(models.Notification, {
+        through: 'notification_receivers',
+        foreignKey: 'user_id',
+        otherKey: 'notification_id',
+        as: 'receivedNotifications'
       })
     }
   }

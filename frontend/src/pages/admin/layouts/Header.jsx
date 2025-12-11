@@ -1,36 +1,71 @@
 import { useNavigate } from 'react-router'
 import { useAuthStore } from '@/stores/useAuthStore'
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem
+} from '@/components/ui/dropdown-menu'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Building2 } from 'lucide-react'
+import { useSidebar } from '@/components/ui/sidebar'
 
 export const Header = () => {
-  const { logout } = useAuthStore()
-  const user = useAuthStore((s) => s.user)
   const navigate = useNavigate()
+  const { logout, user } = useAuthStore()
+  const { setOpenMobile } = useSidebar()
+
   const handleLogout = async () => {
-    await logout()
+    logout()
     navigate('/auth/login')
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg">
-      <div className="mx-auto px-8 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-x-4">
-            <div className="flex items-center gap-x-3">
-              <i className="fas fa-building text-2xl"></i>
-              <h1 className="text-xl font-bold">Vinhomes Central Park</h1>
+    <header className="fixed top-0 z-20 w-full bg-white text-black shadow-sm">
+      <div className="container mx-auto flex items-center justify-between px-6 py-4">
+        {/* Left */}
+        <div className="flex items-center space-x-4">
+          <button
+            id="menuToggle"
+            className="md:hidden"
+            onClick={() => setOpenMobile(true)}>
+            <i className="fas fa-bars text-xl"></i>
+          </button>
+
+          <div className="flex items-center space-x-3">
+            <Building2 />
+            <div>
+              <h1 className="text-lg font-semibold">Luxury Residence</h1>
+              <p className="text-sm opacity-80">Trang quản trị</p>
             </div>
           </div>
+        </div>
 
-          <div className="flex items-center gap-x-4">
-            <div className="hidden items-center gap-x-2 md:flex">
-              <i className="fas fa-user-circle text-xl"></i>
-              <span>{user?.display_name}</span>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="cursor-pointer rounded-lg bg-white/20 px-4 py-2 transition-all hover:bg-white/30">
-              <i className="fas fa-sign-out-alt mr-2"></i>Đăng xuất
-            </button>
+        {/* Right */}
+        <div className="flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Avatar className="h-8 w-8 cursor-pointer">
+                <AvatarImage src={user?.avatar_url} alt="Avatar" />
+                <AvatarFallback>
+                  <i className="fas fa-user text-black"></i>
+                </AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent sideOffset={10} align="center">
+              <DropdownMenuItem onClick={handleLogout}>
+                Đăng xuất
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <div className="hidden flex-col md:flex">
+            <p className="text-sm leading-none font-medium">
+              {user?.display_name}
+            </p>
+            <p className="mt-2 text-xs leading-none opacity-75">
+              {user?.role_name}
+            </p>
           </div>
         </div>
       </div>

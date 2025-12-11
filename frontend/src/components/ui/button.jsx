@@ -23,7 +23,8 @@ const buttonVariants = cva(
         success:
           'border-transparent bg-green-500 text-white [a&]:hover:bg-green-600 focus-visible:ring-green-500/20 dark:focus-visible:ring-green-400/40 dark:bg-green-600/70',
         blue: 'border-transparent bg-blue-500 text-white hover:bg-blue-600 focus-visible:ring-blue-500/20  dark:focus-visible:ring-blue-400/40 dark:bg-blue-600/70',
-        gray: 'bg-gray-700 text-white hover:bg-gray-900'
+        gray: 'bg-gray-700 text-white hover:bg-gray-900',
+        red: 'bg-red-500 text-white hover:bg-red-600'
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',

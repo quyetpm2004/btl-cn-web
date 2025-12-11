@@ -16,7 +16,7 @@ async function getNotificationsByFilter(residentId, filter = 'all') {
     filter === 'all' ? {} : { category: categoryStringToNumber(filter) }
 
   return NotificationReceiver.findAll({
-    where: { resident_id: residentId },
+    where: { user_id: userId },
     include: [
       {
         model: Notification,

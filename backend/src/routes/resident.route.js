@@ -1,6 +1,6 @@
 import express from 'express'
-import { residentController } from '../controllers/resident.controller.js'
-import { validateBody, validateParams } from '../middlewares/validate.js'
+import { residentController } from '@/controllers/admin/resident.controller.js'
+import { validateBody, validateParams } from '@/middlewares/validate.js'
 import {
   createResidentSchema,
   updateResidentSchema,

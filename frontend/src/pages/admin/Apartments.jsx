@@ -193,7 +193,7 @@ export const Apartments = () => {
           <p className="text-gray-600">Quản lý thông tin căn hộ</p>
         </div>
         <Button variant="blue" onClick={() => handleOpenDialog(null, 'create')}>
-          <i className="fas fa-plus mr-2"></i>
+          <i className="fas fa-plus"></i>
           Thêm căn hộ
         </Button>
 
@@ -330,7 +330,7 @@ export const Apartments = () => {
                 <p>
                   <i className="fas fa-ruler-combined mr-2"></i>
                   {apt?.area ? `${apt.area}m²` : '—'}
-                </p>{' '}
+                </p>
                 <p>
                   <i className="fas fa-building mr-2"></i>
                   {apt?.type?.name ? `${apt.type.name}` : '—'}

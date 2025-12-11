@@ -42,7 +42,7 @@ module.exports = {
       status: {
         type: Sequelize.TINYINT,
         defaultValue: 1,
-        comment: '0: closed | 1: active'
+        comment: '0: closed | 1: open'
       }
     })
   },

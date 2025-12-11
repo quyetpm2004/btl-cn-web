@@ -37,14 +37,6 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'resident_id',
         as: 'maintenanceRequests'
       })
-
-      // Resident receives Notifications
-      Resident.belongsToMany(models.Notification, {
-        through: 'notification_receivers',
-        foreignKey: 'resident_id',
-        otherKey: 'notification_id',
-        as: 'notifications'
-      })
     }
   }
 

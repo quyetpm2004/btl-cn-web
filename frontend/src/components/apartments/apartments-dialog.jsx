@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/select'
 import { ResidentListDialog } from '@/components/residents/resident-list-dialog'
 import { ResidentsDialog } from '@/components/residents/residents-dialog'
+import { ApartmentResidentsDialog } from './apartment-residents-dialog'
 import { createResidentApi } from '@/services/resident.api'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
@@ -38,7 +39,8 @@ const apartmentSchema = z.object({
   floor: z.coerce.number().min(1, 'Tầng phải lớn hơn 0'),
   status: z.string(),
   owner_id: z.union([z.string(), z.number(), z.null()]).optional(),
-  owner_name: z.string().optional()
+  owner_name: z.string().optional(),
+  is_living: z.boolean().optional()
 })
 
 function FieldInfo({ field }) {
@@ -65,6 +67,7 @@ export const ApartmentDialog = ({
   const queryClient = useQueryClient()
   const [residentListOpen, setResidentListOpen] = useState(false)
   const [createResidentOpen, setCreateResidentOpen] = useState(false)
+  const [apartmentResidentsOpen, setApartmentResidentsOpen] = useState(false)
 
   const form = useForm({
     defaultValues: {
@@ -75,7 +78,8 @@ export const ApartmentDialog = ({
       status: '0',
       floor: '',
       owner_id: '',
-      owner_name: ''
+      owner_name: '',
+      is_living: false
     },
     validators: {
       onSubmit: apartmentSchema,
@@ -95,8 +99,6 @@ export const ApartmentDialog = ({
       const payload = {
         ...value,
         type_id: value.type_id ? parseInt(value.type_id) : null,
-        // area: value.area ? parseFloat(value.area) : null,
-        // floor: value.floor ? parseInt(value.floor) : null,
         status: parseInt(value.status),
         owner_id: value.owner_id ? parseInt(value.owner_id) : null
       }
@@ -128,10 +130,14 @@ export const ApartmentDialog = ({
         form.setFieldValue('area', apartment.area || '')
         form.setFieldValue('status', String(apartment.status) || '0')
         form.setFieldValue('floor', apartment.floor || '')
-        form.setFieldValue('owner_id', apartment.owner_id || '')
+        form.setFieldValue('owner_id', apartment.residents?.[0]?.id || '')
         form.setFieldValue(
           'owner_name',
           apartment.residents?.[0]?.full_name || ''
+        )
+        form.setFieldValue(
+          'is_living',
+          apartment.residents?.[0]?.ResidentApartment?.is_living ?? true
         )
       } else {
         form.reset()
@@ -187,7 +193,7 @@ export const ApartmentDialog = ({
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
                     placeholder="vd: A101"
-                    disabled={isViewMode}
+                    disabled={isViewMode || isEditMode}
                     className="w-full"
                   />
                   <FieldInfo field={field} />
@@ -331,32 +337,64 @@ export const ApartmentDialog = ({
                   </Button>
                 )}
               </div>
+              <form.Field
+                name="is_living"
+                children={(field) => (
+                  <div className="mt-4 flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="is_living"
+                      checked={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.checked)}
+                      disabled={isViewMode}
+                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <Label
+                      htmlFor="is_living"
+                      className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      Chủ sở hữu sinh sống tại đây
+                    </Label>
+                  </div>
+                )}
+              />
             </div>
 
-            <DialogFooter className="col-span-2">
-              {!isViewMode && (
-                <DialogClose asChild>
-                  <Button variant="outline">Hủy</Button>
-                </DialogClose>
-              )}
-              {!isViewMode && (
-                <form.Subscribe
-                  selector={(state) => [state.canSubmit, state.isSubmitting]}
-                  children={([canSubmit, isSubmitting]) => (
-                    <Button
-                      type="submit"
-                      disabled={!canSubmit || isSubmitting}
-                      variant="blue">
-                      {isSubmitting ? 'Đang lưu...' : getButtonLabel()}
-                    </Button>
-                  )}
-                />
-              )}
-              {isViewMode && (
-                <DialogClose asChild>
-                  <Button variant="gray">{getButtonLabel()}</Button>
-                </DialogClose>
-              )}
+            <DialogFooter className="col-span-2 flex items-center justify-between sm:justify-between">
+              <div>
+                {isViewMode && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setApartmentResidentsOpen(true)}>
+                    Xem cư dân
+                  </Button>
+                )}
+              </div>
+              <div className="flex gap-2">
+                {!isViewMode && (
+                  <DialogClose asChild>
+                    <Button variant="outline">Hủy</Button>
+                  </DialogClose>
+                )}
+                {!isViewMode && (
+                  <form.Subscribe
+                    selector={(state) => [state.canSubmit, state.isSubmitting]}
+                    children={([canSubmit, isSubmitting]) => (
+                      <Button
+                        type="submit"
+                        disabled={!canSubmit || isSubmitting}
+                        variant="blue">
+                        {isSubmitting ? 'Đang lưu...' : getButtonLabel()}
+                      </Button>
+                    )}
+                  />
+                )}
+                {isViewMode && (
+                  <DialogClose asChild>
+                    <Button variant="gray">{getButtonLabel()}</Button>
+                  </DialogClose>
+                )}
+              </div>
             </DialogFooter>
           </form>
         </DialogContent>
@@ -367,6 +405,12 @@ export const ApartmentDialog = ({
         onOpenChange={setResidentListOpen}
         onSelect={handleSelectResident}
         onCreate={() => setCreateResidentOpen(true)}
+      />
+
+      <ApartmentResidentsDialog
+        open={apartmentResidentsOpen}
+        onOpenChange={setApartmentResidentsOpen}
+        apartmentId={apartment?.id}
       />
 
       <ResidentsDialog

@@ -1,11 +1,11 @@
 import express from 'express'
-import { apartmentController } from '../controllers/apartment.controller.js'
-import { validateBody, validateParams } from '../middlewares/validate.js'
+import { apartmentController } from '@/controllers/admin/apartment.controller.js'
+import { validateBody, validateParams } from '@/middlewares/validate.js'
 import {
   createApartmentSchema,
   updateApartmentSchema,
   apartmentIdParamSchema
-} from '../schemas/apartment.schema.js'
+} from '@/schemas/apartment.schema.js'
 
 const apartmentRouter = express.Router()
 
@@ -34,6 +34,12 @@ apartmentRouter.delete(
   '/:id',
   validateParams(apartmentIdParamSchema),
   apartmentController.deleteApartment
+)
+
+apartmentRouter.post('/:id/residents', apartmentController.addResident)
+apartmentRouter.delete(
+  '/:id/residents/:residentId',
+  apartmentController.removeResident
 )
 
 export default apartmentRouter

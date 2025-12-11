@@ -1,34 +1,34 @@
 import {
   handleGetNotification,
-  handleMarkNotificationRead,
-} from "../../services/user/notification.service";
+  handleMarkNotificationRead
+} from '../../services/user/notification.service'
 
 const getNotification = async (req, res) => {
-  const { residentId } = req.params;
-  const { filter } = req.query;
+  const { userId } = req.params
+  const { filter } = req.query
   try {
-    const notification = await handleGetNotification(residentId, filter);
+    const notification = await handleGetNotification(userId, filter)
     return res
       .status(200)
-      .json({ message: "Fetch notification successful", notification });
+      .json({ message: 'Fetch notification successful', notification })
   } catch (err) {
-    return res.status(400).json({ error: err.message });
+    return res.status(400).json({ error: err.message })
   }
-};
+}
 
 const markNotificationRead = async (req, res) => {
-  const { notificationReceiverId, isRead } = req.params;
+  const { notificationReceiverId, isRead } = req.params
   try {
     const notification = await handleMarkNotificationRead(
       notificationReceiverId,
       isRead
-    );
+    )
     return res
       .status(200)
-      .json({ message: "Fetch notification successful", notification });
+      .json({ message: 'Fetch notification successful', notification })
   } catch {
-    return res.status(400).json({ error: err.message });
+    return res.status(400).json({ error: err.message })
   }
-};
+}
 
-export { getNotification, markNotificationRead };
+export { getNotification, markNotificationRead }

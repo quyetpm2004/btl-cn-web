@@ -1,0 +1,288 @@
+//////////////////////////////////////////////////////////////
+// 🔹 1. QUẢN LÝ NGƯỜI DÙNG & PHÂN QUYỀN
+//////////////////////////////////////////////////////////////
+Table roles {
+  id int [pk, increment]
+  name varchar                    // Admin, Cư dân, Thu ngân, Kỹ thuật...
+  description text
+}
+
+Table users {
+  id int [pk, increment]
+  username varchar [not null, unique]
+  password varchar [not null]
+  role_id int [ref: > roles.id]
+  email varchar
+  phone varchar
+  avatar_url varchar
+  status tinyint [default: 1]     // 0:'inactive', 1:'active'
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table staffs {
+  id int [pk, increment]
+  user_id int [ref: > users.id]
+  full_name varchar
+  dob date
+  gender tinyint                  // 1:nam, 2:nữ, 3:khác
+  position varchar
+  department varchar
+  id_card varchar
+  address varchar
+  start_date date
+  salary int
+  status tinyint [default: 1]     // 0:'nghỉ', 1:'đang làm', 2:'nghỉ phép'
+}
+
+//////////////////////////////////////////////////////////////
+// 🔹 2. CƯ DÂN, CĂN HỘ & XE
+//////////////////////////////////////////////////////////////
+Table apartment_types {
+  id int [pk, increment]
+  name varchar                    // Studio, 1PN, 2PN...
+  description text
+  layout_image varchar
+}
+
+Table apartments {
+  id int [pk, increment]
+  apartment_code varchar [unique] // A101
+  building varchar                // S1
+  type_id int [ref: > apartment_types.id]
+  area float
+  floor int
+  status tinyint                  // 0:'Trống', 1:'Đang ở'
+  
+  // [NEW] Ví tiền thừa của căn hộ (dùng để cấn trừ tự động tháng sau)
+  excess_balance bigint [default: 0] 
+}
+
+Table residents {
+  id int [pk, increment]
+  user_id int [ref: > users.id]   // Link tài khoản (để login App)
+  full_name varchar
+  gender tinyint
+  phone varchar
+  dob date
+  id_card varchar [unique]
+  hometown varchar
+  status tinyint [default: 1]     // 1:'đang ở', 2:'tạm vắng', 3:'chuyển đi'
+  registered_at timestamp
+}
+
+Table resident_apartment {
+  id int [pk, increment]
+  resident_id int [ref: > residents.id]
+  apartment_id int [ref: > apartments.id]
+  
+  // Quan trọng: Phân biệt Chủ sở hữu và Người ở
+  relationship varchar            // 'OWNER', 'TENANT' (thuê), 'MEMBER' (thành viên)
+  is_living boolean [default: 1]  // TRUE: Đang ở, FALSE: Chỉ sở hữu/đứng tên
+  
+  start_date date
+  end_date date                   // Nếu chuyển đi thì update ngày này
+}
+
+Table vehicles {
+  id int [pk, increment]
+  apartment_id int [ref: > apartments.id]
+  type tinyint                    // 1:'car', 2:'motorbike', 3:'bicycle'
+  brand varchar
+  license_plate varchar [unique]
+  color varchar
+  status tinyint [default: 1]
+}
+
+//////////////////////////////////////////////////////////////
+// 🔹 3. DỊCH VỤ & CHỐT SỐ (INPUT DỮ LIỆU)
+//////////////////////////////////////////////////////////////
+Table services {
+  id int [pk, increment]
+  name varchar                    // Phí quản lý, Gửi xe, Điện, Nước
+  type tinyint                    // 0: Cố định (Fixed), 1: Theo chỉ số (Metered)
+  price int                       // Đơn giá
+  unit varchar                    // tháng, kwh, m3
+  description text
+}
+
+// [NEW] Bảng lưu chỉ số Điện/Nước hàng tháng
+Table meter_readings {
+  id int [pk, increment]
+  apartment_id int [ref: > apartments.id]
+  service_id int [ref: > services.id]      // Dịch vụ: Điện hoặc Nước
+  period_id int [ref: > collection_periods.id]
+  
+  old_index int                            // Chỉ số cũ
+  new_index int                            // Chỉ số mới
+  amount int                               // Số tiêu thụ = new - old
+  image_url varchar                        // Ảnh chụp công tơ
+  
+  created_at timestamp
+  created_by int [ref: > users.id]
+}
+
+Table service_registrations {
+  id int [pk, increment]
+  apartment_id int [ref: > apartments.id]
+  service_id int [ref: > services.id]
+  vehicle_id int [ref: > vehicles.id, null] // Nếu là gửi xe thì link vào đây
+  start_date date
+  end_date date
+  status tinyint [default: 1]
+}
+
+//////////////////////////////////////////////////////////////
+// 🔹 4. TÀI CHÍNH (HÓA ĐƠN & THANH TOÁN)
+//////////////////////////////////////////////////////////////
+Table collection_periods {
+  id int [pk, increment]
+  name varchar                    // "Thu phí tháng 11/2024"
+  start_date date
+  end_date date
+  status tinyint [default: 1]     // 1:'active', 0:'closed'
+}
+
+Table invoices {
+  id int [pk, increment]
+  apartment_id int [ref: > apartments.id]
+  period_id int [ref: > collection_periods.id]
+  
+  total_amount bigint             // Tổng tiền phải thu
+  payment_deadline date           // Hạn chót
+  
+  status tinyint [default: 0]     // 0:'Unpaid', 1:'Paid', 2:'Cancelled'
+  created_at timestamp
+  created_by int [ref: > users.id]
+  note text
+}
+
+Table invoice_items {
+  id int [pk, increment]
+  invoice_id int [ref: > invoices.id]
+  service_id int [ref: > services.id]
+  
+  title varchar                   // "Tiền điện (100 - 150)"
+  quantity int                    // Số lượng / Số tiêu thụ
+  unit_price int                  // Đơn giá lúc tính
+  amount int                      // Thành tiền
+}
+
+Table payments {
+  id int [pk, increment]
+  invoice_id int [ref: > invoices.id]
+  resident_id int [ref: > residents.id]   // Người thao tác thanh toán
+  
+  amount bigint                           // Số tiền thực tế chuyển
+  method varchar                          // BANK_TRANSFER, QR_CODE
+  transaction_code varchar                // Mã tham chiếu ngân hàng
+  paid_at timestamp
+  
+  status tinyint [default: 1]             // 1: Success, 2: Refund_Needed (Nộp thừa/trùng)
+}
+
+// [NEW] Bảng lịch sử tiền thừa (Thay cho ví)
+Table excess_transactions {
+  id int [pk, increment]
+  apartment_id int [ref: > apartments.id]
+  
+  amount bigint                           // Số tiền (+ hoặc -)
+  type tinyint                            // 1: Nộp thừa (Overpayment), 2: Trừ tự động (Auto-deduct)
+  
+  payment_id int [ref: > payments.id, null] // Link nếu type=1 (Nộp thừa từ Payment nào)
+  invoice_id int [ref: > invoices.id, null] // Link nếu type=2 (Trừ tiền cho Invoice nào)
+  
+  description text                        // "Thừa từ GD #123", "Trừ cho HD T12"
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////////////
+// 🔹 5. THIẾT BỊ & BẢO TRÌ (Giữ nguyên)
+//////////////////////////////////////////////////////////////
+Table equipments {
+  id int [pk, increment]
+  name varchar
+  location varchar
+  status tinyint [default: 1]     // 0:inactive, 1:active, 2:maintenance, 3:broken
+  last_maintenance timestamp
+}
+
+Table work_types {
+  id int [pk, increment]
+  name varchar                    // Điện, Nước, Xây dựng...
+  description text
+}
+
+Table maintenance_requests {
+  id int [pk, increment]
+  resident_id int [ref: > residents.id]
+  title varchar
+  description text
+  priority tinyint                // 1:low -> 4:urgent
+  status tinyint [default: 0]     // 0:pending, 1:processing, 2:done, 3:cancelled
+  
+  assigned_to int [ref: > staffs.id]
+  work_type_id int [ref: > work_types.id]
+  
+  images json
+  result text
+  created_at timestamp
+  resolved_at timestamp
+}
+
+Table maintenance_schedules {
+  id int [pk, increment]
+  equipment_id int [ref: > equipments.id]
+  assigned_to int [ref: > staffs.id]
+  start_at timestamp
+  end_at timestamp
+  description text
+  status tinyint
+}
+
+//////////////////////////////////////////////////////////////
+// 🔹 6. THÔNG BÁO & TIN TỨC (Giữ nguyên logic)
+//////////////////////////////////////////////////////////////
+Table notifications {
+  id int [pk, increment]
+  title varchar
+  content text
+  category tinyint                // 1:System, 2:Event, 3:Fee, 4:Maintenance
+  created_at timestamp
+  created_by int [ref: > users.id]
+}
+
+Table notification_receivers {
+  id int [pk, increment]
+  notification_id int [ref: > notifications.id]
+  resident_id int [ref: > residents.id]
+  is_read boolean [default: 0]
+  read_at timestamp
+}
+
+Table news {
+  id int [pk, increment]
+  title varchar
+  content text
+  category int                    // Event, News, Guide
+  created_at timestamp
+}
+
+//////////////////////////////////////////////////////////////
+// 🔹 7. TIỆN ÍCH KHÁC
+//////////////////////////////////////////////////////////////
+Table contacts {
+  id int [pk, increment]
+  email varchar
+  phone varchar
+  address varchar
+  map_embed_url text
+}
+
+Table financial_reports {
+  id int [pk, increment]
+  period_id int [ref: > collection_periods.id]
+  total_income bigint
+  total_expense bigint
+  created_at timestamp
+}

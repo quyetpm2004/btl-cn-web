@@ -44,3 +44,20 @@ export const getTypesApartmentApi = async () => {
   const res = await instance.get('/apartments/types')
   return res.data
 }
+
+export const addResidentToApartmentApi = async (apartmentId, residentId) => {
+  const res = await instance.post(`/apartments/${apartmentId}/residents`, {
+    resident_id: residentId
+  })
+  return res.data
+}
+
+export const removeResidentFromApartmentApi = async (
+  apartmentId,
+  residentId
+) => {
+  const res = await instance.delete(
+    `/apartments/${apartmentId}/residents/${residentId}`
+  )
+  return res.data
+}

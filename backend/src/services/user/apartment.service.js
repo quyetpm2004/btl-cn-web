@@ -4,6 +4,7 @@ import { AppError } from '../../utils/errors'
 import { User, Apartment, Resident, ApartmentType } from '../../models'
 import { includes } from 'zod'
 import apartment from '../../models/apartment'
+import { StatusCodes } from 'http-status-codes'
 
 const handleGetApartment = async (userId) => {
   const apartment = await getApartmentByUserId(userId)
