@@ -275,8 +275,8 @@ const UserDashboard = () => {
           </p>
         </div>
 
-        <div className="rounded-lg border bg-white px-4 shadow-sm">
-          <Table>
+        <div className="rounded-lg border bg-white px-4 text-gray-600 shadow-sm">
+          <Table className="text-md">
             <TableHeader>
               <TableRow className="bg-gray-50 hover:bg-gray-50">
                 <TableHead className="font-semibold">Tên dịch vụ</TableHead>
@@ -291,15 +291,13 @@ const UserDashboard = () => {
                   .filter((service) => service.price > 0)
                   .map((service) => (
                     <TableRow key={service.id} className="hover:bg-gray-50">
-                      <TableCell className="font-medium">
-                        {service.name}
-                      </TableCell>
+                      <TableCell className="font-sm">{service.name}</TableCell>
 
-                      <TableCell className="font-medium">
+                      <TableCell className="font-sm">
                         {service.price.toLocaleString('vi-VN') + ' đ'}
                       </TableCell>
 
-                      <TableCell className="text-sm text-gray-600">
+                      <TableCell className="font-sm">
                         {formatUnit(service.unit) || 'VND'}
                       </TableCell>
                     </TableRow>

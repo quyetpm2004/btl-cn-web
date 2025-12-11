@@ -6,7 +6,8 @@ const navItems = {
   'Bảng giá': 'bang-gia',
   'Tiện ích': 'tien-ich',
   'Tin tức': 'tin-tuc',
-  'Liên hệ': 'lien-he'
+  'Liên hệ': 'lien-he',
+  'Đăng nhập': 'auth/login'
 }
 
 export const Navbar = () => {
@@ -25,7 +26,11 @@ export const Navbar = () => {
               {Object.keys(navItems).map((item, i) => (
                 <a
                   key={i}
-                  href={'#' + navItems[item]}
+                  href={
+                    navItems[item] === 'auth/login'
+                      ? navItems[item]
+                      : '#' + navItems[item]
+                  }
                   className="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-purple-600">
                   {item}
                 </a>

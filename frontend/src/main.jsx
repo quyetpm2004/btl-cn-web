@@ -13,9 +13,7 @@ import { AdminMaintenance } from './pages/admin/Maintenance.jsx'
 import { Staffs } from './pages/admin/Staffs.jsx'
 import { Notifications } from './pages/admin/Notifications.jsx'
 import { LandingPage } from './pages/landing-page/layout/LandingPage.jsx'
-import { AuthLayout } from './pages/auth/AuthLayout.jsx'
 import { Login } from './pages/auth/Login.jsx'
-import { Register } from './pages/auth/Register.jsx'
 import { Toaster } from 'sonner'
 import { ProtectedRoute } from './routes/ProtectedRoute.jsx'
 import { UserLayout } from './pages/user/layout/Layout'
@@ -76,12 +74,8 @@ const router = createBrowserRouter([
     // ]
   },
   {
-    path: '/auth',
-    Component: AuthLayout,
-    children: [
-      { path: 'login', Component: Login },
-      { path: 'register', Component: Register }
-    ]
+    path: '/auth/login',
+    Component: Login
   }
 ])
 

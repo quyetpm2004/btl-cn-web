@@ -31,7 +31,7 @@ import { useResidentStore } from '@/stores/useResidentStore'
 
 const AppSidebar = () => {
   const { resident } = useResidentStore()
-  const residentId = resident.id
+  const residentId = resident?.id
 
   const unreadCount = useNotificationStore((s) => s.unreadCount)
   const fetchNotifications = useNotificationStore((s) => s.fetchNotifications)

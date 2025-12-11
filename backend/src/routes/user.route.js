@@ -36,7 +36,7 @@ import {
   vnpayReturn
 } from '../controllers/user/payment.controller.js'
 import { getDashboard } from '../controllers/user/dashboard.controller.js'
-import { serviceController } from '../controllers/service.controller.js'
+import { serviceController } from '../controllers/admin/service.controller.js'
 import { validateBody } from '../middlewares/validate.js'
 import { profileSchema } from '../schemas/profile.schema.js'
 const uploadAvatar = uploadFile('avatar')
