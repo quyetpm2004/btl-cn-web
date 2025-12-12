@@ -22,8 +22,8 @@ async function getResidentById(id) {
   return Resident.findByPk(id)
 }
 
-async function updateResident(id, data) {
-  return Resident.update(data, { where: { id } })
+async function updateResident(id, data, options = {}) {
+  return Resident.update(data, { where: { id }, ...options })
 }
 
 async function deleteResident(id) {
@@ -41,7 +41,14 @@ async function filterResidents(filters) {
   const offset = (page - 1) * limit
 
   // Build safe where object: exclude pagination-related keys and empty values
-  const { page: _p, limit: _l, offset: _o, full_name, ...rest } = filters || {}
+  const {
+    page: _p,
+    limit: _l,
+    offset: _o,
+    full_name,
+    user_id,
+    ...rest
+  } = filters || {}
   const where = Object.fromEntries(
     Object.entries(rest).filter(
       ([, v]) => v !== undefined && v !== null && v !== ''
@@ -52,6 +59,15 @@ async function filterResidents(filters) {
   if (full_name && full_name.trim()) {
     where.full_name = {
       [Op.like]: `%${full_name.trim()}%`
+    }
+  }
+
+  // Handle user_id filter
+  if (user_id !== undefined) {
+    if (user_id === 'null' || user_id === null) {
+      where.user_id = null
+    } else {
+      where.user_id = user_id
     }
   }
 
@@ -71,11 +87,6 @@ async function filterResidents(filters) {
           where: { end_date: null, is_living: true }
         }
       }
-      // {
-      //   model: User,
-      //   as: 'user',
-      //   attributes: ['id', 'username', 'email', 'phone']
-      // }
     ],
     limit,
     offset
@@ -84,8 +95,10 @@ async function filterResidents(filters) {
   return { items, total, page, limit }
 }
 
-const getResidentByUserId = async (userId) => {
-  return Resident.findOne({ where: { user_id: userId } });
+async function getResidentsWithoutAccount() {
+  return Resident.findAll({
+    where: { user_id: null }
+  })
 }
 
 export {
@@ -96,5 +109,5 @@ export {
   deleteResident,
   getResidentCount,
   filterResidents,
-  getResidentByUserId
+  getResidentsWithoutAccount
 }

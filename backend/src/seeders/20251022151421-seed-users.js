@@ -21,7 +21,6 @@ module.exports = {
         password: bcrypt.hashSync('123456', 10),
         role_id: roleId['Admin'],
         email: `admin${i}@gmail.com`,
-        phone: `09000000${i.toString().padStart(2, '0')}`,
         status: 1,
         created_at: now,
         updated_at: now
@@ -35,7 +34,7 @@ module.exports = {
         password: bcrypt.hashSync('123456', 10),
         role_id: roleId['Manager'],
         email: `manager${i}@gmail.com`,
-        phone: `09100000${i.toString().padStart(2, '0')}`,
+
         status: 1,
         created_at: now,
         updated_at: now
@@ -49,7 +48,6 @@ module.exports = {
         password: bcrypt.hashSync('123456', 10),
         role_id: roleId['Accountant'],
         email: `accountant${i}@gmail.com`,
-        phone: `09200000${i.toString().padStart(2, '0')}`,
         status: 1,
         created_at: now,
         updated_at: now
@@ -63,7 +61,6 @@ module.exports = {
         password: bcrypt.hashSync('123456', 10),
         role_id: roleId['Technician'],
         email: `technician${i}@gmail.com`,
-        phone: `09300000${i.toString().padStart(2, '0')}`,
         status: 1,
         created_at: now,
         updated_at: now
@@ -77,11 +74,6 @@ module.exports = {
         password: bcrypt.hashSync('123456', 10),
         role_id: roleId['Resident'],
         email: `resident${i}@gmail.com`,
-        phone: `09${Math.floor(Math.random() * 9) + 1}${Math.floor(
-          Math.random() * 1000000
-        )
-          .toString()
-          .padStart(7, '0')}`,
         status: 1,
         created_at: now,
         updated_at: now

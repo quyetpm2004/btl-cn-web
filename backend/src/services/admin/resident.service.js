@@ -49,6 +49,10 @@ async function getResidentsService() {
   return residentRepo.getAllResidents()
 }
 
+async function getResidentsWithoutAccountService() {
+  return residentRepo.getResidentsWithoutAccount()
+}
+
 async function getResidentDetailService(id) {
   const resident = await residentRepo.getResidentById(id)
   if (!resident) {
@@ -139,5 +143,6 @@ export const residentService = {
   updateResidentService,
   filterResidentsService,
   deleteResidentService,
-  getResidentCountService
+  getResidentCountService,
+  getResidentsWithoutAccountService
 }

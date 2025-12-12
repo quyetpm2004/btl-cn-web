@@ -10,6 +10,10 @@ import {
 const maintenanceRequestRouter = express.Router()
 
 maintenanceRequestRouter.get(
+  '/',
+  maintenanceRequestController.getAllMaintenanceRequests
+)
+maintenanceRequestRouter.get(
   '/pending',
   maintenanceRequestController.getAllPendingMaintenanceRequests
 )
@@ -17,7 +21,6 @@ maintenanceRequestRouter.get(
   '/:id',
   maintenanceRequestController.getMaintenanceRequestDetail
 )
-
 maintenanceRequestRouter.put(
   '/:id/assign',
   maintenanceRequestController.assignRequest

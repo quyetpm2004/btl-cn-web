@@ -35,18 +35,16 @@ module.exports = {
         Math.floor(Math.random() * 12),
         1 + Math.floor(Math.random() * 28)
       )
-      const idCard = `${100000000 + i}`
       staffs.push({
         user_id: u.id,
         full_name: `${roleToPosition[u.role_name] || 'Nhân viên'} ${i + 1}`,
-        dob: dob.toISOString().split('T')[0],
         gender: Math.floor(Math.random() * 3) + 1,
+        phone: `0${300000000 + i}`,
+        dob: dob.toISOString().split('T')[0],
+        id_card: `${100000000 + i}`,
         position: roleToPosition[u.role_name] || 'Nhân viên',
         department: roleToDepartment[u.role_name] || 'Hành chính',
-        id_card: idCard,
-        address: `Địa chỉ ${i + 1}`,
         start_date: baseStart.toISOString().split('T')[0],
-        salary: 10000000 + Math.floor(Math.random() * 10000000),
         status: 1
       })
     }

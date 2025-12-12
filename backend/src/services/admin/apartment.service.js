@@ -1,6 +1,7 @@
 import { AppError } from '../../utils/errors.js'
 import { StatusCodes } from 'http-status-codes'
 import * as apartmentRepo from '../../repositories/apartment.repository.js'
+import * as serviceRegistrationRepo from '../../repositories/serviceRegistration.repository.js'
 import { residentApartmentService } from './residentApartment.service.js'
 import { sequelize } from '../../models/index.js'
 
@@ -34,10 +35,6 @@ async function createApartmentService(data) {
     await t.rollback()
     throw error
   }
-}
-
-async function getApartmentsService() {
-  return apartmentRepo.getAllApartments()
 }
 
 async function getApartmentDetailService(id) {
@@ -113,6 +110,10 @@ async function filterApartmentsService(filters) {
   return apartmentRepo.filterApartments(filters)
 }
 
+async function getApartmentsWithServicesService(filters) {
+  return apartmentRepo.getApartmentsWithServices(filters)
+}
+
 async function deleteApartmentService(id) {
   const deletedRows = await apartmentRepo.deleteApartment(id)
   if (deletedRows === 0) {
@@ -134,14 +135,58 @@ async function getTypesApartmentService() {
   return types.map((t) => t.name)
 }
 
+async function updateApartmentServices(apartmentId, services) {
+  const t = await sequelize.transaction()
+  try {
+    const currentRegistrations =
+      await serviceRegistrationRepo.getAllServicesApartment(apartmentId)
+    const currentMap = new Map(
+      currentRegistrations.map((r) => [r.service_id, r])
+    )
+    const newMap = new Map(services.map((s) => [s.serviceId, s]))
+
+    for (const newService of services) {
+      const currentReg = currentMap.get(newService.serviceId)
+      if (!currentReg) {
+        await serviceRegistrationRepo.create(
+          {
+            apartment_id: apartmentId,
+            service_id: newService.serviceId,
+            start_date: new Date(),
+            status: true
+          },
+          { transaction: t }
+        )
+      }
+    }
+
+    for (const currentReg of currentRegistrations) {
+      if (!newMap.has(currentReg.service_id)) {
+        await serviceRegistrationRepo.update(
+          currentReg.id,
+          { status: false, end_date: new Date() },
+          { transaction: t }
+        )
+      }
+    }
+
+    await t.commit()
+    return true
+  } catch (error) {
+    await t.rollback()
+    throw error
+  }
+}
+
 export const apartmentService = {
   createApartmentService,
-  getApartmentsService,
   getApartmentDetailService,
   updateApartmentService,
   filterApartmentsService,
+  getApartmentsWithServicesService,
   deleteApartmentService,
   getApartmentCountService,
   getBuildingsApartmentService,
-  getTypesApartmentService
+  getTypesApartmentService,
+  updateApartmentServices
 }

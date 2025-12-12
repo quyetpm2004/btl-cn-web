@@ -47,7 +47,7 @@ export const LuxuryHero = () => {
             <div className="text-center lg:text-left">
               {/* Badge */}
               <div className="animate-slide-left">
-                <span className="glass-effect mb-6 inline-flex items-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600 px-4 py-2 text-sm font-medium text-white">
+                <span className="glass-effect mb-6 inline-flex items-center rounded-full bg-linear-to-r from-blue-500 to-purple-600 px-4 py-2 text-sm font-medium text-white">
                   <svg
                     className="mr-2 h-4 w-4"
                     fill="currentColor"

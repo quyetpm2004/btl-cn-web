@@ -12,9 +12,9 @@ module.exports = (sequelize, DataTypes) => {
 
       // Service has many InvoiceItems
       Service.hasMany(models.InvoiceItem, {
-        foreignKey: "service_id",
-        as: "items",
-      });
+        foreignKey: 'service_id',
+        as: 'items'
+      })
     }
   }
 
@@ -37,6 +37,10 @@ module.exports = (sequelize, DataTypes) => {
       },
       unit: {
         type: DataTypes.STRING
+      },
+      status: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
       }
     },
     {

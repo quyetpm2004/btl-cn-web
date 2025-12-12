@@ -98,86 +98,85 @@ export const ApartmentResidentsDialog = ({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="md:max-w-2xl lg:max-w-3xl">
           <DialogHeader>
-            <DialogTitle>Danh sách cư dân trong căn hộ</DialogTitle>
-            <DialogDescription>
-              Quản lý cư dân đang sinh sống tại căn hộ này
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4">
-            <div className="flex justify-end">
+            <div className="flex items-center justify-between pr-3">
+              <div className="space-y-2">
+                <DialogTitle>Danh sách cư dân trong căn hộ</DialogTitle>
+                <DialogDescription>
+                  Quản lý cư dân đang sinh sống tại căn hộ này
+                </DialogDescription>
+              </div>
               <Button onClick={() => setAddResidentOpen(true)} variant="blue">
                 <i className="fas fa-plus"></i>
-                Thêm cư dân
+                Thêm
               </Button>
             </div>
+          </DialogHeader>
 
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Họ tên</TableHead>
+                  <TableHead>Quan hệ</TableHead>
+                  <TableHead>SĐT</TableHead>
+                  <TableHead>Ngày sinh</TableHead>
+                  <TableHead>Thao tác</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {isLoading ? (
                   <TableRow>
-                    <TableHead>Họ tên</TableHead>
-                    <TableHead>Quan hệ</TableHead>
-                    <TableHead>SĐT</TableHead>
-                    <TableHead>Ngày sinh</TableHead>
-                    <TableHead>Thao tác</TableHead>
+                    <TableCell colSpan={5} className="py-4 text-center">
+                      Đang tải...
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {isLoading ? (
-                    <TableRow>
-                      <TableCell colSpan={5} className="py-4 text-center">
-                        Đang tải...
+                ) : residents.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="py-4 text-center">
+                      Chưa có cư dân nào
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  residents.map((resident) => (
+                    <TableRow key={resident.id}>
+                      <TableCell className="font-medium">
+                        {resident.full_name}
+                      </TableCell>
+                      <TableCell>
+                        {resident.ResidentApartment?.relationship === 'owner'
+                          ? 'Chủ hộ'
+                          : 'Thành viên'}
+                      </TableCell>
+                      <TableCell>{resident.phone || '—'}</TableCell>
+                      <TableCell>
+                        {resident.dob
+                          ? format(new Date(resident.dob), 'dd/MM/yyyy')
+                          : '—'}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex w-16 gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setViewResident(resident)
+                              setViewResidentOpen(true)
+                            }}>
+                            Xem
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => handleDeleteClick(resident)}>
+                            Xóa
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
-                  ) : residents.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={5} className="py-4 text-center">
-                        Chưa có cư dân nào
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    residents.map((resident) => (
-                      <TableRow key={resident.id}>
-                        <TableCell className="font-medium">
-                          {resident.full_name}
-                        </TableCell>
-                        <TableCell>
-                          {resident.ResidentApartment?.relationship === 'owner'
-                            ? 'Chủ hộ'
-                            : 'Thành viên'}
-                        </TableCell>
-                        <TableCell>{resident.phone || '—'}</TableCell>
-                        <TableCell>
-                          {resident.dob
-                            ? format(new Date(resident.dob), 'dd/MM/yyyy')
-                            : '—'}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex w-16 gap-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => {
-                                setViewResident(resident)
-                                setViewResidentOpen(true)
-                              }}>
-                              Xem
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="destructive"
-                              onClick={() => handleDeleteClick(resident)}>
-                              Xóa
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+                  ))
+                )}
+              </TableBody>
+            </Table>
           </div>
         </DialogContent>
       </Dialog>
@@ -196,16 +195,7 @@ export const ApartmentResidentsDialog = ({
         onSave={async (data) => {
           try {
             const payload = {
-              full_name: data.full_name,
-              gender: data.gender ? parseInt(data.gender) : null,
-              dob: data.dob,
-              place_of_birth: data.place_of_birth,
-              ethnicity: data.ethnicity,
-              occupation: data.occupation,
-              hometown: data.hometown,
-              id_card: data.id_card,
-              household_no: data.household_no,
-              status: parseInt(data.status),
+              ...data,
               registered_at: new Date().toISOString().split('T')[0]
             }
             await createResidentApi(payload)

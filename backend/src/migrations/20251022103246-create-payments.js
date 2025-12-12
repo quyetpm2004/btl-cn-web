@@ -29,7 +29,7 @@ module.exports = {
       },
       method: {
         type: Sequelize.STRING,
-        comment: 'cash | bank_transfer | credit_card | e_wallet'
+        comment: 'cash | bank_transfer'
       },
       amount: {
         type: Sequelize.BIGINT

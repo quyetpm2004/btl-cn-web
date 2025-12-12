@@ -37,7 +37,7 @@ export const News = () => {
           {newsList.map((news, index) => (
             <article
               key={index}
-              className="card-hover fade-in flex flex-col overflow-hidden rounded-xl bg-gray-50 shadow-lg">
+              className="fade-in flex flex-col overflow-hidden rounded-xl bg-gray-50 shadow-lg">
               {/* Thay thế khối div và svg bằng thẻ img */}
               <img
                 className="h-48 w-full object-cover"

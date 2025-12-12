@@ -8,6 +8,11 @@ const loginApi = async (username, password) => {
   return response
 }
 
+const getMeApi = async () => {
+  const response = await instance.get('/me')
+  return response
+}
+
 const registerApi = async (
   username,
   password,
@@ -164,6 +169,7 @@ const getServicesApi = async () => {
 
 export {
   loginApi,
+  getMeApi,
   registerApi,
   getProfileApi,
   updateProfileApi,

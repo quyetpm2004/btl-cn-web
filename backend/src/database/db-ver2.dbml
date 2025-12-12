@@ -11,9 +11,8 @@ Table users {
   id int [pk, increment]                        
   username varchar [not null, unique]           // Tên đăng nhập
   password varchar [not null]                   // Mật khẩu (đã mã hóa)
+  email varchar [unique]                        // Email
   role_id int [ref: > roles.id]                 // Vai trò
-  email varchar                                 // Email
-  phone varchar                                 // Số điện thoại
   avatar_url varchar                            // Ảnh đại diện
   status tinyint [default: 1]                   // 0:'inactive', 1:'active'
   created_at timestamp                          // Ngày tạo
@@ -24,14 +23,13 @@ Table staffs {
   id int [pk, increment]                        
   user_id int [ref: > users.id]                 // Tài khoản liên kết
   full_name varchar                             // Họ tên
-  dob date                                      // Ngày sinh
   gender tinyint                                // 1:nam, 2:nữ, 3:khác
+  phone varchar                                 // Số điện thoại
+  dob date                                      // Ngày sinh
+  id_card varchar [unique]                      // CCCD/CMND
   position varchar                              // Chức vụ
   department varchar                            // Phòng ban
-  id_card varchar                               // CCCD/CMND
-  address varchar                               // Địa chỉ
   start_date date                               // Ngày bắt đầu làm
-  salary int                                    // Lương
   status tinyint [default: 1]                   // 0:'nghỉ', 1:'đang làm', 2:'nghỉ phép'
 }
 
@@ -45,14 +43,14 @@ Table residents {
   gender tinyint                                // 1:nam, 2:nữ, 3:khác
   phone varchar                                 // Số điện thoại
   dob date                                      // Ngày sinh
+  id_card varchar [unique]                      // CCCD
   place_of_birth varchar                        // Nơi sinh
   ethnicity varchar                             // Dân tộc
   occupation varchar                            // Nghề nghiệp
   hometown varchar                              // Quê quán
-  id_card varchar [unique]                      // CCCD
   household_no varchar                          // Mã hộ dân
-  status tinyint [default: 1]                   // 1:'đang ở', 2:'tạm vắng', 3:'chuyển đi'
   registered_at timestamp                       // Ngày đăng ký
+  status tinyint [default: 1]                   // 1:'đang ở', 2:'tạm vắng', 3:'chuyển đi'
 }
 
 Table apartment_types {
@@ -118,6 +116,7 @@ Table services {
   description text
   price int
   unit varchar                                  // tháng, lượt, m2, người
+  status boolean [default: 1]                   // 0:'inactive', 1:'active'
 }
 
 Table service_registrations {
@@ -126,7 +125,7 @@ Table service_registrations {
   service_id int [ref: > services.id]
   start_date date
   end_date date
-  status tinyint [default: 1]                   // 0:'inactive', 1:'active'
+  status boolean [default: 1]                   // 0:'inactive', 1:'active'
 }
 
 //////////////////////////////////////////////////////////////
@@ -137,10 +136,12 @@ Table invoices {
   apartment_id int [ref: > apartments.id]
   period_id int [ref: > collection_periods.id]
   total_amount bigint
+  end_date date                                  // Hạn nộp
   status tinyint [default: 0]                    // 0:'unpaid', 1:'paid', 2:'overdue', 3:'cancelled'
   created_at timestamp
   created_by int [ref: > users.id]
   note text
+  paid_at date                                   // Ngày nộp
 }
 
 Table invoice_items {
@@ -189,7 +190,7 @@ Table maintenance_requests {
   title varchar                                 // Tiêu đề yêu cầu
   description text                              // Mô tả chi tiết
   images json                                   // Danh sách ảnh (URL/path)
-  status tinyint [default: 0]                   // 0:'pending', 1:'done', 2:'cancelled', 3:'In Progress'
+  status tinyint [default: 0]                   // 0:'pending', 1:'done', 2:'cancelled', 3:'in progress'
   result text                                   // Kết quả xử lý
   work_type_id int [ref: > work_types.id]       // Mã loại công việc
   assigned_to int [ref: > staffs.id]            // Nhân viên được phân công

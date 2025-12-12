@@ -22,6 +22,10 @@ module.exports = {
       unit: {
         type: Sequelize.STRING,
         comment: 'tháng, lượt, m2, người'
+      },
+      status: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true
       }
     })
   },

@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { Eye } from 'lucide-react'
+import { format } from 'date-fns'
 
 const ModalDetailRequest = ({
   sheetOpen,
@@ -63,15 +64,11 @@ const ModalDetailRequest = ({
           <div>
             <p className="text-sm text-gray-500">Thời gian</p>
             <p className="font-medium">
-              {new Date(selectedRequest?.createdAt).toLocaleString('vi-VN', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                timeZone: 'Asia/Ho_Chi_Minh'
-              })}
+              {selectedRequest?.created_at &&
+                format(
+                  new Date(selectedRequest.created_at),
+                  'HH:mm dd/MM/yyyy'
+                )}
             </p>
           </div>
           <div>

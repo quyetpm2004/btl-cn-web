@@ -45,7 +45,7 @@ const items = [
 
 export const About = () => {
   return (
-    <section id="gioi-thieu" className="bg-about py-20">
+    <section id="gioi-thieu" className="flex min-h-screen items-center">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Tiêu đề */}
         <div className="fade-in mb-16 text-center">
@@ -63,7 +63,7 @@ export const About = () => {
           {items.map((item) => (
             <div
               key={item.id}
-              className="card-hover fade-in rounded-xl bg-gray-50 p-8 text-center transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg">
+              className="fade-in rounded-xl bg-gray-50 p-8 text-center transition-transform duration-300 hover:-translate-y-2 hover:shadow-md">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-purple-100">
                 <svg
                   className="h-8 w-8 text-purple-600"

@@ -1,5 +1,5 @@
 import express from 'express'
-import { serviceController } from '@/controllers/admin/service.controller.js'
+import * as serviceController from '@/controllers/admin/service.controller.js'
 import { validateBody, validateParams } from '@/middlewares/validate.js'
 import {
   createServiceSchema,
@@ -14,13 +14,7 @@ serviceRouter.post(
   validateBody(createServiceSchema),
   serviceController.createService
 )
-serviceRouter.get('/', serviceController.getServices)
-serviceRouter.get('/filter', serviceController.filterServices)
-serviceRouter.get(
-  '/:id',
-  validateParams(serviceIdParamSchema),
-  serviceController.getServiceDetail
-)
+serviceRouter.get('/', serviceController.getAllActiveServices)
 serviceRouter.put(
   '/:id',
   validateParams(serviceIdParamSchema),

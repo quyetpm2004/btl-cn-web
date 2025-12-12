@@ -11,7 +11,7 @@ import LuxuryHero from '../LuxuryHero'
 
 export const LandingPage = () => {
   return (
-    <div className="bg-gray-50">
+    <div className="bg-gray-100">
       <Navbar />
       <LuxuryHero />
       <About />

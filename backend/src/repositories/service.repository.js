@@ -1,34 +1,25 @@
 import { Service } from '../models/index.js'
 
-async function createService(data, options = {}) {
-  return Service.create(data, options)
+async function create(data) {
+  return Service.create(data)
 }
 
-async function getAllServices() {
-  return Service.findAll()
+async function getAllActive() {
+  return Service.findAll({
+    where: { status: 1 }
+  })
 }
 
-async function getServiceById(id) {
+async function getById(id) {
   return Service.findByPk(id)
 }
 
-async function updateService(id, data) {
+async function update(id, data) {
   return Service.update(data, { where: { id } })
 }
 
 async function deleteService(id) {
-  return Service.destroy({ where: { id } })
+  return Service.update({ status: 0 }, { where: { id } })
 }
 
-async function filterServices(filters) {
-  return Service.findAll({ where: filters })
-}
-
-export {
-  createService,
-  getAllServices,
-  getServiceById,
-  updateService,
-  deleteService,
-  filterServices
-}
+export { create, getAllActive, getById, update, deleteService }

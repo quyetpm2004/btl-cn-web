@@ -34,8 +34,8 @@ module.exports = {
         type: Sequelize.DATEONLY
       },
       status: {
-        type: Sequelize.TINYINT,
-        defaultValue: 1,
+        type: Sequelize.BOOLEAN,
+        defaultValue: true,
         comment: '0: inactive | 1: active'
       }
     })

@@ -46,64 +46,47 @@ export function ModalChangePassword({
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Đổi mật khẩu</DialogTitle>
+            <DialogDescription></DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4">
             {/* Mật khẩu cũ */}
             <div className="grid gap-3">
-              <Label>Mật khẩu cũ</Label>
-              <div className="relative">
-                <Input
-                  type={showOld ? 'text' : 'password'}
-                  value={oldPassword}
-                  onChange={(e) => setOldPassword(e.target.value)}
-                  className="pr-10"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowOld(!showOld)}
-                  className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500">
-                  {showOld ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-              </div>
+              <Label required htmlFor="oldPassword">
+                Mật khẩu cũ
+              </Label>
+              <Input
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+                type="password"
+                id="oldPassword"
+              />
             </div>
 
             {/* Mật khẩu mới */}
             <div className="grid gap-3">
-              <Label>Mật khẩu mới</Label>
-              <div className="relative">
-                <Input
-                  type={showNew ? 'text' : 'password'}
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="pr-10"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowNew(!showNew)}
-                  className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500">
-                  {showNew ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-              </div>
+              <Label required htmlFor="newPassword">
+                Mật khẩu mới
+              </Label>
+              <Input
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                type="password"
+                id="newPassword"
+              />
             </div>
 
             {/* Xác nhận mật khẩu */}
             <div className="grid gap-3">
-              <Label>Xác nhận mật khẩu</Label>
-              <div className="relative">
-                <Input
-                  type={showConfirm ? 'text' : 'password'}
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="pr-10"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirm(!showConfirm)}
-                  className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500">
-                  {showConfirm ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-              </div>
+              <Label required htmlFor="confirmPassword">
+                Xác nhận mật khẩu
+              </Label>
+              <Input
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                type="password"
+                id="confirmPassword"
+              />
             </div>
           </div>
 

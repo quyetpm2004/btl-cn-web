@@ -216,7 +216,7 @@ export const ApartmentTypes = () => {
             {apartmentData.map((apartment) => (
               <div
                 key={apartment.id}
-                className="card-hover fade-in cursor-pointer overflow-hidden rounded-xl bg-white shadow-lg"
+                className="fade-in cursor-pointer overflow-hidden rounded-xl bg-white shadow-lg"
                 onClick={() => openGallery(apartment.galleryImages)} // <-- Sự kiện click
               >
                 <img

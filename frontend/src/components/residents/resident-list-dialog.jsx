@@ -23,10 +23,12 @@ import { useQuery } from '@tanstack/react-query'
 import { format } from 'date-fns'
 
 export const ResidentListDialog = ({
+  title,
   open,
   onOpenChange,
   onSelect,
-  onCreate
+  onCreate,
+  filters: extraFilters = {}
 }) => {
   const [searchIdCard, setSearchIdCard] = useState('')
   const [queryIdCard, setQueryIdCard] = useState('')
@@ -40,9 +42,10 @@ export const ResidentListDialog = ({
       page: pagination.page,
       limit: pagination.limit,
       id_card: queryIdCard,
-      full_name: queryName
+      full_name: queryName,
+      ...extraFilters
     }),
-    [pagination.page, pagination.limit, queryIdCard, queryName]
+    [pagination.page, pagination.limit, queryIdCard, queryName, extraFilters]
   )
 
   const { data, isLoading } = useQuery({
@@ -80,7 +83,7 @@ export const ResidentListDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="md:max-w-2xl lg:max-w-3xl">
         <DialogHeader>
-          <DialogTitle>Danh sách cư dân</DialogTitle>
+          <DialogTitle>{title || 'Danh sách cư dân'}</DialogTitle>
           <DialogDescription>
             Tìm kiếm và chọn cư dân từ danh sách bên dưới
           </DialogDescription>

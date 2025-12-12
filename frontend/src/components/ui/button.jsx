@@ -5,7 +5,7 @@ import { cva } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer",
   {
     variants: {
       variant: {
@@ -21,7 +21,7 @@ const buttonVariants = cva(
         link: 'text-primary underline-offset-4 hover:underline',
         icon: 'bg-transparent p-4',
         success:
-          'border-transparent bg-green-500 text-white [a&]:hover:bg-green-600 focus-visible:ring-green-500/20 dark:focus-visible:ring-green-400/40 dark:bg-green-600/70',
+          'border-transparent bg-green-500 text-white hover:bg-green-600 focus-visible:ring-green-500/20 dark:focus-visible:ring-green-400/40 dark:bg-green-600/70',
         blue: 'border-transparent bg-blue-500 text-white hover:bg-blue-600 focus-visible:ring-blue-500/20  dark:focus-visible:ring-blue-400/40 dark:bg-blue-600/70',
         gray: 'bg-gray-700 text-white hover:bg-gray-900',
         red: 'bg-red-500 text-white hover:bg-red-600'

@@ -26,3 +26,8 @@ export const completeRequestApi = async (id, result) => {
   const res = await instance.put(`/requests/${id}/complete`, { result })
   return res.data
 }
+
+export const getAllRequestsApi = async (params) => {
+  const res = await instance.get('/requests', { params })
+  return res.data
+}

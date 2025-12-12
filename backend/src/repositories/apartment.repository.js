@@ -3,33 +3,13 @@ import {
   Resident,
   User,
   ApartmentType,
-  ResidentApartment
+  ServiceRegistration,
+  Service
 } from '../models/index.js'
 import { Op } from 'sequelize'
 
 async function createApartment(data, options = {}) {
   return Apartment.create(data, options)
-}
-
-async function getAllApartments() {
-  return Apartment.findAll({
-    include: [
-      {
-        model: ApartmentType,
-        as: 'type',
-        attributes: ['id', 'name', 'description']
-      },
-      {
-        model: Resident,
-        as: 'residents',
-        attributes: ['id', 'full_name'],
-        through: {
-          attributes: ['end_date'],
-          where: { end_date: null }
-        }
-      }
-    ]
-  })
 }
 
 async function getApartmentById(id) {
@@ -133,6 +113,114 @@ async function filterApartments(filters) {
   return { items, total, page, limit }
 }
 
+async function getApartmentsWithServices(filters) {
+  const page = Number(filters.page) > 0 ? Number(filters.page) : 1
+  const limit = Number(filters.limit) > 0 ? Number(filters.limit) : 9
+  const offset = (page - 1) * limit
+
+  const { query } = filters || {}
+
+  const whereClause = query
+    ? {
+        apartment_code: {
+          [Op.like]: `%${query}%`
+        }
+      }
+    : {}
+
+  const total = await Apartment.count({
+    where: whereClause
+  })
+
+  const items = await Apartment.findAll({
+    where: whereClause,
+    attributes: ['id', 'apartment_code'],
+    include: [
+      {
+        model: Resident,
+        as: 'residents',
+        attributes: ['id', 'full_name', 'phone'],
+        through: {
+          attributes: [],
+          where: { end_date: null, relationship: 'owner' }
+        }
+      },
+      {
+        model: ServiceRegistration,
+        as: 'serviceRegistrations',
+        where: { status: true },
+        required: false,
+        attributes: ['id', 'service_id'],
+        include: [
+          {
+            model: Service,
+            as: 'service',
+            attributes: ['id', 'name', 'price', 'unit']
+          }
+        ]
+      }
+    ],
+    limit,
+    offset
+  })
+
+  return { items, total, page, limit }
+}
+
+async function getApartmentsWithServices(filters) {
+  const page = Number(filters.page) > 0 ? Number(filters.page) : 1
+  const limit = Number(filters.limit) > 0 ? Number(filters.limit) : 9
+  const offset = (page - 1) * limit
+
+  const { query } = filters || {}
+
+  const whereClause = query
+    ? {
+        apartment_code: {
+          [Op.like]: `%${query}%`
+        }
+      }
+    : {}
+
+  const total = await Apartment.count({
+    where: whereClause
+  })
+
+  const items = await Apartment.findAll({
+    where: whereClause,
+    attributes: ['id', 'apartment_code'],
+    include: [
+      {
+        model: Resident,
+        as: 'residents',
+        attributes: ['id', 'full_name', 'phone'],
+        through: {
+          attributes: [],
+          where: { end_date: null, relationship: 'owner' }
+        }
+      },
+      {
+        model: ServiceRegistration,
+        as: 'serviceRegistrations',
+        where: { status: true },
+        required: false,
+        attributes: ['id', 'service_id'],
+        include: [
+          {
+            model: Service,
+            as: 'service',
+            attributes: ['id', 'name', 'price', 'unit']
+          }
+        ]
+      }
+    ],
+    limit,
+    offset
+  })
+
+  return { items, total, page, limit }
+}
+
 async function getApartmentByUserId(userId) {
   const resident = await Resident.findOne({
     where: { user_id: userId },
@@ -169,13 +257,13 @@ async function getTypesApartment() {
 
 export {
   createApartment,
-  getAllApartments,
   getApartmentById,
   getApartmentByCode,
   updateApartment,
   deleteApartment,
   getApartmentCount,
   filterApartments,
+  getApartmentsWithServices,
   getApartmentByUserId,
   getBuildingsApartment,
   getTypesApartment

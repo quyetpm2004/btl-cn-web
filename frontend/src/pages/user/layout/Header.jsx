@@ -69,6 +69,9 @@ const Header = () => {
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent sideOffset={10} align="center">
+              <DropdownMenuItem onClick={() => navigate('/user/profile')}>
+                Hồ sơ cá nhân
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={handleLogout}>
                 Đăng xuất
               </DropdownMenuItem>

@@ -15,6 +15,7 @@ residentRouter.post(
   residentController.createResident
 )
 residentRouter.get('/', residentController.getResidents)
+residentRouter.get('/no-account', residentController.getResidentsWithoutAccount)
 residentRouter.get('/filter', residentController.filterResidents)
 residentRouter.get('/count', residentController.getResidentCount)
 residentRouter.get(

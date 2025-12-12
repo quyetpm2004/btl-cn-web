@@ -26,7 +26,7 @@ function toPublicUser(user) {
     role_id: user.role_id,
     role_name: roleName,
     display_name: displayName,
-    profile_type: resident ? 'resident' : staff ? 'staff' : null,
+    avatar_url: user.avatar_url,
     resident: resident ?? undefined,
     staff: staff ?? undefined
   }
@@ -89,7 +89,9 @@ async function registerService({
     await createResidentApartment(
       {
         resident_id: resident.id,
-        apartment_id: apartment.id
+        apartment_id: apartment.id,
+        relationship: 'member',
+        start_date: new Date()
       },
       { transaction: t }
     )

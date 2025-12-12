@@ -1,46 +1,36 @@
-import { getApartmentCountApi } from '@/services/apartment.api.js'
-import { getResidentCountApi } from '@/services/resident.api.js'
-import { useEffect, useState } from 'react'
+import { getDashboardStatsApi } from '@/services/stat.api.js'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
+
+const StatsCard = ({ title, value, icon, color }) => (
+  <div className="rounded-xl bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl">
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-sm font-medium text-gray-600">{title}</p>
+        <p className="text-2xl font-bold text-gray-900">{value ?? '-'}</p>
+      </div>
+      <div
+        className={`flex h-12 w-12 items-center justify-center rounded-lg bg-${color}-100`}>
+        <i className={`fas fa-${icon} text-${color}-600`}></i>
+      </div>
+    </div>
+  </div>
+)
 
 export const Dashboard = () => {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [data, setData] = useState({
-    apartmentCount: null,
-    residentCount: null
+  const {
+    data: dashboardStatsData,
+    isLoading,
+    isError
+  } = useQuery({
+    queryKey: ['dashboardStats'],
+    queryFn: () => getDashboardStatsApi(),
+    placeholderData: keepPreviousData
   })
 
-  useEffect(() => {
-    const ctrl = new AbortController()
-    setLoading(true)
-    setError(null)
+  const dashboardStats = dashboardStatsData?.dashboardStats || {}
 
-    Promise.allSettled([
-      getApartmentCountApi({ signal: ctrl.signal }),
-      getResidentCountApi({ signal: ctrl.signal })
-    ])
-      .then(([apartmentCountResult, residentCountResult]) => {
-        setData({
-          apartmentCount:
-            apartmentCountResult.status === 'fulfilled'
-              ? apartmentCountResult.value.apartmentCount
-              : null,
-          residentCount:
-            residentCountResult.status === 'fulfilled'
-              ? residentCountResult.value.residentCount
-              : null
-        })
-      })
-      .catch((err) => {
-        if (err.name !== 'CanceledError') setError(err)
-      })
-      .finally(() => setLoading(false))
-
-    return () => ctrl.abort()
-  }, [])
-
-  if (loading) return <div>Đang tải...</div>
-  if (error) return <div>Lỗi tải dữ liệu</div>
+  if (isLoading) return <div>Đang tải...</div>
+  if (isError) return <div>Lỗi tải dữ liệu</div>
 
   return (
     <>
@@ -54,59 +44,39 @@ export const Dashboard = () => {
       </div>
 
       <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <div className="card-hover rounded-xl bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Tổng căn hộ</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {data?.apartmentCount ?? 0}
-              </p>
-            </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
-              <i className="fas fa-home text-blue-600"></i>
-            </div>
-          </div>
-        </div>
+        <StatsCard
+          title="Tổng căn hộ"
+          value={dashboardStats?.apartmentCount}
+          icon="home"
+          color="blue"
+        />
+        <StatsCard
+          title="Tổng cư dân"
+          value={dashboardStats?.residentCount}
+          icon="users"
+          color="green"
+        />
 
-        <div className="card-hover rounded-xl bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Cư dân</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {data?.residentCount ?? 0}
-              </p>
-            </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
-              <i className="fas fa-users text-green-600"></i>
-            </div>
-          </div>
-        </div>
+        <StatsCard
+          title="Tổng doanh thu"
+          value={
+            dashboardStats?.totalInvoiceAmount
+              ? new Intl.NumberFormat('vi-VN', {
+                  style: 'currency',
+                  currency: 'VND'
+                }).format(dashboardStats.totalInvoiceAmount)
+              : '-'
+          }
+          icon="money-bill-wave"
+          color="yellow"
+        />
 
-        <div className="card-hover rounded-xl bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">
-                Thu nhập tháng
-              </p>
-              <p className="text-2xl font-bold text-gray-900">2.4B</p>
-            </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-yellow-100">
-              <i className="fas fa-money-bill-wave text-yellow-600"></i>
-            </div>
-          </div>
-        </div>
-
-        <div className="card-hover rounded-xl bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Phản ánh</p>
-              <p className="text-2xl font-bold text-gray-900">12</p>
-            </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100">
-              <i className="fas fa-exclamation-triangle text-red-600"></i>
-            </div>
-          </div>
-        </div>
+        <StatsCard
+          title="Phản ánh"
+          value={dashboardStats?.requestCount}
+          icon="tools"
+          color="red"
+        />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

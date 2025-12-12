@@ -8,7 +8,10 @@ import {
   CreditCard,
   Wrench,
   UserCog,
-  Bell
+  Bell,
+  Receipt,
+  Layers,
+  ClipboardList
 } from 'lucide-react'
 import {
   Collapsible,
@@ -25,6 +28,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarRail
 } from '@/components/ui/sidebar'
 import { useAuthStore } from '@/stores/useAuthStore'
@@ -74,10 +80,28 @@ export const Sidebar = () => {
         },
         {
           title: 'Phí & Thu chi',
-          url: '/admin/fees',
           icon: <CreditCard className="h-4 w-4" />,
-          isActive: isActive('/admin/fees'),
-          allowedRoles: [ROLES.ADMIN, ROLES.ACCOUNTANT]
+          allowedRoles: [ROLES.ADMIN, ROLES.ACCOUNTANT],
+          items: [
+            {
+              title: 'Hóa đơn',
+              url: '/admin/fees/invoices',
+              icon: <Receipt className="h-4 w-4" />,
+              isActive: isActive('/admin/fees/invoices')
+            },
+            {
+              title: 'Dịch vụ & đợt thu',
+              url: '/admin/fees/services',
+              icon: <Layers className="h-4 w-4" />,
+              isActive: isActive('/admin/fees/services')
+            },
+            {
+              title: 'Đăng ký dịch vụ',
+              url: '/admin/fees/registrations',
+              icon: <ClipboardList className="h-4 w-4" />,
+              isActive: isActive('/admin/fees/registrations')
+            }
+          ]
         },
         {
           title: 'Phản ánh',
@@ -87,10 +111,10 @@ export const Sidebar = () => {
           allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.TECHNICIAN]
         },
         {
-          title: 'Nhân sự',
-          url: '/admin/staffs',
+          title: 'Tài khoản',
+          url: '/admin/accounts',
           icon: <UserCog className="h-4 w-4" />,
-          isActive: isActive('/admin/staffs'),
+          isActive: isActive('/admin/accounts'),
           allowedRoles: [ROLES.ADMIN]
         },
         {
@@ -136,15 +160,38 @@ export const Sidebar = () => {
                   <SidebarMenu>
                     {group.items.map((item) => (
                       <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton
-                          asChild
-                          isActive={item.isActive}
-                          className="flex items-center gap-2">
-                          <Link to={item.url}>
-                            {item.icon}
-                            <span>{item.title}</span>
-                          </Link>
-                        </SidebarMenuButton>
+                        {item.items ? (
+                          <>
+                            <SidebarMenuButton className="flex items-center gap-2">
+                              {item.icon}
+                              <span>{item.title}</span>
+                            </SidebarMenuButton>
+                            <SidebarMenuSub>
+                              {item.items.map((subItem) => (
+                                <SidebarMenuSubItem key={subItem.title}>
+                                  <SidebarMenuSubButton
+                                    asChild
+                                    isActive={subItem.isActive}>
+                                    <Link to={subItem.url}>
+                                      {subItem.icon}
+                                      <span>{subItem.title}</span>
+                                    </Link>
+                                  </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                              ))}
+                            </SidebarMenuSub>
+                          </>
+                        ) : (
+                          <SidebarMenuButton
+                            asChild
+                            isActive={item.isActive}
+                            className="flex items-center gap-2">
+                            <Link to={item.url}>
+                              {item.icon}
+                              <span>{item.title}</span>
+                            </Link>
+                          </SidebarMenuButton>
+                        )}
                       </SidebarMenuItem>
                     ))}
                   </SidebarMenu>
