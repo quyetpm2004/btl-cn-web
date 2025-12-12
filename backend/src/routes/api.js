@@ -8,6 +8,7 @@ import maintenanceScheduleRouter from './maintenanceSchedule.route.js'
 import staffRouter from './staff.route.js'
 import maintenanceRequestRouter from './maintenanceRequest.route.js'
 import uploadRouter from './upload.route.js'
+import contactRouter from './contact.route.js'
 
 const router = express.Router()
 
@@ -16,6 +17,9 @@ router.get('/', async (req, res) => {
     message: 'API is running hehe'
   })
 })
+
+// Public routes (không cần auth)
+router.use('/contact', contactRouter)
 
 router.use(authMiddleware)
 router.use(authRouter)
@@ -26,6 +30,6 @@ router.use('/schedules', maintenanceScheduleRouter)
 router.use('/staffs', staffRouter)
 router.use('/requests', maintenanceRequestRouter)
 
-router.use('/upload', uploadRouter) //test cloudinary
+router.use('/upload', uploadRouter) 
 
 export default router

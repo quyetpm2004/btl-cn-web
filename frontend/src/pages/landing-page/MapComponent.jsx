@@ -8,10 +8,10 @@ const containerStyle = {
   borderRadius: '0.5rem' // Bo góc cho đẹp
 }
 
-// Tọa độ của "123 Đường ABC, Quận 1, TP.HCM" (ước tính)
+// Tọa độ của "HH1C Linh Đàm, Hoàng Mai, Hà Nội"
 const center = {
-  lat: 10.773011,
-  lng: 106.6909
+  lat: 20.9647395,
+  lng: 105.8261128
 }
 
 const MapComponent = () => {

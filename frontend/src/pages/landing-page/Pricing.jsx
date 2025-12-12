@@ -12,52 +12,10 @@ export const Pricing = () => {
           </p>
         </div>
 
-        {/* Hai bảng giá */}
-        <div className="mb-12 grid gap-8 md:grid-cols-2">
-          {/* Bảng giá căn hộ */}
-          <div className="price-card fade-in rounded-xl bg-gray-50 p-8 shadow-md transition duration-300 hover:shadow-lg">
-            <h3 className="mb-6 text-2xl font-bold text-gray-800">
-              Bảng Giá Căn Hộ
-            </h3>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between border-b border-gray-200 py-3">
-                <span className="font-medium">Studio (35m²)</span>
-                <span className="font-semibold text-purple-600">
-                  1.2 - 1.5 tỷ
-                </span>
-              </div>
-              <div className="flex items-center justify-between border-b border-gray-200 py-3">
-                <span className="font-medium">1PN (55m²)</span>
-                <span className="font-semibold text-purple-600">
-                  1.8 - 2.2 tỷ
-                </span>
-              </div>
-              <div className="flex items-center justify-between border-b border-gray-200 py-3">
-                <span className="font-medium">2PN (75m²)</span>
-                <span className="font-semibold text-purple-600">
-                  2.5 - 3.0 tỷ
-                </span>
-              </div>
-              <div className="flex items-center justify-between border-b border-gray-200 py-3">
-                <span className="font-medium">3PN (95m²)</span>
-                <span className="font-semibold text-purple-600">
-                  3.2 - 3.8 tỷ
-                </span>
-              </div>
-              <div className="flex items-center justify-between py-3">
-                <span className="font-medium">Penthouse (150m²)</span>
-                <span className="font-semibold text-purple-600">
-                  6.5 - 8.0 tỷ
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Phí dịch vụ hàng tháng */}
-          <div className="price-card fade-in rounded-xl bg-gray-50 p-8 shadow-md transition duration-300 hover:shadow-lg">
-            <h3 className="mb-6 text-2xl font-bold text-gray-800">
-              Phí Dịch Vụ Hàng Tháng
-            </h3>
+        {/* Phí dịch vụ (căn giữa) */}
+        <div className="mb-12 flex justify-center">
+          <div className="price-card fade-in w-full max-w-2xl rounded-xl bg-gray-50 p-8 shadow-md transition duration-300 hover:shadow-lg">
+            <h3 className="mb-6 text-2xl font-bold text-gray-800">Phí Dịch Vụ Hàng Tháng</h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between border-b border-gray-200 py-3">
                 <span className="font-medium">Phí quản lý</span>
