@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
   Dialog,
   DialogTrigger,
@@ -37,6 +37,16 @@ export default function MaintenanceRequestModal({
   const [images, setImages] = useState([])
   const fileInputRef = useRef(null)
   const MAX_IMAGES = 5
+
+  useEffect(() => {
+    if (isOpenModal) {
+      setWorkTypeId('')
+      setTitle('')
+      setDescription('')
+      setImages([])
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }, [isOpenModal])
 
   const handleImageSelect = (e) => {
     const files = e.target.files
