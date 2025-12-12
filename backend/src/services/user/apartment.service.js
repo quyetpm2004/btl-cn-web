@@ -38,7 +38,7 @@ const handleFetchResident = async (userId) => {
         {
           model: User,
           as: 'user',
-          attributes: ['username', 'email', 'phone', 'avatar_url']
+          attributes: ['username', 'email', 'avatar_url']
         }
       ]
     })
@@ -51,6 +51,7 @@ const handleFetchResident = async (userId) => {
       fullName: resident.full_name,
       id: resident.id,
       avatar_url: resident.user.avatar_url,
+      phone: resident.phone,
       apartments: resident.apartments.map((a) => ({
         apartmentCode: a.apartment_code,
         floor: a.floor,

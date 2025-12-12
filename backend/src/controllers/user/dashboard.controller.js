@@ -1,4 +1,4 @@
-import { getDashboardCounts } from '../../services/dashboard.service.js'
+import { getDashboardCounts } from '../../services/user/dashboard.service.js'
 
 /**
  * GET /api/user/dashboard
@@ -7,7 +7,8 @@ import { getDashboardCounts } from '../../services/dashboard.service.js'
  */
 async function getDashboard(req, res) {
   try {
-    const residentId = req.query?.residentId 
+    const residentId = req.params.residentId
+    const userId = req.user.id
 
     if (!residentId) {
       return res.status(400).json({
@@ -16,11 +17,13 @@ async function getDashboard(req, res) {
       })
     }
 
-    const data = await getDashboardCounts(residentId)
+    const data = await getDashboardCounts(residentId, userId)
     return res.status(200).json({ success: true, data })
   } catch (err) {
     console.error('getDashboard error', err)
-    return res.status(500).json({ success: false, message: 'Internal server error' })
+    return res
+      .status(500)
+      .json({ success: false, message: 'Internal server error' })
   }
 }
 

@@ -27,20 +27,20 @@ import {
 } from '@/components/ui/sidebar'
 import { useNotificationStore } from '@/stores/useNotificationStore'
 import { useEffect } from 'react'
-import { useResidentStore } from '@/stores/useResidentStore'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 const AppSidebar = () => {
-  const { resident } = useResidentStore()
-  const residentId = resident?.id
+  const { user } = useAuthStore()
+  const userId = user.id
 
   const unreadCount = useNotificationStore((s) => s.unreadCount)
   const fetchNotifications = useNotificationStore((s) => s.fetchNotifications)
 
   useEffect(() => {
-    if (residentId) {
-      fetchNotifications(residentId)
+    if (userId) {
+      fetchNotifications(userId)
     }
-  }, [residentId])
+  }, [userId])
 
   const location = useLocation()
 

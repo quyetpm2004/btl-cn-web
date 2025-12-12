@@ -68,7 +68,11 @@ export const Navbar = () => {
             {Object.keys(navItems).map((item, i) => (
               <a
                 key={i}
-                href={'#' + navItems[item]}
+                href={
+                  navItems[item] === 'auth/login'
+                    ? navItems[item]
+                    : '#' + navItems[item]
+                }
                 className="block px-3 py-2 text-gray-700 hover:text-purple-600">
                 {item}
               </a>

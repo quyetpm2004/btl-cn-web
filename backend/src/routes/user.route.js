@@ -5,10 +5,7 @@ import {
   updatePassword,
   updateProfile
 } from '@/controllers/user/profile.controller.js'
-import {
-  fetchResident,
-  getApartment
-} from '@/controllers/user/apartment.controller.js'
+import { fetchResident } from '@/controllers/user/apartment.controller.js'
 import {
   getNotification,
   markNotificationRead
@@ -36,7 +33,7 @@ import {
   vnpayReturn
 } from '../controllers/user/payment.controller.js'
 import { getDashboard } from '../controllers/user/dashboard.controller.js'
-import { serviceController } from '../controllers/admin/service.controller.js'
+import { getAllActiveServices } from '../controllers/admin/service.controller.js'
 import { validateBody } from '../middlewares/validate.js'
 import { profileSchema } from '../schemas/profile.schema.js'
 const uploadAvatar = uploadFile('avatar')
@@ -100,9 +97,9 @@ userRoute.post('/payment/create-qr', createPayment)
 userRoute.get('/payment/vnpay_return', vnpayReturn)
 
 // Dashboard
-userRoute.get('/dashboard', getDashboard)
+userRoute.get('/dashboard/:residentId', getDashboard)
 
 // Services
-userRoute.get('/services', serviceController.getServices)
+userRoute.get('/services', getAllActiveServices)
 
 export default userRoute

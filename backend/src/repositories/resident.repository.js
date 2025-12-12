@@ -101,6 +101,10 @@ async function getResidentsWithoutAccount() {
   })
 }
 
+const getResidentByUserId = async (userId) => {
+  return Resident.findOne({ where: { user_id: userId } })
+}
+
 export {
   createResident,
   getAllResidents,
@@ -109,5 +113,6 @@ export {
   deleteResident,
   getResidentCount,
   filterResidents,
-  getResidentsWithoutAccount
+  getResidentsWithoutAccount,
+  getResidentByUserId
 }

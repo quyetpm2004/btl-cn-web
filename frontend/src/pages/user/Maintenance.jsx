@@ -23,6 +23,8 @@ import {
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog'
 import { format } from 'date-fns'
+import { io } from 'socket.io-client'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 export default function Maintenance() {
   const statusColorLabel = {
@@ -30,15 +32,15 @@ export default function Maintenance() {
       label: 'Đang chờ xử lý', // Pending
       class: 'border border-blue-400 text-blue-600 bg-blue-50'
     },
-    1: {
+    3: {
       label: 'Đang xử lý', // In Progress
       class: 'border border-yellow-400 text-yellow-600 bg-yellow-50'
     },
-    2: {
+    1: {
       label: 'Đã hoàn thành', // Completed
       class: 'border border-green-400 text-green-600 bg-green-50'
     },
-    3: {
+    2: {
       label: 'Đã hủy', // Cancelled
       class: 'border border-red-600 bg-red-600 text-white'
     },
@@ -51,7 +53,6 @@ export default function Maintenance() {
 
   const { resident } = useResidentStore()
 
-  const [maintenanceRequests, setMaintenanceRequests] = useState([])
   const [workType, setWorkType] = useState([])
   const [sheetOpen, setSheetOpen] = useState(false)
   const [selectedRequest, setSelectedRequest] = useState(null)
@@ -61,21 +62,33 @@ export default function Maintenance() {
     setSheetOpen(true)
   }
 
-  const fetchData = async () => {
-    try {
-      const residentId = resident?.id
-      const res = await getMaintenanceRequestsApi(residentId)
-      setMaintenanceRequests(res.data.requests)
-    } catch (error) {
-      console.error('Error fetching maintenance data:', error)
-    }
-  }
+  useEffect(() => {
+    fetchWorkTypeData()
+  }, [])
+  const queryClient = useQueryClient()
 
   useEffect(() => {
-    fetchData()
-    fetchWorkTypeData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    const socket = io('http://localhost:8080')
+
+    socket.on('maintenance_request_updated', () => {
+      queryClient.invalidateQueries({ queryKey: ['maintenanceRequests'] })
+    })
+
+    return () => {
+      socket.disconnect()
+    }
+  }, [queryClient])
+
+  const {
+    data: requestsData,
+    isLoading,
+    isError
+  } = useQuery({
+    queryKey: ['maintenanceRequests'],
+    queryFn: () => getMaintenanceRequestsApi(resident.id)
+  })
+
+  const requests = requestsData?.data.requests
 
   const [isOpenModal, setIsOpenModal] = useState(false)
 
@@ -88,36 +101,53 @@ export default function Maintenance() {
     }
   }
 
-  const handleCreateNewRequest = async (data) => {
-    const res = await createMaintenanceRequestApi(data)
-    if (res.data) {
-      fetchData()
+  const createRequestMutation = useMutation({
+    mutationFn: (data) => createMaintenanceRequestApi(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['maintenanceRequests'] })
       toast.success('Tạo yêu cầu bảo trì thành công')
-    } else {
+    },
+    onError: () => {
       toast.error('Tạo yêu cầu bảo trì thất bại')
     }
+  })
+
+  const handleCreateNewRequest = (data) => {
+    createRequestMutation.mutate(data)
   }
 
-  const handleDeleteRequest = async (id) => {
-    try {
-      const res = await deleteMaintenanceRequestApi(id)
-      if (res.data) {
-        toast.success('Xóa yêu cầu thành công!')
-        fetchData() // load lại danh sách
-      }
-    } catch (error) {
-      console.error(error)
+  const deleteRequestMutation = useMutation({
+    mutationFn: (id) => deleteMaintenanceRequestApi(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['maintenanceRequests'] })
+      toast.success('Xóa yêu cầu thành công!')
+    },
+    onError: () => {
       toast.error('Không thể xóa yêu cầu!')
     }
+  })
+
+  const handleDeleteRequest = (id) => {
+    deleteRequestMutation.mutate(id)
   }
 
   const [lightboxImage, setLightboxImage] = useState(null) // for fullscreen preview
+
+  // Convert status number → label
+  const requestStatusMap = {
+    0: 'Đang chờ xử lý',
+    1: 'Đã hoàn thành',
+    2: 'Đã hủy',
+    3: 'Đang xử lý'
+  }
+
+  if (isLoading) return <div>Loading...</div>
+  if (isError) return <div>Error loading</div>
 
   return (
     <div className="space-y-6">
       {/* Header Section */}
       <div className="mb-6">
-        <h2 className="mb-2 text-2xl font-bold text-gray-800">Phản ánh</h2>
         <h2 className="mb-2 text-2xl font-bold text-gray-800">Phản ánh</h2>
         <p className="text-gray-600">
           Nơi giúp bạn giải quyết được những vấn đề khó khăn gặp phải
@@ -149,7 +179,7 @@ export default function Maintenance() {
 
       {/* Main Content */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        {maintenanceRequests.map((item) => (
+        {requests.map((item) => (
           <div className="bg-card border-border relative col-span-1 overflow-hidden rounded-lg border shadow-sm transition-all hover:shadow-lg">
             {/* Nút Xóa */}
             <AlertDialog>

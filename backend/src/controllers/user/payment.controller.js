@@ -1,4 +1,4 @@
-import { invoiceService } from '../../services/invoice.service.js'
+import { invoiceService } from '../../services/user/invoice.service.js'
 import { paymentService } from '../../services/user/payment.service.js'
 import { getResidentByUserId } from '../../repositories/resident.repository.js'
 import {
@@ -11,6 +11,7 @@ import moment from 'moment'
 const getPaymentUnpaid = async (req, res) => {
   try {
     const { id } = req.user
+    console.log('id', id)
     const invoices = await invoiceService.getUnpaidInvoicesForUser(id)
     return res
       .status(200)
@@ -59,6 +60,7 @@ const vnpayReturn = async (req, res) => {
     const invoiceId = req.query.vnp_TxnRef.split('_')[1]
 
     if (verify.vnp_ResponseCode === '00') {
+      console.log('Thanh toán thành công')
       const invoice = await getInvoiceById(invoiceId)
       if (invoice.status !== 1) {
         await updateInvoice(invoiceId, {

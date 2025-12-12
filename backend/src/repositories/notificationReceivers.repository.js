@@ -11,7 +11,7 @@ function categoryStringToNumber(str) {
   return map[str] || 0 // 0 = không hợp lệ
 }
 
-async function getNotificationsByFilter(residentId, filter = 'all') {
+async function getNotificationsByFilter(userId, filter = 'all') {
   const categoryFilter =
     filter === 'all' ? {} : { category: categoryStringToNumber(filter) }
 

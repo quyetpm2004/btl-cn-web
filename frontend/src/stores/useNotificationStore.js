@@ -9,10 +9,10 @@ export const useNotificationStore = create(
       unreadCount: 0,
       loading: false,
 
-      fetchNotifications: async (residentId, filter = 'all') => {
+      fetchNotifications: async (userId, filter = 'all') => {
         set({ loading: true })
         try {
-          const res = await getNotification(residentId, filter)
+          const res = await getNotification(userId, filter)
 
           const list = res.data.notification || []
 

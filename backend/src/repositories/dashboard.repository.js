@@ -45,12 +45,12 @@ async function countPendingMaintenance(residentId) {
   })
 }
 
-async function countNewNotifications(residentId) {
-  if (!residentId) return 0
+async function countNewNotifications(userId) {
+  if (!userId) return 0
   return NotificationReceiver.count({
     where: {
       is_read: 0,
-      resident_id: residentId
+      user_id: userId
     }
   })
 }

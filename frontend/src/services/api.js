@@ -53,9 +53,9 @@ const fetchResidentInfoApi = async () => {
   return response
 }
 
-const getNotification = async (residentId, filter) => {
+const getNotification = async (userId, filter) => {
   const response = await instance.get(
-    `/user/notification/${residentId}?filter=${filter}`
+    `/user/notification/${userId}?filter=${filter}`
   )
   return response
 }
@@ -156,9 +156,7 @@ const paymentResultApi = async (query) => {
 }
 
 const dashboardApi = async (residentId) => {
-  const response = await instance.get(
-    `/user/dashboard?residentId=${residentId}`
-  )
+  const response = await instance.get(`/user/dashboard/${residentId}`)
   return response
 }
 

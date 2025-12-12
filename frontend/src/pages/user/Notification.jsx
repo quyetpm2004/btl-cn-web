@@ -10,15 +10,15 @@ import {
   MoreHorizontal,
   Wrench
 } from 'lucide-react'
-import { useResidentStore } from '@/stores/useResidentStore'
 import { NotificationDetailModal } from './NotificationDetailModal'
 import { useNotificationStore } from '@/stores/useNotificationStore'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 const Notification = () => {
   const { notifications, fetchNotifications, markAsRead } =
     useNotificationStore()
   const [activeTab, setActiveTab] = useState('all')
-  const { resident } = useResidentStore()
+  const { user } = useAuthStore()
 
   // lấy filter từ URL (ví dụ: ?filter=payment)
   const getFilterFromUrl = () => {
@@ -33,7 +33,7 @@ const Notification = () => {
   useEffect(() => {
     const initial = getFilterFromUrl()
     setActiveTab(initial)
-    fetchNotifications(resident.id, initial)
+    fetchNotifications(user.id, initial)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
