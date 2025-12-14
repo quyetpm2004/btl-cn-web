@@ -13,6 +13,7 @@ import accountRouter from './account.route.js'
 import serviceRouter from './service.route.js'
 import collectionPeriodRouter from './collectionPeriod.route.js'
 import invoiceRouter from './invoice.route.js'
+import notificationRouter from './notification.route.js'
 
 const router = express.Router()
 
@@ -35,6 +36,7 @@ router.use('/accounts', accountRouter)
 router.use('/services', serviceRouter)
 router.use('/periods', collectionPeriodRouter)
 router.use('/invoices', invoiceRouter)
+router.use('/notifications', notificationRouter)
 
 router.use('/upload', uploadRouter) //test cloudinary
 

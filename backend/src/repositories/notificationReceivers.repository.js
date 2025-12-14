@@ -1,4 +1,4 @@
-import { Notification, NotificationReceiver } from '../models/index.js'
+import { Notification, NotificationReceiver } from '@/models/index.js'
 
 function categoryStringToNumber(str) {
   const map = {

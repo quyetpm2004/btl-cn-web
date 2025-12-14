@@ -81,8 +81,8 @@ async function getAllPending() {
   })
 }
 
-async function deleteSchedule(id) {
-  return MaintenanceSchedule.destroy({ where: { id } })
+async function deleteSchedule(id, options = {}) {
+  return MaintenanceSchedule.destroy({ where: { id }, ...options })
 }
 
 export {
