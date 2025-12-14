@@ -19,3 +19,11 @@ export const payInvoiceApi = (invoiceId) => {
 export const bulkUpdateInvoicesApi = ({ periodId, items }) => {
   return axios.post('/invoices/bulk-update', { period_id: periodId, items })
 }
+
+export const sendPeriodNotificationApi = (periodId) => {
+  return axios.post('/invoices/notify-period', { periodId })
+}
+
+export const sendOverdueNotificationApi = () => {
+  return axios.post('/invoices/notify-overdue')
+}

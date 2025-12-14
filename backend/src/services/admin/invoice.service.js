@@ -1,8 +1,10 @@
+import { createNotificationService } from '@/services/admin/notification.service.js'
 import { AppError } from '@/utils/errors.js'
 import { StatusCodes } from 'http-status-codes'
 import * as invoiceRepo from '@/repositories/invoice.repository.js'
 import db from '@/models/index.js'
 import { Op } from 'sequelize'
+import { format } from 'date-fns'
 
 async function createInvoiceService(data) {
   return invoiceRepo.createInvoice(data)
@@ -170,8 +172,8 @@ async function bulkUpdateInvoicesService(periodId, items) {
 
   for (const item of items) {
     try {
-      const { apartment_code, service_name, amount } = item
-      if (!apartment_code || !service_name || amount === undefined) continue
+      const { apartment_code, service_name, amount, usage } = item
+      if (!apartment_code || !service_name) continue
 
       const apartment = await Apartment.findOne({ where: { apartment_code } })
       if (!apartment) {
@@ -180,10 +182,12 @@ async function bulkUpdateInvoicesService(periodId, items) {
       }
 
       const invoice = await Invoice.findOne({
-        where: { apartment_id: apartment.id, period_id: periodId }
+        where: { apartment_id: apartment.id, period_id: periodId, status: 0 }
       })
       if (!invoice) {
-        errors.push(`Invoice for ${apartment_code} in this period not found`)
+        errors.push(
+          `Unpaid invoice for ${apartment_code} in this period not found`
+        )
         continue
       }
 
@@ -195,20 +199,36 @@ async function bulkUpdateInvoicesService(periodId, items) {
         continue
       }
 
+      let finalAmount = 0
+      let finalQuantity = 1
+
+      if (usage !== undefined && usage !== null) {
+        finalQuantity = Number(usage)
+        finalAmount = finalQuantity * service.price
+      } else if (amount !== undefined) {
+        finalAmount = Number(amount)
+        finalQuantity = 1
+      } else {
+        continue
+      }
+
       const invoiceItem = await InvoiceItem.findOne({
         where: { invoice_id: invoice.id, service_id: service.id }
       })
 
       if (invoiceItem) {
-        await invoiceItem.update({ amount: amount })
+        await invoiceItem.update({
+          amount: finalAmount,
+          quantity: finalQuantity,
+          unit_price: service.price
+        })
       } else {
-        // Create new item if not exists (optional, but good for flexibility)
         await InvoiceItem.create({
           invoice_id: invoice.id,
           service_id: service.id,
-          amount: amount,
-          quantity: 1,
-          unit_price: amount
+          amount: finalAmount,
+          quantity: finalQuantity,
+          unit_price: service.price
         })
       }
 
@@ -228,11 +248,124 @@ async function bulkUpdateInvoicesService(periodId, items) {
   return { updated: updatedCount, errors }
 }
 
+async function sendPeriodNotificationService(periodId) {
+  const { CollectionPeriod, Invoice, Apartment, Resident, User, Notification } =
+    db
+
+  const period = await CollectionPeriod.findByPk(periodId)
+  if (!period) throw new AppError(StatusCodes.NOT_FOUND, 'Period not found')
+
+  const invoices = await Invoice.findAll({
+    where: { period_id: periodId, status: 0 },
+    include: [
+      {
+        model: Apartment,
+        as: 'apartment',
+        include: [
+          {
+            model: Resident,
+            as: 'residents',
+            include: [{ model: User, as: 'user' }]
+          }
+        ]
+      }
+    ]
+  })
+
+  const userIds = new Set()
+  invoices.forEach((inv) => {
+    inv.apartment?.residents?.forEach((res) => {
+      if (res.user?.id) {
+        userIds.add(res.user.id)
+      }
+    })
+  })
+
+  if (userIds.size === 0) return { message: 'No users to notify' }
+
+  // Remove old notifications for this period
+  await Notification.destroy({
+    where: {
+      title: `Thông báo thu phí đợt ${period.name}`,
+      category: 3 // Fee
+    }
+  })
+
+  await createNotificationService({
+    title: `Thông báo thu phí đợt ${period.name}`,
+    content: `Đợt thu phí ${period.name} đã bắt đầu. Hạn thanh toán: ${format(period.end_date, 'dd/MM/yyyy')}. Vui lòng kiểm tra và thanh toán hóa đơn.`,
+    category: 3, // Fee
+    userIds: Array.from(userIds)
+  })
+
+  return { message: `Sent notifications to ${userIds.size} users` }
+}
+
+async function sendOverdueNotificationService() {
+  const { Invoice, Apartment, Resident, User, CollectionPeriod, Notification } =
+    db
+
+  const overdueInvoices = await Invoice.findAll({
+    where: {
+      status: { [Op.ne]: 1 }
+    },
+    include: [
+      {
+        model: CollectionPeriod,
+        as: 'period',
+        where: {
+          end_date: { [Op.lt]: new Date() }
+        }
+      },
+      {
+        model: Apartment,
+        as: 'apartment',
+        include: [
+          {
+            model: Resident,
+            as: 'residents',
+            include: [{ model: User, as: 'user' }]
+          }
+        ]
+      }
+    ]
+  })
+
+  let count = 0
+  for (const inv of overdueInvoices) {
+    const userIds = []
+    inv.apartment?.residents?.forEach((res) => {
+      if (res.user?.id) userIds.push(res.user.id)
+    })
+
+    if (userIds.length > 0) {
+      await Notification.destroy({
+        where: {
+          title: `Thông báo quá hạn thanh toán - Căn hộ ${inv.apartment.apartment_code}`,
+          category: 3 // Fee
+        }
+      })
+
+      await createNotificationService({
+        title: `Thông báo quá hạn thanh toán - Căn hộ ${inv.apartment.apartment_code}`,
+        content: `Hóa đơn đợt ${inv.period.name} của căn hộ ${inv.apartment.apartment_code} đã quá hạn. Số tiền: ${inv.total_amount.toLocaleString()}đ. Vui lòng thanh toán ngay.`,
+        category: 3,
+        userIds: userIds
+      })
+      count++
+    }
+  }
+
+  return { message: `Sent notifications for ${count} overdue invoices` }
+}
+
 export {
   createInvoiceService,
   getInvoicesService,
   getInvoiceStatsService,
   generateInvoicesForPeriodService,
   payInvoiceService,
-  bulkUpdateInvoicesService
+  bulkUpdateInvoicesService,
+  sendPeriodNotificationService,
+  sendOverdueNotificationService
 }

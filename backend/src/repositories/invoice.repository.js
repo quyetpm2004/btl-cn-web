@@ -80,7 +80,10 @@ async function getInvoices(filters) {
     ],
     limit,
     offset,
-    order: [['created_at', 'DESC']]
+    order: [
+      ['period_id', 'ASC'],
+      ['apartment_id', 'ASC']
+    ]
   })
 
   return { items, total, page, limit }

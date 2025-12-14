@@ -51,7 +51,9 @@ export const payInvoice = async (req, res) => {
         .json({ message: 'Invoice ID is required' })
     }
     await invoiceService.payInvoiceService(invoice_id)
-    return res.status(StatusCodes.OK).json({ message: 'Invoice paid successfully' })
+    return res
+      .status(StatusCodes.OK)
+      .json({ message: 'Invoice paid successfully' })
   } catch (err) {
     const http = toHttpError(err)
     return res.status(http.status).json(http.body)
@@ -66,10 +68,39 @@ export const bulkUpdateInvoices = async (req, res) => {
         .status(StatusCodes.BAD_REQUEST)
         .json({ message: 'Invalid data' })
     }
-    const result = await invoiceService.bulkUpdateInvoicesService(period_id, items)
+    const result = await invoiceService.bulkUpdateInvoicesService(
+      period_id,
+      items
+    )
     return res.status(StatusCodes.OK).json(result)
   } catch (err) {
     const http = toHttpError(err)
+    return res.status(http.status).json(http.body)
+  }
+}
+
+export const sendPeriodNotification = async (req, res) => {
+  try {
+    const { periodId } = req.body
+    if (!periodId) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: 'Period ID is required' })
+    }
+    const result = await invoiceService.sendPeriodNotificationService(periodId)
+    return res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    const http = toHttpError(error)
+    return res.status(http.status).json(http.body)
+  }
+}
+
+export const sendOverdueNotification = async (req, res) => {
+  try {
+    const result = await invoiceService.sendOverdueNotificationService()
+    return res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    const http = toHttpError(error)
     return res.status(http.status).json(http.body)
   }
 }

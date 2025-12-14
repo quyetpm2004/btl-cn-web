@@ -109,7 +109,7 @@ export const InvoiceDetailDialog = ({ invoice, open, onOpenChange, onPay }) => {
                   key={idx}
                   className="flex justify-between border-b border-gray-50 py-2 text-sm last:border-0">
                   <span className="text-gray-600">
-                    {item.service?.name || 'Dịch vụ'} - {item.quantity}
+                    {item.service?.name || 'Dịch vụ'} - {item.quantity}{' '}
                     {item.service?.unit || ''}
                   </span>
                   <span className="font-medium text-gray-900">

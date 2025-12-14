@@ -8,8 +8,9 @@ import {
   AlertCircle,
   FileText,
   CreditCard,
-  Loader2,
-  Upload
+  Upload,
+  Bell,
+  AlertTriangle
 } from 'lucide-react'
 import {
   keepPreviousData,
@@ -22,7 +23,9 @@ import {
   getInvoicesApi,
   getInvoiceStatsApi,
   payInvoiceApi,
-  bulkUpdateInvoicesApi
+  bulkUpdateInvoicesApi,
+  sendPeriodNotificationApi,
+  sendOverdueNotificationApi
 } from '@/services/invoice.api'
 import { getAllCollectionPeriodsApi } from '@/services/collectionPeriod.api'
 import { usePagination } from '@/hooks/use-pagination'
@@ -36,10 +39,25 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip'
 import { format } from 'date-fns'
 import { InvoiceDetailDialog } from '@/components/fees/invoice-detail-dialog'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import * as XLSX from 'xlsx'
+import { Spinner } from '@/components/ui/spinner'
 
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat('vi-VN', {
@@ -173,9 +191,13 @@ export const Invoices = () => {
   const bulkUpdateMutation = useMutation({
     mutationFn: bulkUpdateInvoicesApi,
     onSuccess: (data) => {
-      toast.success(`Đã cập nhật ${data.data.updated} hóa đơn`)
+      toast.success(`Đã cập nhật hóa đơn`, {
+        id: 'bulk-update'
+      })
       if (data.data.errors?.length > 0) {
-        toast.warning(`Có ${data.data.errors.length} lỗi xảy ra`)
+        toast.warning(`Có ${data.data.errors.length} lỗi xảy ra`, {
+          id: 'bulk-update'
+        })
         console.warn(data.data.errors)
       }
       queryClient.invalidateQueries(['invoices'])
@@ -184,6 +206,30 @@ export const Invoices = () => {
     onError: (err) => {
       toast.error(
         'Lỗi cập nhật: ' + (err.response?.data?.message || err.message)
+      )
+    }
+  })
+
+  const notifyPeriodMutation = useMutation({
+    mutationFn: sendPeriodNotificationApi,
+    onSuccess: (data) => {
+      toast.success(data.data.message || 'Đã gửi thông báo đợt thu')
+    },
+    onError: (err) => {
+      toast.error(
+        'Lỗi gửi thông báo: ' + (err.response?.data?.message || err.message)
+      )
+    }
+  })
+
+  const notifyOverdueMutation = useMutation({
+    mutationFn: sendOverdueNotificationApi,
+    onSuccess: (data) => {
+      toast.success(data.data.message || 'Đã gửi thông báo quá hạn')
+    },
+    onError: (err) => {
+      toast.error(
+        'Lỗi gửi thông báo: ' + (err.response?.data?.message || err.message)
       )
     }
   })
@@ -220,31 +266,58 @@ export const Invoices = () => {
     }
   }
 
-  const handleExport = () => {
-    if (invoices.length === 0) {
-      toast.error('Không có dữ liệu để xuất')
+  const handleExport = async () => {
+    if (periodId === 'all') {
+      toast.error('Vui lòng chọn đợt thu để xuất báo cáo')
       return
     }
 
-    const data = invoices.map((inv) => ({
-      'Mã hóa đơn': inv.id,
-      'Căn hộ': inv.apartment?.apartment_code,
-      'Chủ hộ': inv.apartment?.residents?.[0]?.full_name || '',
-      'Đợt thu': inv.period?.name,
-      'Tổng tiền': inv.total_amount,
-      'Trạng thái':
-        inv.status === 1
-          ? 'Đã thanh toán'
-          : inv.status === 2
-            ? 'Quá hạn'
-            : 'Chờ thanh toán',
-      'Ngày tạo': format(new Date(inv.created_at), 'dd/MM/yyyy')
-    }))
+    try {
+      toast.loading('Đang tải dữ liệu...', { id: 'export-loading' })
+      const res = await getInvoicesApi({
+        period_id: periodId,
+        limit: 10000,
+        page: 1
+      })
 
-    const worksheet = XLSX.utils.json_to_sheet(data)
-    const workbook = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Invoices')
-    XLSX.writeFile(workbook, `Invoices_${format(new Date(), 'yyyyMMdd')}.xlsx`)
+      const allInvoices = res.data?.items || []
+
+      if (allInvoices.length === 0) {
+        toast.dismiss('export-loading')
+        toast.info('Không có dữ liệu hóa đơn cho đợt này')
+        return
+      }
+
+      const data = allInvoices.map((inv) => ({
+        'Căn hộ': inv.apartment?.apartment_code,
+        'Chủ hộ': inv.apartment?.residents?.[0]?.full_name || '',
+        'Đợt thu': inv.period?.name,
+        'Tổng tiền': inv.total_amount,
+        'Trạng thái':
+          inv.status === 1
+            ? 'Đã thanh toán'
+            : inv.status === 2
+              ? 'Quá hạn'
+              : 'Chờ thanh toán',
+        'Ngày tạo': format(new Date(inv.createdAt), 'dd/MM/yyyy')
+      }))
+
+      const worksheet = XLSX.utils.json_to_sheet(data)
+      const workbook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Invoices')
+
+      const periodName =
+        periods.find((p) => String(p.id) === periodId)?.name || periodId
+      XLSX.writeFile(
+        workbook,
+        `Báo cáo thu phí ${periodName}_${format(new Date(), 'yyyyMMdd')}.xlsx`
+      )
+
+      toast.success('Xuất báo cáo thành công', { id: 'export-loading' })
+    } catch (error) {
+      console.error(error)
+      toast.error('Lỗi khi xuất báo cáo', { id: 'export-loading' })
+    }
   }
 
   const handleImportClick = () => {
@@ -268,13 +341,29 @@ export const Invoices = () => {
         const ws = wb.Sheets[wsname]
         const data = XLSX.utils.sheet_to_json(ws)
 
-        // Expected format: ApartmentCode, ServiceName, Amount
-        // Map keys if necessary or assume headers: "Mã căn hộ", "Dịch vụ", "Số tiền"
-        const items = data.map((row) => ({
-          apartment_code: row['Mã căn hộ'] || row['ApartmentCode'],
-          service_name: row['Dịch vụ'] || row['Service'],
-          amount: row['Số tiền'] || row['Amount']
-        }))
+        const items = []
+        data.forEach((row) => {
+          const apartmentCode = row['Mã căn hộ'] || row['ApartmentCode']
+          if (!apartmentCode) return
+
+          const elecUsage = row['Số điện (kWh)'] || row['Electricity']
+          if (elecUsage !== undefined) {
+            items.push({
+              apartment_code: apartmentCode,
+              service_name: 'Điện',
+              usage: elecUsage
+            })
+          }
+
+          const waterUsage = row['Số nước (m3)'] || row['Water']
+          if (waterUsage !== undefined) {
+            items.push({
+              apartment_code: apartmentCode,
+              service_name: 'Nước',
+              usage: waterUsage
+            })
+          }
+        })
 
         if (items.length === 0) {
           toast.error('File không có dữ liệu hợp lệ')
@@ -303,7 +392,7 @@ export const Invoices = () => {
           </p>
         </div>
 
-        <div>
+        <div className="flex gap-2">
           <input
             type="file"
             ref={fileInputRef}
@@ -312,9 +401,22 @@ export const Invoices = () => {
             accept=".xlsx, .xls"
           />
           <Button
-            variant="blue"
-            onClick={handleImportClick}
-            className="mr-4 gap-2">
+            variant="outline"
+            onClick={() => notifyPeriodMutation.mutate(periodId)}
+            disabled={periodId === 'all' || notifyPeriodMutation.isPending}
+            className="gap-2">
+            <Bell className="h-4 w-4" />
+            Thông báo đợt thu
+          </Button>
+          <Button
+            variant="destructive"
+            onClick={() => notifyOverdueMutation.mutate()}
+            disabled={notifyOverdueMutation.isPending}
+            className="gap-2">
+            <AlertTriangle className="h-4 w-4" />
+            Thông báo quá hạn
+          </Button>
+          <Button variant="blue" onClick={handleImportClick} className="gap-2">
             <Upload className="h-4 w-4" />
             Nhập Excel
           </Button>
@@ -407,6 +509,7 @@ export const Invoices = () => {
                 <SelectItem value="all">Tất cả trạng thái</SelectItem>
                 <SelectItem value="0">Chờ thanh toán</SelectItem>
                 <SelectItem value="1">Đã thanh toán</SelectItem>
+                <SelectItem value="2">Quá hạn</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -418,106 +521,125 @@ export const Invoices = () => {
       </div>
 
       {/* Data Table */}
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b border-gray-200 bg-gray-50 text-gray-500">
-              <tr>
-                <th className="px-6 py-4 font-medium whitespace-nowrap">
-                  Thông tin căn hộ
-                </th>
-                <th className="px-6 py-4 font-medium whitespace-nowrap">
-                  Đợt thu
-                </th>
-                <th className="px-6 py-4 text-right font-medium whitespace-nowrap">
-                  Tổng tiền
-                </th>
-                <th className="px-6 py-4 font-medium whitespace-nowrap">
-                  Trạng thái
-                </th>
-                <th className="sticky right-0 bg-gray-50 px-6 py-4 text-right font-medium whitespace-nowrap">
-                  Thao tác
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {isLoading ? (
-                <tr>
-                  <td colSpan={5} className="py-8 text-center text-gray-500">
-                    <Loader2 className="mx-auto h-6 w-6 animate-spin" />
-                    <p className="mt-2">Đang tải dữ liệu...</p>
-                  </td>
-                </tr>
-              ) : invoices.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="py-8 text-center text-gray-500">
-                    Không có hóa đơn nào
-                  </td>
-                </tr>
-              ) : (
-                invoices.map((invoice) => (
-                  <tr
-                    key={invoice.id}
-                    className="group transition-colors hover:bg-blue-50/30">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-xs font-bold text-gray-600">
-                          {invoice.apartment?.apartment_code?.substring(0, 1)}
+      <div className="overflow-hidden rounded-xl border bg-white shadow-sm">
+        <Table>
+          <TableHeader className="bg-gray-50">
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="py-4 pl-6 font-medium text-gray-500">
+                Thông tin căn hộ
+              </TableHead>
+              <TableHead className="py-4 font-medium text-gray-500">
+                Đợt thu
+              </TableHead>
+              <TableHead className="py-4 text-right font-medium text-gray-500">
+                Tổng tiền
+              </TableHead>
+              <TableHead className="py-4 text-right font-medium text-gray-500">
+                Trạng thái
+              </TableHead>
+              <TableHead className="py-4 pr-6 text-right font-medium text-gray-500">
+                Thao tác
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={5}
+                  className="h-24 text-center text-gray-500">
+                  <div className="flex flex-col items-center justify-center gap-2">
+                    <Spinner />
+                    <p>Đang tải dữ liệu...</p>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : invoices.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center text-gray-500">
+                  Không có hóa đơn nào
+                </TableCell>
+              </TableRow>
+            ) : (
+              invoices.map((invoice) => (
+                <TableRow key={invoice.id} className="group h-14">
+                  <TableCell className="pl-6">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-xs font-bold text-gray-600">
+                        {invoice.apartment?.apartment_code?.substring(0, 1)}
+                      </div>
+                      <div>
+                        <div className="font-semibold text-gray-900">
+                          {invoice.apartment?.apartment_code}
                         </div>
-                        <div>
-                          <div className="font-semibold text-gray-900">
-                            {invoice.apartment?.apartment_code}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            {invoice.apartment?.residents?.[0]?.full_name ||
-                              '---'}
-                          </div>
+                        <div className="text-xs text-gray-500">
+                          {invoice.apartment?.residents?.[0]?.full_name ||
+                            '---'}
                         </div>
                       </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-gray-600">
-                      <div className="flex items-center gap-1.5">
-                        <Calendar className="h-3.5 w-3.5 text-gray-400" />
-                        {invoice.period?.name}
-                      </div>
-                      <div className="mt-0.5 text-xs text-gray-400">
-                        Hạn:{' '}
-                        {format(
-                          new Date(invoice?.period?.end_date || new Date()),
-                          'dd/MM/yyyy'
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-right font-bold whitespace-nowrap text-gray-900">
-                      {formatCurrency(invoice.total_amount)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <StatusBadge status={invoice.status} />
-                    </td>
-                    <td className="sticky right-0 bg-white px-6 py-4 text-right whitespace-nowrap group-hover:bg-blue-50/30">
-                      <div className="flex justify-end gap-2">
-                        <button
-                          onClick={() => setSelectedInvoice(invoice)}
-                          className="rounded-lg border border-transparent p-2 text-gray-400 shadow-sm transition-colors hover:border-gray-200 hover:bg-white hover:text-blue-600"
-                          title="Xem chi tiết">
-                          <Eye className="h-4 w-4" />
-                        </button>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1.5 text-gray-600">
+                      <Calendar className="h-3.5 w-3.5 text-gray-400" />
+                      {invoice.period?.name}
+                    </div>
+                    <div className="mt-0.5 text-xs text-gray-400">
+                      Hạn:{' '}
+                      {format(
+                        new Date(invoice?.period?.end_date || new Date()),
+                        'dd/MM/yyyy'
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right font-bold text-gray-900">
+                    {formatCurrency(invoice.total_amount)}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <StatusBadge status={invoice.status} />
+                  </TableCell>
+                  <TableCell className="pr-6 text-right">
+                    <div className="flex justify-end gap-2 opacity-0 transition-opacity group-hover:opacity-100">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="icon"
+                              size="icon-sm"
+                              onClick={() => setSelectedInvoice(invoice)}
+                              className="text-gray-600 hover:bg-gray-100">
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Xem chi tiết</p>
+                          </TooltipContent>
+                        </Tooltip>
+
                         {invoice.status !== 1 && (
-                          <button
-                            onClick={() => handlePayInvoice(invoice)}
-                            className="rounded-lg border border-green-200 bg-green-50 p-2 font-medium text-green-600 transition-colors hover:bg-green-100"
-                            title="Xác nhận thanh toán">
-                            <CheckCircle className="h-4 w-4" />
-                          </button>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="icon"
+                                size="icon-sm"
+                                onClick={() => handlePayInvoice(invoice)}
+                                className="text-green-600 hover:bg-green-50">
+                                <CheckCircle className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Xác nhận thanh toán</p>
+                            </TooltipContent>
+                          </Tooltip>
                         )}
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                      </TooltipProvider>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
 
         <PaginationControls pagination={pagination} />
       </div>
