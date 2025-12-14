@@ -1,7 +1,7 @@
 import { useResidentStore } from '@/stores/useResidentStore'
 import { useAuthStore } from '@/stores/useAuthStore'
 import React from 'react'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -43,49 +43,47 @@ const Header = () => {
             <i className="fas fa-bars text-xl"></i>
           </button>
 
-          <div className="flex items-center space-x-3">
+          <Link to="/user" className="flex items-center space-x-3">
             <Building2 />
             <div>
               <h1 className="text-lg font-semibold">Luxury Residence</h1>
-              <p className="text-sm opacity-80">Cổng thông tin cư dân</p>
+              <p className="text-sm opacity-80">Trang quản trị</p>
             </div>
-          </div>
+          </Link>
         </div>
 
         {/* Right */}
-        <div className="flex items-center gap-2">
-          {/* 1. Avatar và Dropdown Menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Avatar className="h-8 w-8 cursor-pointer">
+        {/* 1. Avatar và Dropdown Menu */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <div className="flex cursor-pointer items-center gap-2">
+              <Avatar className="h-8 w-8">
                 <AvatarImage
                   src={`${baseURL}/images/avatar/${resident?.avatar_url}`}
                   alt="Avatar"
                 />
                 <AvatarFallback>
-                  {/* Sử dụng Tailwind class cho fallback (nếu có) hoặc giữ nguyên biểu tượng */}
                   <i className="fas fa-user text-black"></i>
                 </AvatarFallback>
               </Avatar>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent sideOffset={10} align="center">
-              <DropdownMenuItem onClick={() => navigate('/user/profile')}>
-                Hồ sơ cá nhân
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleLogout}>
-                Đăng xuất
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
 
-          {/* 2. Thông tin người dùng (Ẩn trên Mobile, Hiện trên Desktop) */}
-          <div className="hidden flex-col md:flex">
-            <p className="text-sm leading-none font-medium">{fullName}</p>
-            <p className="mt-2 text-xs leading-none opacity-75">
-              Căn hộ {apartmentCode}
-            </p>
-          </div>
-        </div>
+              <div className="hidden flex-col md:flex">
+                <p className="text-sm leading-none font-medium">{fullName}</p>
+                <p className="mt-2 text-xs leading-none opacity-75">
+                  Căn hộ {apartmentCode}
+                </p>
+              </div>
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent sideOffset={10} align="center">
+            <DropdownMenuItem onClick={() => navigate('/user/profile')}>
+              Hồ sơ cá nhân
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
+              Đăng xuất
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   )

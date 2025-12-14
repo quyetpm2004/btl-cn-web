@@ -15,19 +15,17 @@ import { AdminMaintenance } from './pages/admin/Maintenance.jsx'
 import { Accounts } from './pages/admin/Accounts.jsx'
 import { Notifications } from './pages/admin/Notifications.jsx'
 import { LandingPage } from './pages/landing-page/layout/LandingPage.jsx'
-import { AuthLayout } from './pages/auth/AuthLayout.jsx'
 import { Login } from './pages/auth/Login.jsx'
-import { Register } from './pages/auth/Register.jsx'
 import { Toaster } from 'sonner'
 import { ProtectedRoute } from './routes/ProtectedRoute.jsx'
 import { UserLayout } from './pages/user/layout/Layout'
 import UserDashboard from './pages/user/Dashboard'
 import ProfileSection from './pages/user/Profile'
-import Apartment from './pages/user/Apartment'
 import Payment from './pages/user/Payment'
 import Notification from './pages/user/Notification'
 import Maintenance from './pages/user/Maintenance'
 import { Profile } from './pages/admin/Profile'
+import PaymentResult from './pages/user/PaymentResult'
 
 const queryClient = new QueryClient()
 
@@ -71,8 +69,8 @@ const router = createBrowserRouter([
         children: [
           { index: true, Component: UserDashboard },
           { path: 'profile', Component: ProfileSection },
-          { path: 'apartment', Component: Apartment },
           { path: 'payment', Component: Payment },
+          { path: 'payment/result', Component: PaymentResult },
           { path: 'notification', Component: Notification },
           { path: 'maintenance', Component: Maintenance }
         ]
@@ -84,12 +82,8 @@ const router = createBrowserRouter([
     Component: LandingPage
   },
   {
-    path: '/auth',
-    Component: AuthLayout,
-    children: [
-      { path: 'login', Component: Login },
-      { path: 'register', Component: Register }
-    ]
+    path: '/auth/login',
+    Component: Login
   }
 ])
 
