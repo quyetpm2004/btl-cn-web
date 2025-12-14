@@ -182,7 +182,11 @@ async function bulkUpdateInvoicesService(periodId, items) {
       }
 
       const invoice = await Invoice.findOne({
-        where: { apartment_id: apartment.id, period_id: periodId, status: 0 }
+        where: {
+          apartment_id: apartment.id,
+          period_id: periodId,
+          status: { [Op.ne]: 1 }
+        }
       })
       if (!invoice) {
         errors.push(

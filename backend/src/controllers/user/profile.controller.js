@@ -26,7 +26,8 @@ const updateProfile = async (req, res) => {
     dob,
     hometown,
     ethnicity,
-    occupation
+    occupation,
+    household_no
   } = req.body
   const avatar = req.file ? req.file.filename : null
   try {
@@ -41,6 +42,7 @@ const updateProfile = async (req, res) => {
       hometown,
       ethnicity,
       occupation,
+      household_no,
       avatar
     )
     return res.status(200).json({ message: 'Update profile successful', data })

@@ -1,10 +1,10 @@
 import {
   Apartment,
   Resident,
-  User,
   ApartmentType,
   ServiceRegistration,
-  Service
+  Service,
+  ResidentApartment
 } from '../models/index.js'
 import { Op } from 'sequelize'
 
@@ -168,29 +168,21 @@ async function getApartmentsWithServices(filters) {
 }
 
 async function getApartmentByUserId(userId) {
-  return Apartment.findOne({
+  const resident = await Resident.findOne({
+    where: { user_id: userId },
     include: [
       {
-        model: Resident,
-        as: 'owner',
-        required: true,
-        include: [
-          {
-            model: User,
-            as: 'user',
-            required: true,
-            where: { id: userId },
-            attributes: { exclude: ['password', 'createdAt', 'updatedAt'] }
-          }
-        ]
-      },
-      {
-        model: ApartmentType,
-        as: 'type',
-        attributes: { exclude: ['createdAt', 'updatedAt'] }
+        model: ResidentApartment,
+        as: 'residentApartment',
+        include: [{ model: Apartment, as: 'apartment' }]
       }
     ]
   })
+
+  const apartment = resident.residentApartment.map((item) => {
+    return item.apartment
+  })
+  return apartment
 }
 
 async function getBuildingsApartment() {

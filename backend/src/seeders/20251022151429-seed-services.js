@@ -52,6 +52,12 @@ module.exports = {
         description: 'Sử dụng hồ bơi',
         price: 500000,
         unit: 'tháng'
+      },
+      {
+        name: 'Tiền thuê nhà',
+        description: 'Tiền thuê căn hộ chung cư',
+        price: 0,
+        unit: 'tháng'
       }
     ])
   },

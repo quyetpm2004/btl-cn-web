@@ -41,7 +41,14 @@ async function filterResidents(filters) {
   const offset = (page - 1) * limit
 
   // Build safe where object: exclude pagination-related keys and empty values
-  const { page: _p, limit: _l, offset: _o, full_name, user_id, ...rest } = filters || {}
+  const {
+    page: _p,
+    limit: _l,
+    offset: _o,
+    full_name,
+    user_id,
+    ...rest
+  } = filters || {}
   const where = Object.fromEntries(
     Object.entries(rest).filter(
       ([, v]) => v !== undefined && v !== null && v !== ''
@@ -94,6 +101,10 @@ async function getResidentsWithoutAccount() {
   })
 }
 
+const getResidentByUserId = async (userId) => {
+  return Resident.findOne({ where: { user_id: userId } })
+}
+
 export {
   createResident,
   getAllResidents,
@@ -102,5 +113,6 @@ export {
   deleteResident,
   getResidentCount,
   filterResidents,
-  getResidentsWithoutAccount
+  getResidentsWithoutAccount,
+  getResidentByUserId
 }

@@ -12,7 +12,7 @@ export const getAllNotifications = async (filters) => {
   }
 
   if (query) {
-    where.title.additional = { [Op.like]: `%${query}%` }
+    where.title[Op.like] = `%${query}%`
   }
   if (category) {
     where.category = category

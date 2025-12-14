@@ -15,7 +15,6 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "service_id",
         as: "service",
       });
-
     }
   }
 

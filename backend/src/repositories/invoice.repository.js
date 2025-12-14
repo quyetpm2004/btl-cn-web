@@ -51,9 +51,7 @@ async function getInvoices(filters) {
           {
             model: Resident,
             as: 'residents',
-            through: {
-              where: { relationship: 'owner' }
-            },
+            through: { where: { relationship: 'owner' } },
             required: false,
             attributes: ['full_name']
           }
@@ -81,7 +79,7 @@ async function getInvoices(filters) {
     limit,
     offset,
     order: [
-      ['period_id', 'ASC'],
+      ['period_id', 'DESC'],
       ['apartment_id', 'ASC']
     ]
   })
@@ -89,4 +87,62 @@ async function getInvoices(filters) {
   return { items, total, page, limit }
 }
 
-export { createInvoice, getInvoices }
+async function getInvoiceById(invoiceId, transaction) {
+  const options = { transaction }
+  if (transaction) options.lock = transaction.LOCK.UPDATE
+  return Invoice.findByPk(invoiceId, options)
+}
+
+async function updateInvoice(invoiceId, data) {
+  await Invoice.update(data, { where: { id: invoiceId } })
+}
+
+async function getInvoicesByApartmentAndStatus(apartments, status) {
+  const apartmentIds = apartments.map((a) => a.id)
+
+  const where = { apartment_id: { [Op.in]: apartmentIds } }
+
+  if (Array.isArray(status)) {
+    where.status = { [Op.in]: status }
+  } else if (status !== undefined && status !== null) {
+    where.status = status
+  }
+
+  const invoices = await Invoice.findAll({
+    where,
+    include: [
+      {
+        model: InvoiceItem,
+        as: 'items',
+        include: [{ model: Service, as: 'service' }]
+      },
+      { model: CollectionPeriod, as: 'period' }
+    ],
+    order: [['period_id', 'DESC']]
+  })
+
+  return invoices.map((invoice) => ({
+    id: invoice.id,
+    apartment_id: invoice.apartment_id,
+    total_amount: invoice.total_amount,
+    status: invoice.status,
+    end_date: invoice.end_date,
+    paid_at: invoice.paid_at,
+    created_at: invoice.created_at,
+    items: invoice.items,
+    name: invoice.period?.name
+  }))
+}
+
+async function getInvoicesByApartment(apartments) {
+  return getInvoicesByApartmentAndStatus(apartments)
+}
+
+export {
+  createInvoice,
+  getInvoices,
+  getInvoiceById,
+  updateInvoice,
+  getInvoicesByApartmentAndStatus,
+  getInvoicesByApartment
+}

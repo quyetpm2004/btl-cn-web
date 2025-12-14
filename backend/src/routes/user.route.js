@@ -5,10 +5,7 @@ import {
   updatePassword,
   updateProfile
 } from '@/controllers/user/profile.controller.js'
-import {
-  fetchResident,
-  getApartment
-} from '@/controllers/user/apartment.controller.js'
+import { fetchResident } from '@/controllers/user/apartment.controller.js'
 import {
   getNotification,
   markNotificationRead
@@ -27,8 +24,18 @@ import {
 import {
   getAllEquipments,
   getEquipmentById
-} from '@/controllers/user/equipment.controller.js'
-import { getAllWorkType } from '@/controllers/user/worktype.controller.js'
+} from '../controllers/user/equipment.controller.js'
+import { getAllWorkType } from '../controllers/user/worktype.controller.js'
+import {
+  getPaymentUnpaid,
+  getPaymentPaid,
+  createPayment,
+  vnpayReturn
+} from '../controllers/user/payment.controller.js'
+import { getDashboard } from '../controllers/user/dashboard.controller.js'
+import { getAllActiveServices } from '../controllers/admin/service.controller.js'
+import { validateBody } from '../middlewares/validate.js'
+import { profileSchema } from '../schemas/profile.schema.js'
 const uploadAvatar = uploadFile('avatar')
 const uploadRequestImages = uploadFile('request')
 
@@ -36,11 +43,15 @@ const userRoute = express.Router()
 
 // profle
 userRoute.get('/profile', getProfile)
-userRoute.put('/profile', uploadAvatar.single('avatar'), updateProfile)
+userRoute.put(
+  '/profile',
+  uploadAvatar.single('avatar'),
+  validateBody(profileSchema),
+  updateProfile
+)
 userRoute.put('/password', updatePassword)
 
 // apartment
-userRoute.get('/apartment', getApartment)
 userRoute.get('/fetch-resident', fetchResident)
 
 // notification
@@ -78,5 +89,17 @@ userRoute.get('/equipment/:id', getEquipmentById)
 
 // Work Type
 userRoute.get('/work-type', getAllWorkType)
+
+// Fee
+userRoute.get('/payment/unpaid', getPaymentUnpaid)
+userRoute.get('/payment/paid', getPaymentPaid)
+userRoute.post('/payment/create-qr', createPayment)
+userRoute.get('/payment/vnpay_return', vnpayReturn)
+
+// Dashboard
+userRoute.get('/dashboard/:residentId', getDashboard)
+
+// Services
+userRoute.get('/services', getAllActiveServices)
 
 export default userRoute

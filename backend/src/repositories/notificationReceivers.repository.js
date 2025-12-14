@@ -29,10 +29,11 @@ async function getNotificationsByFilter(userId, filter = 'all') {
           'created_by',
           'created_at'
         ],
-        where: categoryFilter // nếu filter=all thì where = {}
+        where: categoryFilter
       }
     ],
-    order: [['id', 'DESC']]
+
+    order: [[{ model: Notification, as: 'notification' }, 'created_at', 'DESC']]
   })
 }
 
@@ -75,6 +76,10 @@ async function createNotification(payload) {
   return Notification.create(payload)
 }
 
+async function createNotificationReceiver(payload) {
+  return NotificationReceiver.create(payload)
+}
+
 async function markAsRead(id) {
   return NotificationReceiver.update({ is_read: true }, { where: { id } })
 }
@@ -110,5 +115,6 @@ export {
   markAllAsRead,
   deleteNotification,
   getAllNotifications,
-  markAsUnRead
+  markAsUnRead,
+  createNotificationReceiver
 }

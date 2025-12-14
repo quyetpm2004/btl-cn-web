@@ -9,12 +9,13 @@ import { comparePassword, hashPassword } from '../../validations/password'
 
 const handleGetProfile = async (userId) => {
   const result = await getUserWithProfile(userId)
-  const { email, phone, resident, staff, avatar_url, role } = result
+  const { email, resident, staff, avatar_url, role } = result
   if (resident) {
     const {
       full_name,
       gender,
       id_card,
+      phone,
       dob,
       hometown,
       ethnicity,
@@ -76,6 +77,7 @@ const handleUpdateProfile = async (
   hometown,
   ethnicity,
   occupation,
+  household_no,
   avatar
 ) => {
   const user = await getUserWithProfile(userId)
@@ -90,6 +92,7 @@ const handleUpdateProfile = async (
       hometown,
       ethnicity,
       occupation,
+      household_no,
       avatar
     })
   } else if (user.staff) {
@@ -104,9 +107,9 @@ const handleUpdateProfile = async (
     })
   } else {
     if (avatar !== null) {
-      return await updateUser(userId, { email, phone, avatar_url: avatar })
+      return await updateUser(userId, { email, avatar_url: avatar })
     } else {
-      return await updateUser(userId, { email, phone })
+      return await updateUser(userId, { email })
     }
   }
 }
