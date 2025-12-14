@@ -1,29 +1,29 @@
-import axios from './axios.customize'
+import instance from './axios.customize'
 
 export const getInvoicesApi = (params) => {
-  return axios.get('/invoices', { params })
+  return instance.get('/invoices', { params })
 }
 
 export const getInvoiceStatsApi = (params) => {
-  return axios.get('/invoices/stats', { params })
+  return instance.get('/invoices/stats', { params })
 }
 
 export const generateInvoicesApi = ({ periodId, userId }) => {
-  return axios.post('/invoices/generate', { periodId, userId })
+  return instance.post('/invoices/generate', { periodId, userId })
 }
 
 export const payInvoiceApi = (invoiceId) => {
-  return axios.post('/invoices/pay', { invoice_id: invoiceId })
+  return instance.post('/invoices/pay', { invoice_id: invoiceId })
 }
 
 export const bulkUpdateInvoicesApi = ({ periodId, items }) => {
-  return axios.post('/invoices/bulk-update', { period_id: periodId, items })
+  return instance.post('/invoices/bulk-update', { period_id: periodId, items })
 }
 
 export const sendPeriodNotificationApi = (periodId) => {
-  return axios.post('/invoices/notify-period', { periodId })
+  return instance.post('/invoices/notify-period', { periodId })
 }
 
 export const sendOverdueNotificationApi = () => {
-  return axios.post('/invoices/notify-overdue')
+  return instance.post('/invoices/notify-overdue')
 }

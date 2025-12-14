@@ -76,12 +76,12 @@ export const LuxuryHero = () => {
               </p>
               {/* CTA Buttons */}
               <div className="animate-fade-up flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
-                <button className="group relative overflow-hidden rounded-full bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-4 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl">
+                <button className="group relative cursor-pointer overflow-hidden rounded-full bg-linear-to-r from-blue-600 to-purple-600 px-8 py-4 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl">
                   <a
                     href="#can-ho"
                     className="relative z-10 flex items-center justify-center">
                     <svg
-                      className="mr-2 h-5 w-5 transition-transform duration-300 group-hover:rotate-12"
+                      className="mr-2 h-5 w-5 transition-transform duration-300 group-hover:scale-110"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24">
@@ -102,7 +102,7 @@ export const LuxuryHero = () => {
                   </a>
                   <div className="shimmer absolute inset-0"></div>
                 </button>
-                <button className="group glass-effect hover:bg-opacity-20 rounded-full px-8 py-4 font-semibold text-white transition-all duration-300 hover:scale-105 hover:bg-white">
+                <button className="group glass-effect hover:bg-opacity-20 cursor-pointer rounded-full px-8 py-4 font-semibold text-white transition-all duration-300 hover:scale-105 hover:bg-white">
                   <a
                     href="#lien-he"
                     className="flex items-center justify-center">

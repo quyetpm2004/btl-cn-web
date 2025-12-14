@@ -74,7 +74,7 @@ export const Footer = () => {
             <div className="space-y-2 text-gray-300">
               <p>📞 Hotline: 1900 1234</p>
               <p>✉️ Email: info@luxuryresidence.vn</p>
-              <p>📍 123 Đường ABC, Quận 1, TP.HCM</p>
+              <p>📍 P. Linh Đường, Hoàng Liệt, Hoàng Mai, Hà Nội 100000</p>
               <p>🕒 8:00 - 22:00 (Hàng ngày)</p>
             </div>
           </div>

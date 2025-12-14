@@ -5,6 +5,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { vi } from 'date-fns/locale'
 import { getNotificationsApi } from '@/services/notification.api'
 import { Link } from 'react-router'
+import { useAuthStore } from '../../stores/useAuthStore'
 
 const StatsCard = ({ title, value, icon, color, url }) => (
   <Link
@@ -24,6 +25,8 @@ const StatsCard = ({ title, value, icon, color, url }) => (
 )
 
 export const Dashboard = () => {
+  const { user } = useAuthStore()
+
   // Dashboard Stats Query
   const {
     data: dashboardStatsData,
@@ -76,16 +79,15 @@ export const Dashboard = () => {
           value={dashboardStats?.apartmentCount}
           icon="home"
           color="blue"
-          url="/admin/apartments"
+          url={`${[1, 3].includes(user.role_id) ? '/admin/apartments' : '/admin'}`}
         />
         <StatsCard
           title="Tổng cư dân"
           value={dashboardStats?.residentCount}
           icon="users"
           color="green"
-          url="/admin/residents"
+          url={`${[1, 3].includes(user.role_id) ? '/admin/residents' : '/admin'}`}
         />
-
         <StatsCard
           title="Tổng doanh thu"
           value={
@@ -98,15 +100,14 @@ export const Dashboard = () => {
           }
           icon="money-bill-wave"
           color="yellow"
-          url="/admin/fees/invoices"
+          url={`${[1, 4].includes(user.role_id) ? '/admin/fees/invoices' : '/admin'}`}
         />
-
         <StatsCard
           title="Phản ánh"
           value={dashboardStats?.requestCount}
           icon="tools"
           color="red"
-          url="/admin/maintenance"
+          url={`${user.role_id === 4 ? '/admin' : '/admin/maintenance'}`}
         />
       </div>
 
@@ -141,7 +142,7 @@ export const Dashboard = () => {
         </Link>
 
         <Link
-          to="/admin/maintenance"
+          to={`${user.role_id === 4 ? '/admin' : '/admin/maintenance'}`}
           className="rounded-xl bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
           <h3 className="mb-4 text-lg font-semibold">Phản ánh gần đây</h3>
           {requestsLoading ? (

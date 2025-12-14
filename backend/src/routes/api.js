@@ -14,6 +14,7 @@ import serviceRouter from './service.route.js'
 import collectionPeriodRouter from './collectionPeriod.route.js'
 import invoiceRouter from './invoice.route.js'
 import notificationRouter from './notification.route.js'
+import contactRouter from './contact.route.js'
 
 const router = express.Router()
 
@@ -22,6 +23,9 @@ router.get('/', async (req, res) => {
     message: 'API is running'
   })
 })
+
+// Public routes (không cần auth)
+router.use('/contact', contactRouter)
 
 router.use(authMiddleware)
 router.use(authRouter)
