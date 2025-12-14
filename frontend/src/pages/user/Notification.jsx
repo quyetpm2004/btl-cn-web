@@ -10,13 +10,14 @@ import {
   MoreHorizontal,
   Wrench
 } from 'lucide-react'
-import { getNotification, markNotification } from '@/services/api'
 import { NotificationDetailModal } from './NotificationDetailModal'
-import { useAuthStore } from '../../stores/useAuthStore'
+import { useNotificationStore } from '@/stores/useNotificationStore'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 const Notification = () => {
+  const { notifications, fetchNotifications, markAsRead } =
+    useNotificationStore()
   const [activeTab, setActiveTab] = useState('all')
-  const [notifications, setNotifications] = useState([])
   const { user } = useAuthStore()
 
   // lấy filter từ URL (ví dụ: ?filter=payment)
@@ -29,21 +30,10 @@ const Notification = () => {
     }
   }
 
-  // gọi backend để lấy notifications theo filter
-  const fetchNotifications = async (filter) => {
-    try {
-      const res = await getNotification(user.id, filter)
-      setNotifications(res.data.notification)
-    } catch (err) {
-      console.log('Fetch error', err)
-      setNotifications([])
-    }
-  }
-
   useEffect(() => {
     const initial = getFilterFromUrl()
     setActiveTab(initial)
-    fetchNotifications(initial)
+    fetchNotifications(user.id, initial)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -57,15 +47,15 @@ const Notification = () => {
     } catch {
       // ignore
     }
-    fetchNotifications(value)
+    fetchNotifications(user.id, value)
   }
 
   const getTypeColor = (category) => {
     const colors = {
       1: 'destructive',
-      2: 'outline',
+      2: 'default',
       3: 'success',
-      4: 'default',
+      4: 'warning',
       5: 'secondary'
     }
     return colors[category] || 'secondary'
@@ -83,17 +73,11 @@ const Notification = () => {
   }
 
   const handleMarkAsRead = async (item) => {
-    await markNotification(item.id, 1)
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === item.id ? { ...n, is_read: true } : n))
-    )
+    await markAsRead(item.id, 1)
   }
 
   const handleMarkAsUnRead = async (item) => {
-    await markNotification(item.id, 0)
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === item.id ? { ...n, is_read: false } : n))
-    )
+    await markAsRead(item.id, 0)
   }
 
   const [selectedNotification, setSelectedNotification] = useState(null)

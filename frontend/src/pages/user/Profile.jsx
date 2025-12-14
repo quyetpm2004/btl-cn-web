@@ -5,6 +5,17 @@ import { ModalChangePassword } from '@/components/ModalChangePassword'
 import { useResidentStore } from '@/stores/useResidentStore'
 import { Button } from '@/components/ui/button'
 import { PenLine } from 'lucide-react'
+import { format } from 'date-fns'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { DatePicker } from '@/components/date-picker'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
 
 const ProfileSection = () => {
   const { resident, refreshResident } = useResidentStore()
@@ -42,6 +53,7 @@ const ProfileSection = () => {
   }
   const handleSave = async (e) => {
     e.preventDefault()
+
     let res
     // If a new avatar has been selected, send as FormData
     if (avatarFile) {
@@ -49,7 +61,9 @@ const ProfileSection = () => {
       // Append primitive fields from residentInfo
       Object.keys(residentInfo || {}).forEach((k) => {
         const v = residentInfo[k]
-        if (v !== undefined && v !== null) form.append(k, v)
+        if (v !== undefined && v !== null) {
+          form.append(k, v)
+        }
       })
       form.append('avatar', avatarFile)
       res = await updateProfileApi(form)
@@ -58,18 +72,17 @@ const ProfileSection = () => {
     }
     if (res.data) {
       toast.success('Cập nhật thông tin thành công!')
+      refreshResident()
+      fetchResidentInfo()
+      // Reset preview/file state
+      setAvatarFile(null)
+      setAvatarPreview(null)
+      setIsEditing(false)
     } else {
-      toast.error('Cập nhật thông tin thất bại. Vui lòng thử lại.')
+      toast.error(
+        res?.details?.[0]?.message || res?.error || 'Đã có lỗi xảy ra!'
+      )
     }
-    refreshResident()
-
-    fetchResidentInfo()
-
-    // Reset preview/file state
-    setAvatarFile(null)
-    setAvatarPreview(null)
-
-    setIsEditing(false)
   }
 
   const handleChange = (e) => {
@@ -132,7 +145,7 @@ const ProfileSection = () => {
                       }}
                     />
                   ) : (
-                    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+                    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-linear-to-r from-blue-500 to-purple-600 text-white">
                       <span className="text-2xl font-bold">
                         {resident?.fullName
                           ? resident.fullName
@@ -164,10 +177,14 @@ const ProfileSection = () => {
                 <div className="text-center md:text-left">
                   <h3 className="text-xl font-semibold">{fullName}</h3>
                   <p className="text-gray-600">
-                    {relationship} - Căn hộ {apartmentCode}
+                    {relationship === 'owner'
+                      ? 'Chủ hộ'
+                      : 'Thành viên gia đình'}{' '}
+                    - Căn hộ {apartmentCode}
                   </p>
                   <p className="text-sm text-gray-500">
-                    Thành viên từ: {startDate}
+                    Thành viên từ:{' '}
+                    {format(new Date(startDate || Date.now()), 'dd/MM/yyyy')}
                   </p>
                 </div>
 
@@ -188,10 +205,22 @@ const ProfileSection = () => {
                   <Info label="Số điện thoại" value={residentInfo.phone} />
                   <Info
                     label="Giới tính"
-                    value={residentInfo.gender === 1 ? 'Nam' : 'Nữ'}
+                    value={
+                      residentInfo.gender === 1
+                        ? 'Nam'
+                        : residentInfo.gender === 2
+                          ? 'Nữ'
+                          : 'Khác'
+                    }
                   />
                   <Info label="CCCD/CMND" value={residentInfo.id_card} />
-                  <Info label="Ngày sinh" value={residentInfo.dob} />
+                  <Info
+                    label="Ngày sinh"
+                    value={format(
+                      new Date(residentInfo.dob || Date.now()),
+                      'dd/MM/yyyy'
+                    )}
+                  />
                   <Info label="Quê quán" value={residentInfo.hometown} />
                   <Info label="Dân tộc" value={residentInfo.ethnicity} />
                   <Info label="Nghề nghiệp" value={residentInfo.occupation} />
@@ -215,6 +244,7 @@ const ProfileSection = () => {
                   <EditInput
                     label="Họ và tên"
                     name="full_name"
+                    required={true}
                     value={residentInfo.full_name}
                     onChange={handleChange}
                   />
@@ -222,6 +252,7 @@ const ProfileSection = () => {
                     label="Email"
                     name="email"
                     type="email"
+                    required={true}
                     value={residentInfo.email}
                     onChange={handleChange}
                   />
@@ -231,19 +262,28 @@ const ProfileSection = () => {
                     value={residentInfo.phone}
                     onChange={handleChange}
                   />
-                  <div>
-                    <label className="mb-1 block text-sm text-gray-600">
-                      Giới tính
-                    </label>
-                    <select
-                      name="gender"
-                      value={residentInfo.gender}
-                      onChange={handleChange}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500">
-                      <option value={1}>Nam</option>
-                      <option value={2}>Nữ</option>
-                      <option value={3}>Khác</option>
-                    </select>
+                  <div className="space-y-2">
+                    <Label htmlFor="gender">Giới tính</Label>
+                    <Select
+                      value={String(residentInfo.gender)}
+                      onValueChange={(value) =>
+                        setResidentInfo({
+                          ...residentInfo,
+                          gender: Number(value)
+                        })
+                      }>
+                      <SelectTrigger
+                        id="gender"
+                        name="gender"
+                        className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="1">Nam</SelectItem>
+                        <SelectItem value="2">Nữ</SelectItem>
+                        <SelectItem value="3">Khác</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <EditInput
                     label="CCCD/CMND"
@@ -251,13 +291,24 @@ const ProfileSection = () => {
                     value={residentInfo.id_card}
                     onChange={handleChange}
                   />
-                  <EditInput
-                    label="Ngày sinh"
-                    name="dob"
-                    type="date"
-                    value={residentInfo.dob}
-                    onChange={handleChange}
-                  />
+                  <div className="space-y-2">
+                    <Label htmlFor="dob">Ngày sinh</Label>
+                    <DatePicker
+                      id="dob"
+                      name="dob"
+                      value={
+                        residentInfo.dob
+                          ? new Date(residentInfo.dob)
+                          : undefined
+                      }
+                      onChange={(date) =>
+                        setResidentInfo({
+                          ...residentInfo,
+                          dob: date ? format(date, 'yyyy-MM-dd') : ''
+                        })
+                      }
+                    />
+                  </div>
                   <EditInput
                     label="Quê quán"
                     name="hometown"
@@ -285,7 +336,7 @@ const ProfileSection = () => {
 
                   {/* Buttons */}
                   <div className="flex space-x-4 md:col-span-2">
-                    <Button type="submit" variant="success">
+                    <Button type="submit" variant="blue">
                       Lưu thay đổi
                     </Button>
                     <Button onClick={handleCancel} variant="outline">
@@ -299,32 +350,6 @@ const ProfileSection = () => {
 
           {/* RIGHT SIDE */}
           <div className="space-y-6">
-            {/* Family Members */}
-            <div className="rounded-xl bg-white p-6 shadow-sm">
-              <div className="mb-4 flex items-center justify-between">
-                <h4 className="font-semibold text-gray-800">
-                  Thành viên gia đình
-                </h4>
-              </div>
-              <div className="space-y-3">
-                <FamilyMemberCard
-                  name="Trần Thị Bình"
-                  relationship="Vợ"
-                  phone="0987654321"
-                  dob="20/05/1988"
-                  initials="TB"
-                  color="bg-blue-500"
-                />
-                <FamilyMemberCard
-                  name="Nguyễn Minh Khang"
-                  relationship="Con trai"
-                  age="15 tuổi"
-                  dob="10/12/2008"
-                  initials="NK"
-                  color="bg-green-500"
-                />
-              </div>
-            </div>
             <AccountSettings changePassword={changePassword} />
           </div>
         </div>
@@ -345,15 +370,23 @@ const Info = ({ label, value }) => (
   </div>
 )
 
-const EditInput = ({ label, name, value, onChange, type = 'text' }) => (
-  <div>
-    <label className="mb-1 block text-sm text-gray-600">{label}</label>
-    <input
+const EditInput = ({
+  label,
+  name,
+  value,
+  onChange,
+  type = 'text',
+  required = false
+}) => (
+  <div className="space-y-2">
+    <Label htmlFor={name}>{label}</Label>
+    <Input
+      id={name}
       type={type}
       name={name}
       value={value}
       onChange={onChange}
-      className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+      required={required}
     />
   </div>
 )
@@ -385,7 +418,7 @@ const FamilyMemberCard = ({
 )
 
 const AccountSettings = ({ changePassword }) => (
-  <div className="rounded-xl bg-white p-6 shadow-sm">
+  <div className="rounded-xl bg-white p-4 shadow-sm">
     <h4 className="mb-4 font-semibold">Cài đặt tài khoản</h4>
     <div className="space-y-3">
       <SettingItem icon="fa-key" text="Đổi mật khẩu" onClick={changePassword} />
@@ -394,9 +427,10 @@ const AccountSettings = ({ changePassword }) => (
 )
 
 const SettingItem = ({ icon, text, onClick, badge, badgeColor }) => (
-  <button
+  <Button
     onClick={onClick}
-    className="flex w-full cursor-pointer items-center justify-between rounded-lg p-3 text-left transition-colors hover:bg-gray-50">
+    className="flex w-full justify-between transition-colors hover:bg-gray-50"
+    variant="ghost">
     <div className="flex items-center space-x-3">
       <i className={`fas ${icon} text-gray-500`}></i>
       <span>{text}</span>
@@ -412,7 +446,7 @@ const SettingItem = ({ icon, text, onClick, badge, badgeColor }) => (
     ) : (
       <i className="fas fa-chevron-right text-gray-400"></i>
     )}
-  </button>
+  </Button>
 )
 
 export default ProfileSection

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
   Dialog,
   DialogTrigger,
@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/select'
 import { X, Plus } from 'lucide-react'
 import { useResidentStore } from '@/stores/useResidentStore'
+import { toast } from 'sonner'
 
 export default function MaintenanceRequestModal({
   isOpenModal,
@@ -36,6 +37,16 @@ export default function MaintenanceRequestModal({
   const [images, setImages] = useState([])
   const fileInputRef = useRef(null)
   const MAX_IMAGES = 5
+
+  useEffect(() => {
+    if (isOpenModal) {
+      setWorkTypeId('')
+      setTitle('')
+      setDescription('')
+      setImages([])
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }, [isOpenModal])
 
   const handleImageSelect = (e) => {
     const files = e.target.files
@@ -67,6 +78,10 @@ export default function MaintenanceRequestModal({
   }
 
   const handleSubmit = () => {
+    if (title === '' || description === '') {
+      toast.error('Bạn phải nhập đầy đủ thông tin')
+      return
+    }
     const payload = {
       work_type_id: Number(workTypeId),
       resident_id: Number(resident?.id),
@@ -75,6 +90,7 @@ export default function MaintenanceRequestModal({
       images: images.map((img) => img.file)
     }
     onSubmit?.(payload)
+    setIsOpenModal(false)
   }
 
   return (
@@ -92,7 +108,7 @@ export default function MaintenanceRequestModal({
               placeholder="Nhập tiêu đề phản ánh"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-            ></Input>
+              required></Input>
           </div>
 
           <div className="grid grid-cols-4 items-start gap-4">
@@ -102,6 +118,7 @@ export default function MaintenanceRequestModal({
               placeholder="Nhập mô tả chi tiết về phản ánh"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              required
             />
           </div>
 
@@ -181,9 +198,9 @@ export default function MaintenanceRequestModal({
               Hủy
             </Button>
           </DialogClose>
-          <DialogClose asChild>
-            <Button onClick={handleSubmit}>Gửi yêu cầu</Button>
-          </DialogClose>
+          <Button onClick={handleSubmit} variant="blue">
+            Gửi yêu cầu
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

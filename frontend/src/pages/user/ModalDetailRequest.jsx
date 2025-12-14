@@ -79,7 +79,7 @@ const ModalDetailRequest = ({
           <div>
             <p className="text-sm text-gray-500">Loại công việc</p>
             <p className="font-medium">
-              {selectedRequest?.work_type?.name || '—'}
+              {selectedRequest?.work_type?.name || ''}
             </p>
           </div>
 

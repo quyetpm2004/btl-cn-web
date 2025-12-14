@@ -45,7 +45,7 @@ const items = [
 
 export const About = () => {
   return (
-    <section id="gioi-thieu" className="flex min-h-screen items-center">
+    <section id="gioi-thieu" className="flex items-center py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Tiêu đề */}
         <div className="fade-in mb-16 text-center">
