@@ -60,12 +60,10 @@ export const useAuthStore = create(
             user: res.data.user
           })
 
-          toast.success('Login successful!')
+          toast.success('Đăng nhập thành công!')
         } catch (error) {
           console.error('Login error:', error)
-          toast.error(
-            'Login failed. Please check your credentials and try again.'
-          )
+          toast.error('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.')
         } finally {
           set({ loading: false })
         }
@@ -79,7 +77,7 @@ export const useAuthStore = create(
           user: null
         })
         localStorage.removeItem('auth_storage')
-        toast.success('Logged out successfully.')
+        toast.success('Đăng xuất thành công.')
       },
 
       setUser: (user) => set({ user })
