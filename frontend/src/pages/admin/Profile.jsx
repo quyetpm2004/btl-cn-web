@@ -114,252 +114,248 @@ export const Profile = () => {
   }, [avatarPreview])
 
   return (
-    <>
-      <div id="profile" className="content-section">
-        <div className="mb-6">
-          <h2 className="mb-2 text-2xl font-bold text-gray-800">
-            Hồ sơ cá nhân
-          </h2>
-          <p className="text-gray-600">Quản lý thông tin cá nhân</p>
-        </div>
+    <div className="animate-in fade-in duration-300">
+      <div className="mb-6">
+        <h2 className="mb-2 text-2xl font-bold text-gray-800">Hồ sơ cá nhân</h2>
+        <p className="text-gray-600">Quản lý thông tin cá nhân</p>
+      </div>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          {/* LEFT SIDE */}
-          <div className="lg:col-span-2">
-            <div className="rounded-xl bg-white p-6 shadow-sm">
-              <div className="mb-6 flex flex-col items-center space-y-4 md:flex-row md:items-start md:space-y-0 md:space-x-4">
-                {/* Avatar */}
-                <div className="relative">
-                  {avatarPreview || userInfo?.avatar_url ? (
-                    <img
-                      src={
-                        avatarPreview ||
-                        `${baseURL}/images/avatar/${userInfo?.avatar_url}`
-                      }
-                      alt="avatar"
-                      className="aspect-square size-20 rounded-full"
-                      onClick={() => {
-                        if (isEditing && fileInputRef.current)
-                          fileInputRef.current.click()
-                      }}
-                    />
-                  ) : (
-                    <div className="flex size-20 items-center justify-center rounded-full bg-linear-to-r from-blue-500 to-purple-600 text-white">
-                      <span className="text-2xl font-bold">
-                        {userInfo?.full_name
-                          ? userInfo.full_name
-                              .split(' ')
-                              .map((n) => n?.[0])
-                              .slice(0, 2)
-                              .join('')
-                          : 'NV'}
-                      </span>
-                    </div>
-                  )}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* LEFT SIDE */}
+        <div className="lg:col-span-2">
+          <div className="rounded-xl bg-white p-6 shadow-sm">
+            <div className="mb-6 flex flex-col items-center space-y-4 md:flex-row md:items-start md:space-y-0 md:space-x-4">
+              {/* Avatar */}
+              <div className="relative">
+                {avatarPreview || userInfo?.avatar_url ? (
+                  <img
+                    src={
+                      avatarPreview ||
+                      `${baseURL}/images/avatar/${userInfo?.avatar_url}`
+                    }
+                    alt="avatar"
+                    className="aspect-square size-20 rounded-full"
+                    onClick={() => {
+                      if (isEditing && fileInputRef.current)
+                        fileInputRef.current.click()
+                    }}
+                  />
+                ) : (
+                  <div className="flex size-20 items-center justify-center rounded-full bg-linear-to-r from-blue-500 to-purple-600 text-white">
+                    <span className="text-2xl font-bold">
+                      {userInfo?.full_name
+                        ? userInfo.full_name
+                            .split(' ')
+                            .map((n) => n?.[0])
+                            .slice(0, 2)
+                            .join('')
+                        : 'NV'}
+                    </span>
+                  </div>
+                )}
 
-                  {isEditing && (
-                    <button
-                      type="button"
-                      onClick={() =>
-                        fileInputRef.current && fileInputRef.current.click()
-                      }
-                      className="absolute right-0 -bottom-2 rounded bg-white px-2 py-1 text-xs shadow">
-                      Thay ảnh
-                    </button>
-                  )}
-                </div>
-
-                <div className="text-center md:text-left">
-                  <h3 className="text-xl font-semibold">
-                    {userInfo?.full_name}
-                  </h3>
-                  <p className="text-gray-600">
-                    {userInfo?.position} - {userInfo?.department}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Ngày vào làm: {userInfo?.start_date}
-                  </p>
-                </div>
-
-                <Button
-                  className="mt-4 md:mt-0 md:ml-auto"
-                  variant="blue"
-                  onClick={handleEdit}>
-                  <PenLine /> Chỉnh sửa
-                </Button>
+                {isEditing && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      fileInputRef.current && fileInputRef.current.click()
+                    }
+                    className="absolute right-0 -bottom-2 rounded bg-white px-2 py-1 text-xs shadow">
+                    Thay ảnh
+                  </button>
+                )}
               </div>
 
-              {/* View Mode */}
-              {!isEditing && (
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                  <Info
-                    label="Họ và tên"
-                    value={userInfo?.full_name}
-                    className="col-span-2"
-                  />
-                  <Info label="Email" value={userInfo?.email} />
-                  <Info label="Số điện thoại" value={userInfo?.phone} />
-                  <Info
-                    label="Giới tính"
-                    value={
-                      userInfo.gender === 1
-                        ? 'Nam'
-                        : userInfo.gender === 2
-                          ? 'Nữ'
-                          : 'Khác'
-                    }
-                  />
-                  <Info label="CCCD/CMND" value={userInfo.id_card} />
-                  <Info
-                    label="Ngày sinh"
-                    value={format(
-                      new Date(userInfo?.dob || Date.now()),
-                      'dd/MM/yyyy'
-                    )}
-                  />
-                  <Info label="Chức vụ" value={userInfo?.position} />
-                  <Info label="Phòng ban" value={userInfo?.department} />
-                  <Info
-                    label="Trạng thái"
-                    value={
-                      userInfo.status === 1 ? 'Đang làm việc' : 'Đã nghỉ việc'
+              <div className="text-center md:text-left">
+                <h3 className="text-xl font-semibold">{userInfo?.full_name}</h3>
+                <p className="text-gray-600">
+                  {userInfo?.position} - {userInfo?.department}
+                </p>
+                <p className="text-sm text-gray-500">
+                  Ngày vào làm:{' '}
+                  {format(
+                    new Date(userInfo?.start_date || Date.now()),
+                    'dd/MM/yyyy'
+                  )}
+                </p>
+              </div>
+
+              <Button
+                className="mt-4 md:mt-0 md:ml-auto"
+                variant="blue"
+                onClick={handleEdit}>
+                <PenLine /> Chỉnh sửa
+              </Button>
+            </div>
+
+            {/* View Mode */}
+            {!isEditing && (
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <Info
+                  label="Họ và tên"
+                  value={userInfo?.full_name}
+                  className="col-span-2"
+                />
+                <Info label="Email" value={userInfo?.email} />
+                <Info label="Số điện thoại" value={userInfo?.phone} />
+                <Info
+                  label="Giới tính"
+                  value={
+                    userInfo.gender === 1
+                      ? 'Nam'
+                      : userInfo.gender === 2
+                        ? 'Nữ'
+                        : 'Khác'
+                  }
+                />
+                <Info label="CCCD/CMND" value={userInfo.id_card} />
+                <Info
+                  label="Ngày sinh"
+                  value={format(
+                    new Date(userInfo?.dob || Date.now()),
+                    'dd/MM/yyyy'
+                  )}
+                />
+                <Info label="Chức vụ" value={userInfo?.position} />
+                <Info label="Phòng ban" value={userInfo?.department} />
+                <Info
+                  label="Trạng thái"
+                  value={
+                    userInfo.status === 1 ? 'Đang làm việc' : 'Đã nghỉ việc'
+                  }
+                />
+              </div>
+            )}
+
+            {/* Edit Mode */}
+            {isEditing && (
+              <form
+                onSubmit={handleSave}
+                className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarSelect}
+                  className="hidden"
+                  name="avatar"
+                />
+                <EditInput
+                  label="Họ và tên"
+                  name="full_name"
+                  value={formData.full_name || ''}
+                  onChange={handleChange}
+                  className="col-span-2"
+                />
+                <EditInput
+                  label="Email"
+                  name="email"
+                  value={formData.email || ''}
+                  onChange={handleChange}
+                />
+                <EditInput
+                  label="Số điện thoại"
+                  name="phone"
+                  value={formData.phone || ''}
+                  onChange={handleChange}
+                />
+
+                <div className="space-y-2">
+                  <Label htmlFor="gender">Giới tính</Label>
+                  <Select
+                    value={String(formData.gender)}
+                    onValueChange={(value) =>
+                      setFormData({
+                        ...formData,
+                        gender: Number(value)
+                      })
+                    }>
+                    <SelectTrigger id="gender" name="gender" className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">Nam</SelectItem>
+                      <SelectItem value="2">Nữ</SelectItem>
+                      <SelectItem value="3">Khác</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <EditInput
+                  label="CCCD/CMND"
+                  name="id_card"
+                  value={formData.id_card || ''}
+                  onChange={handleChange}
+                />
+
+                <div className="space-y-2">
+                  <Label htmlFor="dob">Ngày sinh</Label>
+                  <DatePicker
+                    id="dob"
+                    name="dob"
+                    value={formData.dob || ''}
+                    onChange={(date) =>
+                      setFormData({
+                        ...formData,
+                        dob: date ? format(date, 'yyyy-MM-dd') : ''
+                      })
                     }
                   />
                 </div>
-              )}
 
-              {/* Edit Mode */}
-              {isEditing && (
-                <form
-                  onSubmit={handleSave}
-                  className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleAvatarSelect}
-                    className="hidden"
-                    name="avatar"
-                  />
+                <div className="pointer-events-none opacity-50">
                   <EditInput
-                    label="Họ và tên"
-                    name="full_name"
-                    value={formData.full_name || ''}
-                    onChange={handleChange}
-                    className="col-span-2"
+                    label="Chức vụ"
+                    name="position"
+                    value={formData.position || ''}
+                    onChange={() => {}}
                   />
+                </div>
+                <div className="pointer-events-none opacity-50">
                   <EditInput
-                    label="Email"
-                    name="email"
-                    value={formData.email || ''}
-                    onChange={handleChange}
+                    label="Phòng ban"
+                    name="department"
+                    value={formData.department || ''}
+                    onChange={() => {}}
                   />
+                </div>
+                <div className="pointer-events-none opacity-50">
                   <EditInput
-                    label="Số điện thoại"
-                    name="phone"
-                    value={formData.phone || ''}
-                    onChange={handleChange}
+                    label="Trạng thái"
+                    name="status"
+                    value={
+                      formData.status === 1 ? 'Đang làm việc' : 'Đã nghỉ việc'
+                    }
+                    onChange={() => {}}
                   />
+                </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="gender">Giới tính</Label>
-                    <Select
-                      value={String(formData.gender)}
-                      onValueChange={(value) =>
-                        setFormData({
-                          ...formData,
-                          gender: Number(value)
-                        })
-                      }>
-                      <SelectTrigger
-                        id="gender"
-                        name="gender"
-                        className="w-full">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1">Nam</SelectItem>
-                        <SelectItem value="2">Nữ</SelectItem>
-                        <SelectItem value="3">Khác</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <EditInput
-                    label="CCCD/CMND"
-                    name="id_card"
-                    value={formData.id_card || ''}
-                    onChange={handleChange}
-                  />
-
-                  <div className="space-y-2">
-                    <Label htmlFor="dob">Ngày sinh</Label>
-                    <DatePicker
-                      id="dob"
-                      name="dob"
-                      value={formData.dob || ''}
-                      onChange={(date) =>
-                        setFormData({
-                          ...formData,
-                          dob: date ? format(date, 'yyyy-MM-dd') : ''
-                        })
-                      }
-                    />
-                  </div>
-
-                  <div className="pointer-events-none opacity-50">
-                    <EditInput
-                      label="Chức vụ"
-                      name="position"
-                      value={formData.position || ''}
-                      onChange={() => {}}
-                    />
-                  </div>
-                  <div className="pointer-events-none opacity-50">
-                    <EditInput
-                      label="Phòng ban"
-                      name="department"
-                      value={formData.department || ''}
-                      onChange={() => {}}
-                    />
-                  </div>
-                  <div className="pointer-events-none opacity-50">
-                    <EditInput
-                      label="Trạng thái"
-                      name="status"
-                      value={
-                        formData.status === 1 ? 'Đang làm việc' : 'Đã nghỉ việc'
-                      }
-                      onChange={() => {}}
-                    />
-                  </div>
-
-                  <div className="flex space-x-4 md:col-span-2">
-                    <Button type="submit" variant="success">
-                      Lưu thay đổi
-                    </Button>
-                    <Button onClick={handleCancel} variant="outline">
-                      Hủy
-                    </Button>
-                  </div>
-                </form>
-              )}
-            </div>
-          </div>
-
-          {/* RIGHT SIDE */}
-          <div className="space-y-6">
-            <AccountSettings
-              changePassword={() => setIsOpenChangePassword(true)}
-            />
+                <div className="flex space-x-4 md:col-span-2">
+                  <Button type="submit" variant="blue">
+                    Lưu thay đổi
+                  </Button>
+                  <Button onClick={handleCancel} variant="outline">
+                    Hủy
+                  </Button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
+
+        {/* RIGHT SIDE */}
+        <div className="space-y-6">
+          <AccountSettings
+            changePassword={() => setIsOpenChangePassword(true)}
+          />
+        </div>
       </div>
+
       <ModalChangePassword
         isOpenChangePassword={isOpenChangePassword}
         handleClosePassword={() => setIsOpenChangePassword(false)}
       />
-    </>
+    </div>
   )
 }
 
@@ -379,7 +375,7 @@ const EditInput = ({ label, name, value, onChange, className }) => (
 )
 
 const AccountSettings = ({ changePassword }) => (
-  <div className="rounded-xl bg-white p-6 shadow-sm">
+  <div className="rounded-xl bg-white p-4 shadow-sm">
     <h4 className="mb-4 font-semibold">Cài đặt tài khoản</h4>
     <div className="space-y-3">
       <SettingItem icon="fa-key" text="Đổi mật khẩu" onClick={changePassword} />
@@ -388,9 +384,10 @@ const AccountSettings = ({ changePassword }) => (
 )
 
 const SettingItem = ({ icon, text, onClick, badge, badgeColor }) => (
-  <button
+  <Button
     onClick={onClick}
-    className="flex w-full cursor-pointer items-center justify-between rounded-lg p-3 text-left transition-colors hover:bg-gray-50">
+    className="flex w-full justify-between transition-colors hover:bg-gray-50"
+    variant="ghost">
     <div className="flex items-center space-x-3">
       <i className={`fas ${icon} text-gray-500`}></i>
       <span>{text}</span>
@@ -406,5 +403,5 @@ const SettingItem = ({ icon, text, onClick, badge, badgeColor }) => (
     ) : (
       <i className="fas fa-chevron-right text-gray-400"></i>
     )}
-  </button>
+  </Button>
 )

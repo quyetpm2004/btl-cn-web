@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { useAuthStore } from '@/stores/useAuthStore'
 import {
   DropdownMenu,
@@ -35,26 +35,21 @@ export const Header = () => {
             <i className="fas fa-bars text-xl"></i>
           </button>
 
-          <div className="flex items-center space-x-3">
+          <Link to="/admin" className="flex items-center space-x-3">
             <Building2 />
             <div>
               <h1 className="text-lg font-semibold">Luxury Residence</h1>
               <p className="text-sm opacity-80">Trang quản trị</p>
             </div>
-          </div>
+          </Link>
         </div>
 
         {/* Right */}
-        <div className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              {/* <Avatar className="h-8 w-8 cursor-pointer">
-                <AvatarImage src={user?.avatar_url} alt="Avatar" />
-                <AvatarFallback>
-                  <i className="fas fa-user text-black"></i>
-                </AvatarFallback>
-              </Avatar> */}
-              <Avatar className="h-8 w-8 cursor-pointer">
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <div className="flex cursor-pointer items-center gap-2">
+              <Avatar className="h-8 w-8">
                 <AvatarImage
                   src={`${baseURL}/images/avatar/${user?.avatar_url}`}
                   alt="Avatar"
@@ -63,26 +58,26 @@ export const Header = () => {
                   <i className="fas fa-user text-black"></i>
                 </AvatarFallback>
               </Avatar>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent sideOffset={10} align="center">
-              <DropdownMenuItem onClick={() => navigate('/admin/profile')}>
-                Hồ sơ cá nhân
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleLogout}>
-                Đăng xuất
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
 
-          <div className="hidden flex-col md:flex">
-            <p className="text-sm leading-none font-medium">
-              {user?.display_name}
-            </p>
-            <p className="mt-2 text-xs leading-none opacity-75">
-              {user?.role_name}
-            </p>
-          </div>
-        </div>
+              <div className="hidden flex-col md:flex">
+                <p className="text-sm leading-none font-medium">
+                  {user?.display_name}
+                </p>
+                <p className="mt-2 text-xs leading-none opacity-75">
+                  {user?.role_name}
+                </p>
+              </div>
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent sideOffset={10} align="center">
+            <DropdownMenuItem onClick={() => navigate('/admin/profile')}>
+              Hồ sơ cá nhân
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
+              Đăng xuất
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   )

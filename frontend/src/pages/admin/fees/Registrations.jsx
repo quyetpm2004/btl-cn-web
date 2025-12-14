@@ -106,7 +106,7 @@ export const Registrations = () => {
   }
 
   return (
-    <>
+    <div className="animate-in fade-in duration-300">
       <div className="mb-6">
         <h2 className="mb-2 text-2xl font-bold text-gray-800">
           Đăng ký dịch vụ
@@ -243,6 +243,6 @@ export const Registrations = () => {
           onSave={handleSaveApartmentServices}
         />
       )}
-    </>
+    </div>
   )
 }

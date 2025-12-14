@@ -28,7 +28,7 @@ import { format, formatDistanceToNow } from 'date-fns'
 import { vi } from 'date-fns/locale'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { io } from 'socket.io-client'
-import { Badge } from '../../components/ui/badge'
+import { Badge } from '@/components/ui/badge'
 
 export const AdminMaintenance = () => {
   const { user } = useAuthStore()
@@ -221,7 +221,7 @@ export const AdminMaintenance = () => {
   if (isError) return <div>Lỗi tải dữ liệu</div>
 
   return (
-    <>
+    <div className="animate-in fade-in duration-300">
       <div className="mb-6">
         <h2 className="mb-2 text-2xl font-bold text-gray-800">
           Bảo trì và phản ánh
@@ -502,6 +502,6 @@ export const AdminMaintenance = () => {
         isLoading={deleteMutation.isPending}
         variant="destructive"
       />
-    </>
+    </div>
   )
 }

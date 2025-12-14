@@ -23,7 +23,7 @@ const AdminLayoutContent = () => {
           className={`flex-10 overflow-hidden p-6 transition-all duration-300 ${
             state === 'collapsed' ? 'ml-16' : 'ml-0'
           }`}>
-          <Outlet />
+          <Outlet className="animate-in fade-in space-y-6 duration-300" />
         </main>
       </div>
     </div>

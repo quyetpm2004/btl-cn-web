@@ -169,7 +169,7 @@ export const Accounts = () => {
   if (isError) return <div>Lỗi tải dữ liệu</div>
 
   return (
-    <>
+    <div className="animate-in fade-in duration-300">
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
@@ -226,7 +226,7 @@ export const Accounts = () => {
               variant="icon"
               onClick={handleSearch}
               size="icon"
-              className="absolute right-0.5 cursor-pointer text-gray-500 hover:text-blue-500">
+              className="absolute right-0.5 text-gray-500 hover:text-blue-500">
               <i className="fas fa-search"></i>
             </Button>
           </div>
@@ -420,6 +420,6 @@ export const Accounts = () => {
         onConfirm={() => deleteMutation.mutate(deleteDialog.account.id)}
         isLoading={deleteMutation.isPending}
       />
-    </>
+    </div>
   )
 }

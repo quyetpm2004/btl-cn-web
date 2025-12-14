@@ -51,7 +51,6 @@ const types = {
 
 export const Services = () => {
   const user = useAuthStore((s) => s.user)
-  console.log('User in Services.jsx:', user)
   const queryClient = useQueryClient()
 
   const [activeTab, setActiveTab] = useState('services')
@@ -265,7 +264,7 @@ export const Services = () => {
   if (isError) return <div>Lỗi tải dữ liệu</div>
 
   return (
-    <>
+    <div className="animate-in fade-in duration-300">
       <div className="mb-6">
         <h2 className="mb-2 text-2xl font-bold text-gray-800">
           Dịch vụ & Đợt thu
@@ -279,7 +278,7 @@ export const Services = () => {
         <nav className="-mb-px flex space-x-8">
           <button
             onClick={() => setActiveTab('services')}
-            className={`border-b-2 px-1 py-4 text-sm font-medium ${
+            className={`cursor-pointer border-b-2 px-1 py-4 text-sm font-medium ${
               activeTab === 'services'
                 ? 'border-blue-500 text-blue-600'
                 : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
@@ -288,7 +287,7 @@ export const Services = () => {
           </button>
           <button
             onClick={() => setActiveTab('periods')}
-            className={`border-b-2 px-1 py-4 text-sm font-medium ${
+            className={`cursor-pointer border-b-2 px-1 py-4 text-sm font-medium ${
               activeTab === 'periods'
                 ? 'border-blue-500 text-blue-600'
                 : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
@@ -612,6 +611,6 @@ export const Services = () => {
         }
         color={confirmDialog.type === 'delete_period' ? 'destructive' : 'blue'}
       />
-    </>
+    </div>
   )
 }

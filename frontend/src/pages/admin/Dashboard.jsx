@@ -1,5 +1,9 @@
 import { getDashboardStatsApi } from '@/services/stat.api.js'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { getAllPendingRequestsApi } from '@/services/request.api'
+import { formatDistanceToNow } from 'date-fns'
+import { vi } from 'date-fns/locale'
+import { getNotificationsApi } from '@/services/notification.api'
 
 const StatsCard = ({ title, value, icon, color }) => (
   <div className="rounded-xl bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl">
@@ -17,6 +21,7 @@ const StatsCard = ({ title, value, icon, color }) => (
 )
 
 export const Dashboard = () => {
+  // Dashboard Stats Query
   const {
     data: dashboardStatsData,
     isLoading,
@@ -29,11 +34,30 @@ export const Dashboard = () => {
 
   const dashboardStats = dashboardStatsData?.dashboardStats || {}
 
+  // Requests Query
+  const { data: requestsData, isLoading: requestsLoading } = useQuery({
+    queryKey: ['maintenanceRequests'],
+    queryFn: getAllPendingRequestsApi
+  })
+
+  const requests = requestsData?.requests || []
+
+  // Notifications Query
+  const { data: notificationsData, isLoading: notificationsLoading } = useQuery(
+    {
+      queryKey: ['admin-notifications', { page: 1, limit: 5 }],
+      queryFn: () => getNotificationsApi({ page: 1, limit: 5 }),
+      placeholderData: keepPreviousData
+    }
+  )
+
+  const notifications = notificationsData?.items || []
+
   if (isLoading) return <div>Đang tải...</div>
   if (isError) return <div>Lỗi tải dữ liệu</div>
 
   return (
-    <>
+    <div className="animate-in fade-in duration-300">
       <div className="mb-6">
         <h2 className="mb-2 text-2xl font-bold text-gray-800">
           Tổng quan hệ thống
@@ -81,58 +105,60 @@ export const Dashboard = () => {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="rounded-xl bg-white p-6 shadow-sm">
-          <h3 className="mb-4 text-lg font-semibold">Hoạt động gần đây</h3>
+          <h3 className="mb-4 text-lg font-semibold">Thông báo gần đây</h3>
           <div className="flex flex-col gap-y-4">
-            <div className="flex items-center gap-x-3 rounded-lg bg-blue-50 p-3">
-              <i className="fas fa-user-plus text-blue-500"></i>
-              <div>
-                <p className="font-medium">Cư dân mới đăng ký</p>
-                <p className="text-sm text-gray-600">
-                  Căn hộ A1205 - 10 phút trước
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-x-3 rounded-lg bg-green-50 p-3">
-              <i className="fas fa-money-bill text-green-500"></i>
-              <div>
-                <p className="font-medium">Thanh toán phí quản lý</p>
-                <p className="text-sm text-gray-600">
-                  Căn hộ B0801 - 1 giờ trước
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-x-3 rounded-lg bg-yellow-50 p-3">
-              <i className="fas fa-tools text-yellow-500"></i>
-              <div>
-                <p className="font-medium">Yêu cầu sửa chữa</p>
-                <p className="text-sm text-gray-600">
-                  Thang máy tầng 15 - 2 giờ trước
-                </p>
-              </div>
-            </div>
+            {notificationsLoading ? (
+              <p className="text-gray-600">Đang tải thông báo...</p>
+            ) : notifications.length === 0 ? (
+              <p className="text-gray-600">Không có thông báo mới.</p>
+            ) : (
+              notifications.slice(0, 3).map((noti) => (
+                <div
+                  key={noti.id}
+                  className="rounded-lg border border-l-4 border-l-blue-500 bg-gray-50 p-3">
+                  <p className="font-medium">{noti.title}</p>
+                  <p className="text-sm text-gray-500">
+                    {noti.createdAt
+                      ? formatDistanceToNow(new Date(noti.createdAt), {
+                          addSuffix: true,
+                          locale: vi
+                        })
+                      : 'Vừa xong'}
+                  </p>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
         <div className="rounded-xl bg-white p-6 shadow-sm">
-          <h3 className="mb-4 text-lg font-semibold">Thông báo quan trọng</h3>
-          <div className="flex flex-col gap-y-4">
-            <div className="border-l-4 border-red-500 pl-4">
-              <p className="font-medium text-red-700">Bảo trì hệ thống điện</p>
-              <p className="text-sm text-gray-600">
-                Ngày 15/12 từ 8:00 - 12:00
-              </p>
+          <h3 className="mb-4 text-lg font-semibold">Phản ánh gần đây</h3>
+          {requestsLoading ? (
+            <p className="text-gray-600">Đang tải phản ánh...</p>
+          ) : requests.length === 0 ? (
+            <p className="text-gray-600">Không có phản ánh nào đang chờ.</p>
+          ) : (
+            <div className="flex flex-col gap-y-4">
+              {requests.slice(0, 3).map((req) => (
+                <div key={req.id} className="border-l-4 border-red-500 pl-4">
+                  <p className="font-medium text-red-700">{req.title}</p>
+                  <p className="text-sm text-gray-700">
+                    Báo cáo bởi: {req.resident?.full_name || 'Ẩn danh'}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {req.created_at
+                      ? formatDistanceToNow(new Date(req.created_at), {
+                          addSuffix: true,
+                          locale: vi
+                        })
+                      : 'Vừa xong'}
+                  </p>
+                </div>
+              ))}
             </div>
-            <div className="border-l-4 border-blue-500 pl-4">
-              <p className="font-medium text-blue-700">Họp cư dân định kỳ</p>
-              <p className="text-sm text-gray-600">Chủ nhật 17/12 lúc 9:00</p>
-            </div>
-            <div className="border-l-4 border-green-500 pl-4">
-              <p className="font-medium text-green-700">Khai trương gym mới</p>
-              <p className="text-sm text-gray-600">Từ ngày 20/12/2024</p>
-            </div>
-          </div>
+          )}
         </div>
       </div>
-    </>
+    </div>
   )
 }
