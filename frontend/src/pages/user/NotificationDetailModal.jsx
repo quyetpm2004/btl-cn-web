@@ -6,10 +6,9 @@ import {
   DialogTitle,
   DialogFooter,
   DialogDescription,
-  DialogTrigger
+  DialogClose
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 
 export const NotificationDetailModal = ({
   notificationItem,
@@ -23,11 +22,13 @@ export const NotificationDetailModal = ({
   const handleMarkUnread = async () => {
     await handleMarkAsUnRead(notificationItem)
     setIsRead(false)
+    setOpen(false)
   }
 
   const handleMarkRead = async () => {
     await handleMarkAsRead(notificationItem)
     setIsRead(true)
+    setOpen(false)
   }
 
   const { notification } = notificationItem
@@ -50,14 +51,16 @@ export const NotificationDetailModal = ({
               Đánh dấu đã đọc
             </Button>
           )}
-          {isRead && (
+
+          {!!isRead && (
             <Button variant="outline" onClick={handleMarkUnread}>
               Đánh dấu chưa đọc
             </Button>
           )}
-          <Button variant="default" onClick={() => setOpen(false)}>
-            Đóng
-          </Button>
+
+          <DialogClose asChild>
+            <Button variant="default">Đóng</Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

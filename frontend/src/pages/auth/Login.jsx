@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { User, Lock, Building, Eye, EyeOff, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAuthStore } from '@/stores/useAuthStore'
-import { toast } from 'sonner'
 import { useNavigate, Link } from 'react-router'
 
 export const Login = () => {
@@ -24,12 +23,7 @@ export const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const res = await login(username, password)
-    if (res.data) {
-      toast.success('Đăng nhập thành công')
-    } else {
-      toast.error('Có lỗi xảy ra')
-    }
+    await login(username, password)
   }
 
   return (
@@ -146,7 +140,7 @@ export const Login = () => {
               <Button
                 type="submit"
                 variant="blue"
-                className="mt-8 w-full py-3 text-lg">
+                className="mt-4 h-11 w-full py-3 text-lg">
                 Đăng nhập
               </Button>
             </form>
