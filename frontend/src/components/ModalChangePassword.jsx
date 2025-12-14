@@ -87,10 +87,7 @@ export function ModalChangePassword({
                 Hủy
               </Button>
             </DialogClose>
-            <Button
-              onClick={handleChangePassword}
-              type="submit"
-              variant="success">
+            <Button onClick={handleChangePassword} type="submit" variant="blue">
               Lưu
             </Button>
           </DialogFooter>
