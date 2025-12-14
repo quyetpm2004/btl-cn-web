@@ -587,7 +587,7 @@ export const Invoices = () => {
                     <div className="mt-0.5 text-xs text-gray-400">
                       Hạn:{' '}
                       {format(
-                        new Date(invoice?.period?.end_date || new Date()),
+                        new Date(invoice?.period?.end_date || Date.now()),
                         'dd/MM/yyyy'
                       )}
                     </div>

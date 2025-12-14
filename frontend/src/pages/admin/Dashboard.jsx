@@ -4,9 +4,12 @@ import { getAllPendingRequestsApi } from '@/services/request.api'
 import { formatDistanceToNow } from 'date-fns'
 import { vi } from 'date-fns/locale'
 import { getNotificationsApi } from '@/services/notification.api'
+import { Link } from 'react-router'
 
-const StatsCard = ({ title, value, icon, color }) => (
-  <div className="rounded-xl bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl">
+const StatsCard = ({ title, value, icon, color, url }) => (
+  <Link
+    to={url}
+    className="rounded-xl bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl">
     <div className="flex items-center justify-between">
       <div>
         <p className="text-sm font-medium text-gray-600">{title}</p>
@@ -17,7 +20,7 @@ const StatsCard = ({ title, value, icon, color }) => (
         <i className={`fas fa-${icon} text-${color}-600`}></i>
       </div>
     </div>
-  </div>
+  </Link>
 )
 
 export const Dashboard = () => {
@@ -73,12 +76,14 @@ export const Dashboard = () => {
           value={dashboardStats?.apartmentCount}
           icon="home"
           color="blue"
+          url="/admin/apartments"
         />
         <StatsCard
           title="Tổng cư dân"
           value={dashboardStats?.residentCount}
           icon="users"
           color="green"
+          url="/admin/residents"
         />
 
         <StatsCard
@@ -93,6 +98,7 @@ export const Dashboard = () => {
           }
           icon="money-bill-wave"
           color="yellow"
+          url="/admin/fees/invoices"
         />
 
         <StatsCard
@@ -100,11 +106,14 @@ export const Dashboard = () => {
           value={dashboardStats?.requestCount}
           icon="tools"
           color="red"
+          url="/admin/maintenance"
         />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="rounded-xl bg-white p-6 shadow-sm">
+        <Link
+          to="/admin/notifications"
+          className="rounded-xl bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
           <h3 className="mb-4 text-lg font-semibold">Thông báo gần đây</h3>
           <div className="flex flex-col gap-y-4">
             {notificationsLoading ? (
@@ -129,9 +138,11 @@ export const Dashboard = () => {
               ))
             )}
           </div>
-        </div>
+        </Link>
 
-        <div className="rounded-xl bg-white p-6 shadow-sm">
+        <Link
+          to="/admin/maintenance"
+          className="rounded-xl bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
           <h3 className="mb-4 text-lg font-semibold">Phản ánh gần đây</h3>
           {requestsLoading ? (
             <p className="text-gray-600">Đang tải phản ánh...</p>
@@ -157,7 +168,7 @@ export const Dashboard = () => {
               ))}
             </div>
           )}
-        </div>
+        </Link>
       </div>
     </div>
   )

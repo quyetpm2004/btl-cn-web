@@ -41,9 +41,9 @@ import {
 
 const CATEGORIES = {
   1: { label: 'Hệ thống', color: 'destructive', icon: Settings },
-  2: { label: 'Sự kiện', color: 'outline', icon: Calendar },
+  2: { label: 'Sự kiện', color: 'default', icon: Calendar },
   3: { label: 'Hóa đơn', color: 'success', icon: DollarSign },
-  4: { label: 'Bảo trì', color: 'default', icon: Wrench },
+  4: { label: 'Bảo trì', color: 'warning', icon: Wrench },
   5: { label: 'Khác', color: 'secondary', icon: MoreHorizontal }
 }
 

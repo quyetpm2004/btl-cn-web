@@ -45,7 +45,6 @@ export const Header = () => {
         </div>
 
         {/* Right */}
-
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <div className="flex cursor-pointer items-center gap-2">

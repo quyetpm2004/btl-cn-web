@@ -6,19 +6,22 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger
+  DialogTitle
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { updatePasswordApi } from '@/services/user.api.js'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { Eye, EyeOff } from 'lucide-react'
 
 export function ModalChangePassword({
   isOpenChangePassword,
   handleClosePassword
 }) {
+  const [showOld, setShowOld] = useState(false)
+  const [showNew, setShowNew] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -30,7 +33,6 @@ export function ModalChangePassword({
       newPassword,
       confirmPassword
     })
-    console.log(res)
     if (res.data) {
       toast.success('Mật khẩu đã được thay đổi!')
       handleClosePassword()
@@ -46,41 +48,78 @@ export function ModalChangePassword({
             <DialogTitle>Đổi mật khẩu</DialogTitle>
             <DialogDescription></DialogDescription>
           </DialogHeader>
+
           <div className="grid gap-4">
+            {/* Mật khẩu cũ */}
             <div className="grid gap-3">
               <Label required htmlFor="oldPassword">
                 Mật khẩu cũ
               </Label>
-              <Input
-                value={oldPassword}
-                onChange={(e) => setOldPassword(e.target.value)}
-                type="password"
-                id="oldPassword"
-              />
+              <div className="relative">
+                <Input
+                  value={oldPassword}
+                  onChange={(e) => setOldPassword(e.target.value)}
+                  type={showOld ? 'text' : 'password'}
+                  id="oldPassword"
+                  className="pr-10"
+                />
+                <Button
+                  variant="icon"
+                  type="button"
+                  onClick={() => setShowOld(!showOld)}
+                  className="absolute right-0 text-gray-500 hover:text-gray-700">
+                  {showOld ? <EyeOff size={16} /> : <Eye size={16} />}
+                </Button>
+              </div>
             </div>
+
+            {/* Mật khẩu mới */}
             <div className="grid gap-3">
               <Label required htmlFor="newPassword">
                 Mật khẩu mới
               </Label>
-              <Input
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                type="password"
-                id="newPassword"
-              />
+              <div className="relative">
+                <Input
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  type={showNew ? 'text' : 'password'}
+                  id="newPassword"
+                  className="pr-10"
+                />
+                <Button
+                  variant="icon"
+                  type="button"
+                  onClick={() => setShowNew(!showNew)}
+                  className="absolute right-0 text-gray-500 hover:text-gray-700">
+                  {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
+                </Button>
+              </div>
             </div>
+
+            {/* Xác nhận mật khẩu */}
             <div className="grid gap-3">
               <Label required htmlFor="confirmPassword">
                 Xác nhận mật khẩu
               </Label>
-              <Input
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                type="password"
-                id="confirmPassword"
-              />
+              <div className="relative">
+                <Input
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  type={showConfirm ? 'text' : 'password'}
+                  id="confirmPassword"
+                  className="pr-10"
+                />
+                <Button
+                  variant="icon"
+                  type="button"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  className="absolute right-0 text-gray-500 hover:text-gray-700">
+                  {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                </Button>
+              </div>
             </div>
           </div>
+
           <DialogFooter>
             <DialogClose asChild>
               <Button onClick={handleClosePassword} variant="outline">
