@@ -21,7 +21,9 @@ import { useQuery } from '@tanstack/react-query'
 import { getAssigneesApi } from '@/services/staff.api'
 import { format } from 'date-fns'
 import { vi } from 'date-fns/locale'
-import { useAuthStore } from '../../stores/useAuthStore'
+import { useAuthStore } from '@/stores/useAuthStore'
+import { Eye } from 'lucide-react'
+import LightboxModal from '@/pages/user/LightboxModal'
 
 export const MaintenanceRequestDialog = ({
   open,
@@ -34,6 +36,7 @@ export const MaintenanceRequestDialog = ({
   const { user } = useAuthStore()
   const [technicianId, setTechnicianId] = useState('')
   const [result, setResult] = useState('')
+  const [lightboxImage, setLightboxImage] = useState(null)
 
   // Reset state when dialog opens/closes or request changes
   useEffect(() => {
@@ -99,12 +102,71 @@ export const MaintenanceRequestDialog = ({
                 })}
             </span>
           </div>
-          <div className="grid grid-cols-4 items-start gap-4">
+          <div className="grid grid-cols-4 items-center gap-4">
             <Label>Mô tả:</Label>
             <span className="col-span-3 text-sm text-gray-600">
               {request.description}
             </span>
           </div>
+
+          <div className="grid grid-cols-4 items-start gap-4">
+            <Label>Hình ảnh:</Label>
+            <div className="col-span-3">
+              {(() => {
+                let imgs = []
+                if (typeof request?.images === 'string') {
+                  try {
+                    imgs = JSON.parse(request.images)
+                  } catch (e) {
+                    console.error('Error parsing images JSON:', e)
+                    imgs = []
+                  }
+                } else if (Array.isArray(request?.images)) {
+                  imgs = request.images
+                }
+
+                if (!imgs || imgs.length === 0) {
+                  return (
+                    <span className="text-sm text-gray-500">
+                      Không có hình ảnh
+                    </span>
+                  )
+                }
+
+                const baseURL =
+                  import.meta.env.VITE_BASE_URL_BACKEND ||
+                  'http://localhost:8080'
+
+                return (
+                  <div className="grid grid-cols-2 gap-2">
+                    {imgs.map((img, idx) => (
+                      <div
+                        key={idx}
+                        className="group relative overflow-hidden rounded bg-gray-100">
+                        <img
+                          src={`${baseURL}/images/request/${img}`}
+                          alt={`img-${idx}`}
+                          className="h-32 w-full object-cover"
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                          <button
+                            type="button"
+                            onClick={() => setLightboxImage(img)}
+                            className="rounded-full bg-white/20 p-1.5 hover:bg-white/40">
+                            <Eye
+                              size={18}
+                              className="text-white hover:cursor-pointer"
+                            />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )
+              })()}
+            </div>
+          </div>
+
           {mode === 'assign' && user.role_id !== 5 && (
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="technician" className="text-right">
@@ -178,6 +240,11 @@ export const MaintenanceRequestDialog = ({
           )}
         </DialogFooter>
       </DialogContent>
+
+      <LightboxModal
+        imageSrc={lightboxImage}
+        onClose={() => setLightboxImage(null)}
+      />
     </Dialog>
   )
 }

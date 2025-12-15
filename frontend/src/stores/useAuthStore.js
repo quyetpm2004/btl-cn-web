@@ -30,10 +30,12 @@ export const useAuthStore = create(
             phone,
             apartment_code
           )
-          toast.success('Đăng ký thành công! Vui lòng đăng nhập.')
+          toast.success('Đăng ký thành công! Vui lòng đăng nhập.', {
+            id: 'auth'
+          })
         } catch (error) {
           console.error('Registration error:', error)
-          toast.error('Đăng ký thất bại. Vui lòng thử lại.')
+          toast.error('Đăng ký thất bại. Vui lòng thử lại.', { id: 'auth' })
         } finally {
           set({ loading: false })
         }
@@ -51,10 +53,12 @@ export const useAuthStore = create(
             user: res.data.user
           })
 
-          toast.success('Đăng nhập thành công!')
+          toast.success('Đăng nhập thành công!', { id: 'auth' })
         } catch (error) {
           console.error('Login error:', error)
-          toast.error('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.')
+          toast.error('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.', {
+            id: 'auth'
+          })
         } finally {
           set({ loading: false })
         }
@@ -68,7 +72,7 @@ export const useAuthStore = create(
           user: null
         })
         localStorage.removeItem('auth_storage')
-        toast.success('Đăng xuất thành công.')
+        toast.success('Đăng xuất thành công.', { id: 'auth' })
       },
 
       setUser: (user) => set({ user })

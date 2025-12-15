@@ -92,7 +92,6 @@ async function findAll(filters) {
 
   const total = await MaintenanceRequest.count()
   const items = await MaintenanceRequest.findAll({
-    order: [['created_at', 'DESC']],
     include: [
       {
         model: WorkType,
@@ -121,6 +120,11 @@ async function findAll(filters) {
         as: 'apartment',
         attributes: ['id', 'apartment_code']
       }
+    ],
+    order: [
+      ['status', 'ASC'],
+      ['created_at', 'DESC'],
+      ['id', 'ASC']
     ],
     limit,
     offset

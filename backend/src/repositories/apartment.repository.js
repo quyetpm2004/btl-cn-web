@@ -189,7 +189,8 @@ async function getBuildingsApartment() {
   return Apartment.findAll({
     attributes: ['building'],
     group: ['building'],
-    raw: true
+    raw: true,
+    order: [['building', 'ASC']]
   })
 }
 

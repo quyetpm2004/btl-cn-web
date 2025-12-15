@@ -158,7 +158,10 @@ const ModalDetailRequest = ({
                               type="button"
                               onClick={() => setLightboxImage(img)}
                               className="rounded-full bg-white/20 p-1.5 hover:bg-white/40">
-                              <Eye size={18} className="text-white" />
+                              <Eye
+                                size={18}
+                                className="text-white hover:cursor-pointer"
+                              />
                             </button>
                           </div>
                         </div>
