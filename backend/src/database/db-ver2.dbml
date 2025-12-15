@@ -276,3 +276,15 @@ Table contacts {
   address varchar
   map_embed_url text
 }
+
+//////////////////////////////////////////////////////////////
+// 🔹 Mã OTP
+//////////////////////////////////////////////////////////////
+Table otps {
+  id int [pk, increment]
+  email varchar [unique]
+  code varchar 
+  expiresAt timestamp
+  createdAt timestamp
+  updatedAt timestamp
+}

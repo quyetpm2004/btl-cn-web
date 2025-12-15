@@ -4,7 +4,8 @@ import { validateBody, validateParams } from '@/middlewares/validate.js'
 import {
   createApartmentSchema,
   updateApartmentSchema,
-  apartmentIdParamSchema
+  apartmentIdParamSchema,
+  removeResidentParamSchema
 } from '@/schemas/apartment.schema.js'
 
 const apartmentRouter = express.Router()
@@ -43,7 +44,7 @@ apartmentRouter.post(
 )
 apartmentRouter.delete(
   '/:id/residents/:residentId',
-  validateParams(apartmentIdParamSchema),
+  validateParams(removeResidentParamSchema),
   apartmentController.removeResident
 )
 apartmentRouter.put(

@@ -21,8 +21,15 @@ async function getAllUsers(filters) {
 async function createUser(data) {
   const t = await sequelize.transaction()
   try {
-    const { username, password, role_id, status, resident_id, staff_data } =
-      data
+    const {
+      username,
+      password,
+      role_id,
+      status,
+      resident_id,
+      staff_data,
+      email
+    } = data
 
     // Check if username exists
     const existingUser = await userRepo.getUserByUsername(username)
@@ -36,7 +43,8 @@ async function createUser(data) {
         username,
         password: hashedPassword,
         role_id,
-        status: status || 1
+        status: status || 1,
+        email
       },
       { transaction: t }
     )
@@ -79,9 +87,10 @@ async function createUser(data) {
 async function updateUser(id, data) {
   const t = await sequelize.transaction()
   try {
-    const { status, password, role_id, resident_id, staff_data } = data
+    const { status, password, role_id, resident_id, staff_data, email } = data
     const updateData = {}
     if (status !== undefined) updateData.status = status
+    if (email !== undefined) updateData.email = email
     if (password) {
       updateData.password = await bcrypt.hash(password, 10)
     }

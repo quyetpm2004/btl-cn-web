@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { resetPasswordApi } from '@/services/api'
 import { toast } from 'sonner'
+import { Eye, EyeOff } from 'lucide-react'
+import { Button } from '../../components/ui/button'
 
 /**
  * Hook để lấy giá trị tham số truy vấn (query parameter) từ URL.
@@ -24,6 +26,8 @@ function ResetPassword() {
 
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [showNewPassword, setShowNewPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
@@ -174,17 +178,28 @@ function ResetPassword() {
                   className="block text-sm font-medium text-gray-700">
                   Mật khẩu mới (Tối thiểu 8 ký tự)
                 </label>
-                <div className="mt-1">
+                <div className="relative mt-1">
                   <input
                     id="password"
                     name="password"
-                    type="password"
+                    type={showNewPassword ? 'text' : 'password'}
                     required
-                    className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
+                    className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 pr-10 text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     disabled={isLoading}
                   />
+                  <Button
+                    variant="icon"
+                    type="button"
+                    className="absolute top-0 right-0 h-9.5 text-gray-500 hover:text-gray-700"
+                    onClick={() => setShowNewPassword(!showNewPassword)}>
+                    {showNewPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
                 </div>
               </div>
 
@@ -195,17 +210,30 @@ function ResetPassword() {
                   className="block text-sm font-medium text-gray-700">
                   Xác nhận Mật khẩu mới
                 </label>
-                <div className="mt-1">
+                <div className="relative mt-1">
                   <input
                     id="confirmPassword"
                     name="confirmPassword"
-                    type="password"
+                    type={showConfirmPassword ? 'text' : 'password'}
                     required
-                    className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
+                    className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 pr-10 text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     disabled={isLoading}
                   />
+                  <Button
+                    variant="icon"
+                    type="button"
+                    className="absolute top-0 right-0 h-9.5 text-gray-500 hover:text-gray-700"
+                    onClick={() =>
+                      setShowConfirmPassword(!showConfirmPassword)
+                    }>
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
                 </div>
               </div>
 

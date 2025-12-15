@@ -47,3 +47,8 @@ export const updateApartmentSchema = createApartmentSchema.partial()
 export const apartmentIdParamSchema = z.strictObject({
   id: z.coerce.number().int().positive()
 })
+
+export const removeResidentParamSchema = z.strictObject({
+  id: z.coerce.number().int().positive(),
+  residentId: z.coerce.number().int().positive()
+})

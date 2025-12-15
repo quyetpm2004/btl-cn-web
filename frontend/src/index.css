@@ -2,14 +2,6 @@
 @import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
-.bg-auth {
-  background-image: url('/images/bg-auth.jpeg'); /* đường dẫn ảnh */
-  background-size: cover; /* phóng ảnh phủ kín */
-  background-position: center; /* canh giữa ảnh */
-  background-repeat: no-repeat; /* không lặp lại */
-  min-height: 100vh; /* full chiều cao màn hình */
-  width: 100%; /* full chiều rộng */
-}
 
 /* styles.css */
 

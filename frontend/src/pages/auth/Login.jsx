@@ -138,8 +138,7 @@ export const Login = () => {
 
               <Link
                 to="/forgot-password"
-                className="float-right mb-2"
-                style={{ fontSize: 14, color: '#1976d2' }}>
+                className="float-right mb-2 text-sm text-blue-600 hover:underline">
                 Quên mật khẩu?
               </Link>
 

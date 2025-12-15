@@ -163,14 +163,18 @@ async function getAllUsers(filters) {
 
   const total = await User.count({
     where,
-    include
+    include: query ? include : []
   })
 
   const items = await User.findAll({
     where,
     include,
     limit,
-    offset
+    offset,
+    order: [
+      ['createdAt', 'DESC'],
+      ['id', 'ASC']
+    ]
   })
 
   return { items, total, page, limit }

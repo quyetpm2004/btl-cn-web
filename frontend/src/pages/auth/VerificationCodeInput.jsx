@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { verifyOtpApi } from '@/services/api'
 import { toast } from 'sonner'
@@ -185,7 +185,7 @@ function VerificationCodeInput({ email, onVerificationSuccess, onBack }) {
       <div className="pt-2 text-center">
         <button
           onClick={onBack}
-          className="text-sm text-gray-500 hover:text-gray-700">
+          className="text-sm text-gray-500 hover:cursor-pointer hover:text-gray-700">
           ← Quay lại
         </button>
       </div>

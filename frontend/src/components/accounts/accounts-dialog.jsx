@@ -25,6 +25,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { DatePicker } from '@/components/date-picker'
 import { format } from 'date-fns'
+import { Eye, EyeOff } from 'lucide-react'
 
 const roles = {
   1: 'Quản trị viên',
@@ -43,6 +44,7 @@ export const AccountDialog = ({
   const queryClient = useQueryClient()
   const [formData, setFormData] = useState({
     username: '',
+    email: '',
     password: '',
     role_id: '2',
     status: '1',
@@ -61,11 +63,13 @@ export const AccountDialog = ({
   const [isResidentDialogOpen, setIsResidentDialogOpen] = useState(false)
   const [isCreateResidentDialogOpen, setIsCreateResidentDialogOpen] =
     useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   useEffect(() => {
     if (account && mode !== 'create') {
       setFormData({
         username: account.username,
+        email: account.email || '',
         password: '', // Don't show password
         role_id: String(account.role_id),
         status: String(account.status),
@@ -93,6 +97,7 @@ export const AccountDialog = ({
       setSelectedResident(account.resident || null)
     } else {
       setFormData({
+        email: '',
         username: '',
         password: '',
         role_id: '2',
@@ -164,6 +169,7 @@ export const AccountDialog = ({
       createMutation.mutate(formData)
     } else {
       updateMutation.mutate({
+        email: formData.email,
         status: formData.status,
         password: formData.password || undefined, // Only send if changed
         role_id: formData.role_id,
@@ -206,30 +212,57 @@ export const AccountDialog = ({
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
-            <div className="space-y-2">
-              <Label>Tên đăng nhập</Label>
-              <Input
-                value={formData.username}
-                onChange={(e) =>
-                  setFormData({ ...formData, username: e.target.value })
-                }
-                disabled={!isCreate}
-                placeholder="Nhập tên đăng nhập"
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Tên đăng nhập</Label>
+                <Input
+                  value={formData.username}
+                  onChange={(e) =>
+                    setFormData({ ...formData, username: e.target.value })
+                  }
+                  disabled={!isCreate}
+                  placeholder="Nhập tên đăng nhập"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Email</Label>
+                <Input
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  disabled={isView}
+                  placeholder="Nhập email"
+                />
+              </div>
             </div>
             <div className={`space-y-2 ${isView ? 'hidden' : ''}`}>
-              <Label>Mật khẩu</Label>
-              <Input
-                type="password"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                disabled={isView}
-                placeholder={
-                  isEdit ? 'Để trống nếu không đổi' : 'Nhập mật khẩu'
-                }
-              />
+              <div className="relative">
+                <Input
+                  type={showPassword ? 'text' : 'password'}
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                  disabled={isView}
+                  placeholder={
+                    isEdit ? 'Để trống nếu không đổi' : 'Nhập mật khẩu'
+                  }
+                  className="pr-10"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4 text-gray-500" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-gray-500" />
+                  )}
+                </Button>
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">

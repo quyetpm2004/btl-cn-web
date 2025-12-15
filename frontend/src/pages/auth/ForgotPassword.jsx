@@ -112,7 +112,7 @@ function ForgotPassword() {
           <a
             href="/auth/login"
             className="mt-4 block font-medium text-indigo-600 hover:text-indigo-500">
-            Quay lại trang Đăng nhập
+            Quay lại
           </a>
         </div>
       </div>
@@ -224,7 +224,7 @@ function ForgotPassword() {
             <a
               href="/auth/login"
               className="font-medium text-indigo-600 hover:text-indigo-500">
-              Quay lại trang Đăng nhập
+              Quay lại
             </a>
           </div>
         </div>
