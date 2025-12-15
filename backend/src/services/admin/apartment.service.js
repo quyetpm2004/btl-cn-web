@@ -83,7 +83,6 @@ async function updateApartmentService(id, data) {
       { transaction: t }
     )
 
-    console.log('data.is_living', data.is_living)
     const result = await residentApartmentService.assignOwnerToApartment(
       data.owner_id,
       id,

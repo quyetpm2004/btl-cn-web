@@ -136,7 +136,7 @@ export const InvoiceDetailDialog = ({ invoice, open, onOpenChange, onPay }) => {
                     <strong>
                       {invoice.payments[0].method === 'cash'
                         ? 'Tiền mặt'
-                        : invoice.payments[0].method === 'bank_transfer'
+                        : invoice.payments[0].method === 'credit_card'
                           ? 'Chuyển khoản'
                           : invoice.payments[0].method}
                     </strong>

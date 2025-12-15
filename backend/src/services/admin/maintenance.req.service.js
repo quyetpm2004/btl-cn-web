@@ -33,7 +33,6 @@ async function update(id, data, files) {
 
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath) // Xóa file
-      console.log(`Deleted file: ${filePath}`)
     }
   })
 

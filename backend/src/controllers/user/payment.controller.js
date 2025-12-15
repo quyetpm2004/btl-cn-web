@@ -11,7 +11,6 @@ import moment from 'moment'
 const getPaymentUnpaid = async (req, res) => {
   try {
     const { id } = req.user
-    console.log('id', id)
     const invoices = await invoiceService.getUnpaidInvoicesForUser(id)
     return res
       .status(200)
@@ -96,7 +95,6 @@ const vnpayReturn = async (req, res) => {
       })
     }
   } catch (err) {
-    console.log('err xay ra la', err)
     res.send('Lỗi xử lý thanh toán')
   }
 }

@@ -61,7 +61,6 @@ const getMaintenanceRequestDetail = async (req, res) => {
 
 const updateMaintenanceRequest = async (req, res) => {
   try {
-    console.log('Updating maintenance request...', req.body, req.files)
     const { id } = req.params
     const updated = await handleUpdateRequest(id, req.body, req.files)
 

@@ -7,10 +7,18 @@ const sequelize = new Sequelize(
   process.env.DB_PASSWORD,
   {
     host: process.env.DB_HOST,
-    dialect: 'mysql',
+    port: process.env.DB_PORT,
+    dialect: process.env.DB_DIALECT || 'mysql',
     timezone: '+07:00',
     logging: false,
-    dialectOptions: { dateStrings: true, typeCast: true }
+    dialectOptions: {
+      dateStrings: true,
+      typeCast: true,
+      ssl: {
+        require: true,
+        rejectUnauthorized: false // TiDB Cloud thường yêu cầu cấu hình này
+      }
+    }
   }
 )
 

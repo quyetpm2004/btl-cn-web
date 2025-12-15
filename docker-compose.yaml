@@ -1,0 +1,55 @@
+name: cn-web-app
+
+services:
+  mysql_db:
+    container_name: cn-web-mysql
+    image: mysql:8.0
+    restart: always
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: apartment_system
+    ports:
+      - '3307:3306'
+    expose:
+      - 3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    container_name: cn-web-backend
+    image: ducbunny/cn-web-backend:init
+    # command: sh -c "echo 'Waiting for MySQL...' && sleep 30 && npm run db:reset && node ./build/src/server.js"
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - '8081:8081'
+    restart: always
+    environment:
+      - PORT=8081
+      - DB_PORT=3306
+      - DB_HOST=mysql_db
+    volumes:
+      - ./backend/.env:/cn-web/backend/.env
+    depends_on:
+      - mysql_db
+    expose:
+      - 8081
+
+  frontend:
+    container_name: cn-web-frontend
+    image: ducbunny/cn-web-frontend:init
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      - BACKEND_URL=http://backend:8081
+    ports:
+      - '80:80'
+    restart: always
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:

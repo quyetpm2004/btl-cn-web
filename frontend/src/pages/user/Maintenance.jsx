@@ -56,7 +56,9 @@ export default function Maintenance() {
   const queryClient = useQueryClient()
 
   useEffect(() => {
-    const socket = io('http://localhost:8080')
+    const socket = io(
+      import.meta.env.VITE_BASE_URL_BACKEND || 'http://localhost:8080'
+    )
 
     socket.on('maintenance_request_updated', () => {
       queryClient.invalidateQueries({ queryKey: ['maintenanceRequests'] })
@@ -76,7 +78,7 @@ export default function Maintenance() {
     queryFn: () => getMaintenanceRequestsApi(resident.id)
   })
 
-  const requests = requestsData?.data.requests
+  const requests = requestsData?.data?.requests || []
 
   const [isOpenModal, setIsOpenModal] = useState(false)
 

@@ -1,11 +1,8 @@
 -------------------------------------------------------------------------------------------
 Role	Mô tả chức năng chính
 Admin (Quản trị viên hệ thống)	Toàn quyền hệ thống: tạo tài khoản, phân quyền, quản lý mọi module
-Resident (Cư dân)	Xem hóa đơn, đăng ký dịch vụ, gửi phản ánh, xem thông báo
-Manager (Ban quản lý)	Quản lý chung cư, theo dõi báo cáo, thông báo, cư dân, thiết bị
+Resident (Cư dân)	Xem hóa đơn, gửi phản ánh, xem thông báo
+Manager (Ban quản lý)	Quản lý chung cư, theo dõi báo cáo, thông báo, cư dân
 Accountant (Thu ngân / Kế toán)	Quản lý hóa đơn, thanh toán, công nợ, báo cáo tài chính
 Technician (Kỹ thuật viên)	Xử lý bảo trì, sửa chữa thiết bị, tiếp nhận yêu cầu cư dân
-Security (Bảo vệ)	Ghi nhận ra/vào, báo cáo sự cố an ninh
-Cleaner (Nhân viên vệ sinh)	Lịch làm việc, ghi nhận hoàn thành công việc
-Receptionist (Tiếp tân)	Tiếp nhận yêu cầu, liên hệ cư dân, hỗ trợ sự kiện
-Inspector (Giám sát kỹ thuật / PCCC)	Theo dõi hệ thống điện, nước, camera, PCCC, ghi nhận nhật ký vận hành
+

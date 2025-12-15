@@ -22,14 +22,6 @@ export const useAuthStore = create(
       ) => {
         try {
           set({ loading: true })
-          console.log('Registering user:', {
-            username,
-            password,
-            full_name,
-            email,
-            phone,
-            apartment_code
-          })
           await registerApi(
             username,
             password,
@@ -53,7 +45,6 @@ export const useAuthStore = create(
           set({ loading: true })
           const res = await loginApi(username, password)
 
-          console.log('Login response:', res.data)
           set({
             accessToken: res.data.token,
             isAuthenticated: true,

@@ -160,7 +160,7 @@ Table payments {
   id int [pk, increment]
   invoice_id int [ref: > invoices.id]
   resident_id int [ref: > residents.id]
-  method varchar
+  method varchar                                // credit_card, cash
   amount bigint
   paid_at timestamp
   transaction_code varchar

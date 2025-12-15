@@ -10,7 +10,7 @@ module.exports = {
         status: 1,
         created_by: 1,
         note: 'Hóa đơn tháng 10 - Căn A101',
-        created_at: '2025-10-01T10:00:00Z',
+        created_at: '2025-10-01 10:00:00',
         end_date: '2025-10-31',
         paid_at: '2025-11-03 17:20:25'
       }

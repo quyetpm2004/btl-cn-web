@@ -51,7 +51,9 @@ export const AdminMaintenance = () => {
 
   // Socket.io connection
   useEffect(() => {
-    const socket = io('http://localhost:8080')
+    const socket = io(
+      import.meta.env.VITE_BASE_URL_BACKEND || 'http://localhost:8080'
+    )
 
     socket.on('maintenance_request_updated', () => {
       queryClient.invalidateQueries({ queryKey: ['maintenanceRequests'] })

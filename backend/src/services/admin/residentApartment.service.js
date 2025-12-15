@@ -65,7 +65,6 @@ async function assignOwnerToApartment(
       { transaction: t }
     )
   }
-  console.log('is_living_here', is_living_here)
   return true
 }
 
