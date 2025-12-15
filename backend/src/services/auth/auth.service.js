@@ -4,9 +4,12 @@ import { StatusCodes } from 'http-status-codes'
 import { AppError } from '../../utils/errors.js'
 import { sequelize } from '../../models/index.js'
 import * as userRepo from '../../repositories/user.repository.js'
+import * as otpRepository from '../../repositories/otp.repository.js'
 import { createResident } from '../../repositories/resident.repository.js'
 import { createResidentApartment } from '../../repositories/residentApartment.repository.js'
 import { getApartmentByCode } from '../../repositories/apartment.repository.js'
+import { hashPassword } from '@/validations/password.js'
+import emailService from '../email.service.js'
 
 const JWT_SECRET = process.env.JWT_SECRET
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '12h'
@@ -148,8 +151,99 @@ async function me(userId) {
   return toPublicUser(user)
 }
 
+function generateOTP() {
+  return Math.floor(100000 + Math.random() * 900000).toString()
+}
+
+async function requestPasswordReset(email) {
+  const user = await userRepo.getUserByEmail(email)
+
+  if (user === null) {
+    throw new Error('Email không tồn tại trong hệ thống.')
+  }
+
+  const code = generateOTP()
+  const expiresAt = new Date(Date.now() + 5 * 60 * 1000)
+
+  if (process.env.EMAIL_USER && process.env.EMAIL_PASSWORD) {
+    try {
+      console.log('Email configured. Sending forgot-password email.', email)
+      await emailService.sendForgotPasswordCode({
+        email,
+        code
+      })
+    } catch (emailError) {
+      console.error('Email sending failed (but contact saved):', emailError)
+    }
+  } else {
+    console.log('Email not configured. Skipping email sending.')
+  }
+
+  return await otpRepository.upsertOtp(email, code, expiresAt)
+}
+
+async function verifyOtp(email, code) {
+  const storedOtp = await otpRepository.findOtpByEmail(email)
+
+  if (!storedOtp) {
+    throw new Error('Email không hợp lệ hoặc chưa gửi yêu cầu khôi phục.')
+  }
+
+  if (storedOtp.code !== code) {
+    throw new Error('Mã xác minh không khớp. Vui lòng thử lại.')
+  }
+
+  if (new Date() > storedOtp.expiresAt) {
+    await otpRepository.deleteOtpByEmail(email)
+    throw new Error('Mã xác minh đã hết hạn. Vui lòng yêu cầu mã mới.')
+  }
+
+  await otpRepository.deleteOtpByEmail(email)
+
+  const user = await userRepo.getUserByEmail(email)
+  if (!user) {
+    throw new Error('Lỗi hệ thống: Không tìm thấy người dùng sau khi xác minh.')
+  }
+
+  const resetToken = jwt.sign(
+    { userId: user.id, purpose: 'reset' },
+    process.env.JWT_SECRET,
+    { expiresIn: '15m' }
+  )
+
+  return resetToken
+}
+
+async function resetPassword(token, newPassword) {
+  let decoded
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET)
+  } catch (err) {
+    throw new Error('Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.')
+  }
+
+  if (decoded.purpose !== 'reset') {
+    throw new Error('Token không hợp lệ.')
+  }
+
+  const userId = decoded.userId
+
+  const newPasswordHash = await hashPassword(newPassword)
+
+  const affectedRows = await userRepo.updatePassword(userId, newPasswordHash)
+
+  console.log('affectedRows', affectedRows)
+
+  if (affectedRows === 0) {
+    throw new Error('Không tìm thấy người dùng để cập nhật.')
+  }
+}
+
 export const authService = {
   registerService,
   loginService,
-  me
+  me,
+  requestPasswordReset,
+  verifyOtp,
+  resetPassword
 }

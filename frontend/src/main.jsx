@@ -26,6 +26,8 @@ import Notification from './pages/user/Notification'
 import Maintenance from './pages/user/Maintenance'
 import { Profile } from './pages/admin/Profile'
 import PaymentResult from './pages/user/PaymentResult'
+import ForgotPassword from './pages/auth/ForgotPassword'
+import ResetPassword from './pages/auth/ResetPassword'
 
 const queryClient = new QueryClient()
 
@@ -84,6 +86,14 @@ const router = createBrowserRouter([
   {
     path: '/auth/login',
     Component: Login
+  },
+  {
+    path: '/forgot-password',
+    Component: ForgotPassword
+  },
+  {
+    path: '/reset-password',
+    Component: ResetPassword
   }
 ])
 

@@ -89,6 +89,56 @@ class EmailService {
       }
     }
   }
+
+  async sendForgotPasswordCode({ email, code }) {
+    if (!email || typeof email !== 'string') {
+      throw new Error(`Email không hợp lệ: ${email}`)
+    }
+
+    const mailOptions = {
+      from: `"Luxury Residence" <${emailConfig.auth.user}>`,
+      to: email.trim(), // ✅ tránh email rỗng do space
+      subject: 'Mã xác nhận đặt lại mật khẩu',
+      html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+        <h2 style="color: #8b5cf6; text-align: center;">
+          Đặt lại mật khẩu
+        </h2>
+
+        <p>Xin chào,</p>
+        <p>Bạn đã yêu cầu đặt lại mật khẩu cho tài khoản tại <strong>Luxury Residence</strong>.</p>
+
+        <div style="background-color: #f9fafb; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0;">
+          <p style="font-size: 14px; color: #555;">Mã xác nhận của bạn là:</p>
+          <p style="font-size: 32px; font-weight: bold; color: #8b5cf6; letter-spacing: 4px;">
+            ${code}
+          </p>
+          <p style="font-size: 13px; color: #666;">
+            Mã có hiệu lực trong <strong>5 phút</strong>
+          </p>
+        </div>
+
+        <p style="color: #555;">
+          Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.
+        </p>
+
+        <p style="color: #666; font-size: 12px; text-align: center; margin-top: 30px;">
+          Email này được gửi tự động từ hệ thống Luxury Residence
+        </p>
+      </div>
+    `
+    }
+
+    try {
+      console.log('📧 Sending forgot-password mail to:', email)
+      const info = await this.transporter.sendMail(mailOptions)
+      console.log('✅ Forgot password email sent:', info.messageId)
+      return { success: true, messageId: info.messageId }
+    } catch (error) {
+      console.error('❌ Error sending forgot password email:', error)
+      throw error
+    }
+  }
 }
 
 export default new EmailService()

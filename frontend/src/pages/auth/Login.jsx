@@ -88,9 +88,9 @@ export const Login = () => {
               Đăng nhập tài khoản của bạn
             </p>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit}>
               {/* Username Field */}
-              <div>
+              <div className="mb-6">
                 <label className="mb-1 block text-sm font-medium text-gray-700">
                   Tài khoản
                 </label>
@@ -108,7 +108,7 @@ export const Login = () => {
               </div>
 
               {/* Password Field */}
-              <div>
+              <div className="mb-2">
                 <label className="mb-1 block text-sm font-medium text-gray-700">
                   Mật khẩu
                 </label>
@@ -135,6 +135,13 @@ export const Login = () => {
                   </Button>
                 </div>
               </div>
+
+              <Link
+                to="/forgot-password"
+                className="float-right mb-2"
+                style={{ fontSize: 14, color: '#1976d2' }}>
+                Quên mật khẩu?
+              </Link>
 
               {/* Login Button */}
               <Button

@@ -165,6 +165,24 @@ const getServicesApi = async () => {
   return response
 }
 
+const forgotPasswordApi = async (email) => {
+  const response = await instance.post('/forgot-password', { email })
+  return response
+}
+
+const verifyOtpApi = async (email, otp) => {
+  const response = await instance.post('/verify-otp', { email, code: otp })
+  return response
+}
+
+const resetPasswordApi = async (token, newPassword) => {
+  const response = await instance.post('/reset-password', {
+    token,
+    newPassword
+  })
+  return response
+}
+
 export {
   loginApi,
   getMeApi,
@@ -187,5 +205,8 @@ export {
   createQrApi,
   paymentResultApi,
   dashboardApi,
-  getServicesApi
+  getServicesApi,
+  forgotPasswordApi,
+  verifyOtpApi,
+  resetPasswordApi
 }

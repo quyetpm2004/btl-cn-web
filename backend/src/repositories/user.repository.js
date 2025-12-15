@@ -176,6 +176,14 @@ async function getAllUsers(filters) {
   return { items, total, page, limit }
 }
 
+async function updatePassword(userId, newPasswordHash) {
+  const [affectedRows] = await User.update(
+    { password: newPasswordHash },
+    { where: { id: userId } }
+  )
+  return affectedRows
+}
+
 export {
   createUser,
   getUserById,
@@ -189,5 +197,6 @@ export {
   getCountManager,
   getCountAccountants,
   getCountTechnicians,
-  getAllUsers
+  getAllUsers,
+  updatePassword
 }
