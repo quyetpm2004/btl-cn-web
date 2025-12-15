@@ -2,11 +2,13 @@ import { Invoice } from '../../models/index.js'
 import moment from 'moment'
 import vnpay from '../../config/vnpay.config.js'
 
+const VNP_RETURN_URL = process.env.BASE_URL_FRONTEND + '/user/payments/result'
+
 async function createPayment(invoiceId, ipAddress) {
   const invoice = await Invoice.findByPk(+invoiceId)
   if (!invoice) throw new Error('Invoice not found')
 
-  if (!process.env.VNP_RETURN_URL) {
+  if (!VNP_RETURN_URL) {
     throw new Error('VNP_RETURN_URL is not configured')
   }
 
@@ -18,7 +20,7 @@ async function createPayment(invoiceId, ipAddress) {
     vnp_IpAddr: ip,
     vnp_TxnRef: orderId,
     vnp_OrderInfo: `Thanh toán hóa đơn #${invoiceId}`,
-    vnp_ReturnUrl: process.env.VNP_RETURN_URL,
+    vnp_ReturnUrl: VNP_RETURN_URL,
     vnp_Locale: 'vn',
     vnp_OrderType: 'billpayment'
   })
