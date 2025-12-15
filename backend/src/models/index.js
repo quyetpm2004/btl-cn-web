@@ -17,7 +17,14 @@ const customizeConfig = {
   dialect: process.env.DB_DIALECT,
   logging: false,
   timezone: '+07:00',
-  dialectOptions: { dateStrings: true, typeCast: true }
+  dialectOptions: {
+    dateStrings: true,
+    typeCast: true,
+    ssl: {
+      require: true,
+      rejectUnauthorized: false
+    }
+  }
 }
 
 sequelize = new Sequelize(
