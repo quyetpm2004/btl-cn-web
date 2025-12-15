@@ -2,7 +2,13 @@ import jwt from 'jsonwebtoken'
 
 export const authMiddleware = (req, res, next) => {
   // Whitelist paths that do not require authentication
-  const whitelists = ['/login', '/register']
+  const whitelists = [
+    '/login',
+    '/register',
+    '/forgot-password',
+    '/verify-otp',
+    '/reset-password'
+  ]
   if (whitelists.find((path) => '/api-v1' + path === req.originalUrl))
     return next()
 
