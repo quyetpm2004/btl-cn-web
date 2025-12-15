@@ -10,7 +10,7 @@ const getNotification = async (req, res) => {
     const notification = await handleGetNotification(userId, filter)
     return res
       .status(200)
-      .json({ message: 'Fetch notification successful', notification })
+      .json({ message: 'Lấy thông báo thành công', notification })
   } catch (err) {
     return res.status(400).json({ error: err.message })
   }
@@ -25,7 +25,7 @@ const markNotificationRead = async (req, res) => {
     )
     return res
       .status(200)
-      .json({ message: 'Fetch notification successful', notification })
+      .json({ message: 'Đánh dấu thông báo đã đọc thành công', notification })
   } catch {
     return res.status(400).json({ error: err.message })
   }

@@ -14,7 +14,10 @@ const getPaymentUnpaid = async (req, res) => {
     const invoices = await invoiceService.getUnpaidInvoicesForUser(id)
     return res
       .status(200)
-      .json({ message: 'Unpaid invoices fetched', data: invoices })
+      .json({
+        message: 'Lấy hóa đơn chưa thanh toán thành công',
+        data: invoices
+      })
   } catch (err) {
     return res.status(400).json({ error: err.message })
   }
@@ -26,7 +29,7 @@ const getPaymentPaid = async (req, res) => {
     const invoices = await invoiceService.getPaidInvoicesForUser(userId)
     return res
       .status(200)
-      .json({ message: 'Paid invoices fetched', data: invoices })
+      .json({ message: 'Lấy hóa đơn đã thanh toán thành công', data: invoices })
   } catch (err) {
     return res.status(400).json({ error: err.message })
   }

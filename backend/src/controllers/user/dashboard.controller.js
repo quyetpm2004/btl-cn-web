@@ -13,7 +13,7 @@ async function getDashboard(req, res) {
     if (!residentId) {
       return res.status(400).json({
         success: false,
-        message: 'residentId is required (query parameter)'
+        message: 'residentId là bắt buộc'
       })
     }
 

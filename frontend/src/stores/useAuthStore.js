@@ -30,10 +30,10 @@ export const useAuthStore = create(
             phone,
             apartment_code
           )
-          toast.success('Registration successful! Please log in.')
+          toast.success('Đăng ký thành công! Vui lòng đăng nhập.')
         } catch (error) {
           console.error('Registration error:', error)
-          toast.error('Registration failed. Please try again.')
+          toast.error('Đăng ký thất bại. Vui lòng thử lại.')
         } finally {
           set({ loading: false })
         }

@@ -47,7 +47,7 @@ async function closeCollectionPeriod(req, res) {
     await collectionPeriodService.close(collectionPeriodId)
     return res
       .status(StatusCodes.OK)
-      .json({ message: 'Collection period closed successfully' })
+      .json({ message: 'Đóng đợt thu thành công' })
   } catch (err) {
     const http = toHttpError(err)
     return res.status(http.status).json(http.body)

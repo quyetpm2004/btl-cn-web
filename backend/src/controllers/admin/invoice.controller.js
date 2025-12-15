@@ -30,12 +30,12 @@ export const generateInvoices = async (req, res) => {
     if (!periodId) {
       return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ message: 'Period ID is required' })
+        .json({ message: 'ID đợt thu là bắt buộc' })
     }
     await invoiceService.generateInvoicesForPeriodService({ periodId, userId })
     return res
       .status(StatusCodes.OK)
-      .json({ message: 'Invoices generated successfully' })
+      .json({ message: 'Tạo hóa đơn thành công' })
   } catch (err) {
     const http = toHttpError(err)
     return res.status(http.status).json(http.body)
@@ -48,12 +48,12 @@ export const payInvoice = async (req, res) => {
     if (!invoice_id) {
       return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ message: 'Invoice ID is required' })
+        .json({ message: 'ID hóa đơn là bắt buộc' })
     }
     await invoiceService.payInvoiceService(invoice_id)
     return res
       .status(StatusCodes.OK)
-      .json({ message: 'Invoice paid successfully' })
+      .json({ message: 'Thanh toán hóa đơn thành công' })
   } catch (err) {
     const http = toHttpError(err)
     return res.status(http.status).json(http.body)
@@ -66,7 +66,7 @@ export const bulkUpdateInvoices = async (req, res) => {
     if (!period_id || !items || !Array.isArray(items)) {
       return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ message: 'Invalid data' })
+        .json({ message: 'Dữ liệu không hợp lệ' })
     }
     const result = await invoiceService.bulkUpdateInvoicesService(
       period_id,
@@ -85,7 +85,7 @@ export const sendPeriodNotification = async (req, res) => {
     if (!periodId) {
       return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ message: 'Period ID is required' })
+        .json({ message: 'ID đợt thu là bắt buộc' })
     }
     const result = await invoiceService.sendPeriodNotificationService(periodId)
     return res.status(StatusCodes.OK).json(result)

@@ -116,7 +116,7 @@ async function addResident(req, res) {
     )
     return res
       .status(StatusCodes.OK)
-      .json({ message: 'Resident added successfully' })
+      .json({ message: 'Thêm cư dân vào căn hộ thành công' })
   } catch (err) {
     const http = toHttpError(err)
     return res.status(http.status).json(http.body)
@@ -133,7 +133,7 @@ async function removeResident(req, res) {
     )
     return res
       .status(StatusCodes.OK)
-      .json({ message: 'Resident removed successfully' })
+      .json({ message: 'Xóa cư dân khỏi căn hộ thành công' })
   } catch (err) {
     const http = toHttpError(err)
     return res.status(http.status).json(http.body)
@@ -145,7 +145,9 @@ async function updateServices(req, res) {
     const apartmentId = req.params.id
     const services = req.body.services // Array of { serviceId }
     await apartmentService.updateApartmentServices(apartmentId, services)
-    return res.status(StatusCodes.OK).json({ message: 'Updated successfully' })
+    return res
+      .status(StatusCodes.OK)
+      .json({ message: 'Cập nhật dịch vụ thành công' })
   } catch (err) {
     const http = toHttpError(err)
     return res.status(http.status).json(http.body)

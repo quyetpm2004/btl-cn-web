@@ -302,7 +302,7 @@ async function sendPeriodNotificationService(periodId) {
     userIds: Array.from(userIds)
   })
 
-  return { message: `Sent notifications to ${userIds.size} users` }
+  return { message: `Đã gửi thông báo đến ${userIds.size} người dùng` }
 }
 
 async function sendOverdueNotificationService() {
@@ -360,7 +360,7 @@ async function sendOverdueNotificationService() {
     }
   }
 
-  return { message: `Sent notifications for ${count} overdue invoices` }
+  return { message: `Đã gửi thông báo cho ${count} hóa đơn quá hạn` }
 }
 
 export {

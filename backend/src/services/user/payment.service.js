@@ -2,7 +2,7 @@ import { Invoice } from '../../models/index.js'
 import moment from 'moment'
 import vnpay from '../../config/vnpay.config.js'
 
-const VNP_RETURN_URL = process.env.BASE_URL_FRONTEND + '/user/payments/result'
+const VNP_RETURN_URL = process.env.BASE_URL_FRONTEND + '/user/payment/result'
 
 async function createPayment(invoiceId, ipAddress) {
   const invoice = await Invoice.findByPk(+invoiceId)
