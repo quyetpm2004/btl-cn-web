@@ -7,6 +7,9 @@ import cookieParser from 'cookie-parser'
 import { Server } from 'socket.io'
 import { createServer } from 'http'
 
+const dns = require('node:dns')
+dns.setDefaultResultOrder('ipv4first')
+
 const port = process.env.PORT || 8080
 const app = express()
 app.use(
